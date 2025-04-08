@@ -5,4 +5,7 @@
     border-radius: var(--radius);
 
     background-color: var(--color-card);
+
+    display: grid;
+    gap: var(--gap);
 }
