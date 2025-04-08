@@ -16,10 +16,10 @@ function App() {
             location: 0,
             address: "Uusi ylioppilastalo, Mannerheimintie 5A",
             area: "Uusi ylioppilastalo",
-            accessible: true,
+            accessible: false,
             host_description: "Järjestöämme ei oikeasti ole",
             rating: 2.5,
-            favourite: false,
+            favourite: true,
             completed: false,
         },
         {
@@ -33,7 +33,7 @@ function App() {
             host_description: "Akateeminen tuubaseura on maailman vanhin orkesteri.",
             rating: 5,
             favourite: false,
-            completed: false,
+            completed: true,
         }
     ];
     function handleClick(event: L.LeafletMouseEvent, map: L.Map) {

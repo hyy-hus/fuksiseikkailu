@@ -2,6 +2,11 @@ import { } from 'react';
 
 import "./CheckpointList.css";
 
+import FavoriteIcon from "./assets/icons/FavoritePlain";
+import CompleteIcon from "./assets/icons/CompletedPlain";
+import AccessibilityIcon from "./assets/icons/AccessibilityPlain";
+import StarsRating from "./assets/icons/StarsRating.tsx";
+
 interface CheckpointData {
     number: number,
     name: string,
@@ -17,13 +22,14 @@ interface CheckpointData {
 }
 
 interface RatingProps {
-    value: number
+    data: CheckpointData
 }
 
 function Rating(props: RatingProps) {
     return (
         <div className="Rating">
-            {props.value}
+            <StarsRating value={props.data.rating} id={props.data.number.toString()} />
+            <span>{props.data.rating} / 5</span>
         </div>
     );
 }
@@ -37,11 +43,23 @@ function Checkpoint(props: CheckpointProps) {
         <div className="Checkpoint">
             <div className="number"><span>{props.data.number}</span></div>
             <span className="name">{props.data.name}</span>
-            <Rating value={props.data.rating} />
+            <Rating data={props.data} />
             <div className="circles">
-                <span className="accessible">A</span>
-                <span className="favourite">F</span>
-                <span className="completed">C</span>
+                <span className="accessible">
+                    <AccessibilityIcon
+                        className={`icon ${props.data.accessible ? "enabled" : ""}`}
+                    />
+                </span>
+                <span className="favourite">
+                    <FavoriteIcon
+                        className={`icon ${props.data.favourite ? "enabled" : ""}`}
+                    />
+                </span>
+                <span className="completed">
+                    <CompleteIcon
+                        className={`icon ${props.data.completed ? "enabled" : ""}`}
+                    />
+                </span>
             </div>
         </div >
     );
@@ -55,7 +73,7 @@ function CheckpointList(props: CheckpointListProps) {
     return (
         <div className="CheckpointList">
             {
-                props.checkpoints.map(checkpoint => <Checkpoint data={checkpoint} />)
+                props.checkpoints.map(checkpoint => <Checkpoint data={checkpoint} key={checkpoint.number} />)
             }
         </div>
     );
