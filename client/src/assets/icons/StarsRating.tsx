@@ -6,8 +6,8 @@ interface starsProps {
 const SvgStarsPlain = (props: starsProps) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
-        width={110}
-        height={20}
+        width={80}
+        height={15}
         viewBox="0 0 127.486 23.05"
         {...props}
     >

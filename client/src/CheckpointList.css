@@ -3,11 +3,11 @@
     grid-template-areas:
         "a b c"
         "a d c";
-    grid-template-rows: auto auto;
-    grid-template-columns: 5rem 1fr auto;
+    grid-template-rows: 1.5rem 1.5rem;
+    grid-template-columns: auto 1fr auto;
 
-    gap: 0.25rem;
-    padding: 0.5rem;
+    gap: var(--gap-xxs);
+    padding: var(--gap-s);
 
     background-color: var(--color-3);
     border-radius: var(--radius);
@@ -19,7 +19,7 @@
     background-color: var(--color-2);
     color: black;
 
-    padding: 1.5rem;
+    padding: 1rem;
     text-align: center;
     justify-content: center;
     align-self: center;
@@ -33,6 +33,8 @@
 
     height: 1rem;
     width: 1rem;
+
+    margin-right: 0.25rem;
 }
 
 .Checkpoint .number span {
@@ -48,7 +50,6 @@
     align-self: center;
 
     font-weight: bold;
-    font-size: 150%;
 }
 
 .Checkpoint .rating {
@@ -68,11 +69,11 @@
 
 .circles {
     display: grid;
-    grid-template-columns: 3rem 3rem 3rem;
+    grid-template-columns: 2rem 2rem 2rem;
 }
 
 svg.icon {
-    width: 2.5rem;
+    width: 1.5rem;
 }
 
 svg.icon circle {
@@ -85,5 +86,5 @@ svg.icon.enabled circle {
 
 .Rating span {
     margin-left: 0.5rem;
-    font-size: 0.8rem;
+    font-size: 0.6rem;
 }
