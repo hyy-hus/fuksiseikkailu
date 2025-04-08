@@ -3,7 +3,7 @@ import './App.css'
 
 import L from "leaflet";
 
-import Map from "./Map";
+import Map from "./Map/Map";
 
 import CheckpointList from "./CheckpointList";
 
