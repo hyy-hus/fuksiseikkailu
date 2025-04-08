@@ -1,6 +1,9 @@
-import * as React from "react";
-import type { SVGProps } from "react";
-const SvgStarsPlain = (props: SVGProps<SVGSVGElement>) => (
+interface starsProps {
+    id: string
+    value: number
+};
+
+const SvgStarsPlain = (props: starsProps) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         width={110}
