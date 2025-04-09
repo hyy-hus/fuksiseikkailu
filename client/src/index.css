@@ -9,7 +9,6 @@
     --color-fg: var(--color-5);
 
     --color-card: light-dark(var(--color-2), var(--color-4));
-    ;
 
     --gap: 1rem;
     --gap-s: 0.5rem;

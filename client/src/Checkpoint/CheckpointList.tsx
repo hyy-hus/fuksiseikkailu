@@ -37,11 +37,12 @@ function Rating(props: RatingProps) {
 
 interface CheckpointProps {
     data: CheckpointData,
+    handleSelect: (value: number) => void;
 }
 
 function Checkpoint(props: CheckpointProps) {
     return (
-        <div className="Checkpoint">
+        <li className="CheckpointItem" onClick={() => props.handleSelect(props.data.number)}>
             <div className="number"><span>{props.data.number}</span></div>
             <span className="name">{props.data.name}</span>
             <Rating data={props.data} />
@@ -62,12 +63,13 @@ function Checkpoint(props: CheckpointProps) {
                     />
                 </span>
             </div>
-        </div >
+        </li >
     );
 }
 
 interface CheckpointListProps {
     checkpoints: CheckpointData[]
+    handleSelect: (value: number) => void
 }
 
 function CheckpointList(props: CheckpointListProps) {
@@ -123,8 +125,13 @@ function CheckpointList(props: CheckpointListProps) {
         handleSearch(searchKey);
     }, [accessibleOnly, favoriteOnly, handleSearch, searchKey]);
 
+    function handleSelect(checkpoint: number) {
+        props.handleSelect(checkpoint);
+    }
+
     return (
         <div className="CheckpointList">
+            <h2>Checkpoints</h2>
             <div className="Search">
                 <div className="search">
                     <input type="text" placeholder="Search" value={searchKey} onChange={(e) => handleSearch(e.target.value)} />
@@ -143,13 +150,15 @@ function CheckpointList(props: CheckpointListProps) {
                     </span>
                 </div>
             </div>
-            {
-                filtered.length > 0 ? filtered.map(checkpoint => <Checkpoint data={checkpoint} key={checkpoint.number} />) : (
-                    <div className="no-results">
-                        Ei tuloksia
-                    </div>
-                )
-            }
+            <ul className="entries">
+                {
+                    filtered.length > 0 ? filtered.map(checkpoint => <Checkpoint data={checkpoint} key={checkpoint.number} handleSelect={handleSelect} />) : (
+                        <div className="no-results">
+                            Ei tuloksia
+                        </div>
+                    )
+                }
+            </ul>
         </div>
     );
 }

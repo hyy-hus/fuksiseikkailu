@@ -1,24 +1,76 @@
 import "./Checkpoint.css";
 
-const CheckpointListItem = () => {
-    return (
-        <li className="CheckpointListItem">
-        </li>
-    )
+import FavoriteIcon from "../assets/icons/FavoritePlain";
+import CompleteIcon from "../assets/icons/CompletedPlain";
+import AccessibilityIcon from "../assets/icons/AccessibilityPlain";
+import StarsRating from "../assets/icons/StarsRating.tsx";
+
+interface RatingProps {
+    data: CheckpointData
 }
 
-const CheckpointList = () => {
+function Rating(props: RatingProps) {
     return (
-        <div className="CheckpointList">
-            <h2>Checkpoints</h2>
-            <ol>
-                <CheckpointListItem />
-            </ol>
+        <div className="Rating">
+            <StarsRating value={props.data.rating} id={props.data.number.toString()} />
+            <span>{props.data.rating} / 5</span>
+        </div>
+    );
+}
+
+interface CheckpointData {
+    number: number,
+    name: string,
+    description: string,
+    location: number,
+    address: string,
+    area: string,
+    accessible: boolean,
+    host_description: string,
+    rating: number,
+    favourite: boolean,
+    completed: boolean,
+}
+
+interface CheckpointProps {
+    data: CheckpointData
+}
+
+function Checkpoint(props: CheckpointProps) {
+    return (
+        <div className="Checkpoint">
+            <div className="circle number">
+                <span>{props.data.number}</span>
+            </div>
+            <h3 className="name">
+                {props.data.name}
+            </h3>
+            <div className="rating">
+                <Rating data={props.data} />
+            </div>
+            <div className="circles">
+                <AccessibilityIcon className={`icon accessibility ${props.data.accessible ? "enabled" : ""}`} />
+                <FavoriteIcon className={`icon favorite ${props.data.favourite ? "enabled" : ""}`} />
+                <CompleteIcon className={`icon completed ${props.data.completed ? "enabled" : ""}`} />
+            </div>
+            <div className="description">
+                {props.data.description}
+            </div>
+            <div className="address">
+                {props.data.address}
+            </div>
+            <div className="nav">
+                <a className="nav button" href="">Löydä rastille!</a>
+            </div>
+            <div className="host">
+                {props.data.host_description}
+            </div>
+            <div className="links">
+                <a className="more button" href="">Lue lisää!</a>
+            </div>
+
         </div>
     )
 }
 
-export {
-    CheckpointList,
-    CheckpointListItem
-}
+export default Checkpoint;

@@ -1,0 +1,116 @@
+.Checkpoint {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "a a"
+        "b b"
+        "c d"
+        "e e"
+        "f f"
+        "g g"
+        "h h"
+        "i i";
+
+    padding: var(--gap);
+    gap: var(--gap);
+
+    background-color: var(--color-3);
+    border: var(--border);
+    border-radius: var(--radius);
+}
+
+.Checkpoint .number {
+    grid-area: a;
+    display: flex;
+    justify-content: center;
+    justify-self: center;
+    align-items: center;
+    text-align: center;
+
+    background-color: var(--color-2);
+
+    width: 2rem;
+    height: 2rem;
+
+    border: var(--border);
+    border-color: var(--color-5);
+    border-radius: 50%;
+
+    color: var(--color-5);
+    font-weight: bold;
+
+    padding: var(--gap-l);
+}
+
+.Checkpoint .name {
+    grid-area: b;
+    justify-self: center;
+    text-align: center;
+
+    font-size: 1.5rem;
+}
+
+.Checkpoint .rating {
+    grid-area: c;
+    font-size: 0.6rem;
+    align-content: center;
+}
+
+.Checkpoint .circles {
+    grid-area: d;
+    justify-self: right;
+
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+
+    gap: var(--gap-s);
+
+    & .icon {
+        width: 2rem;
+        height: 2rem;
+
+    }
+
+    & .icon circle {
+        fill: var(--color-2) !important;
+    }
+
+    & .icon.enabled circle {
+        fill: var(--color-1) !important;
+    }
+}
+
+.Checkpoint .description {
+    grid-area: e;
+}
+
+.Checkpoint .address {
+    grid-area: f;
+    justify-self: center;
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.Checkpoint .nav {
+    grid-area: g;
+    justify-self: center;
+}
+
+.Checkpoint .host {
+    grid-area: h;
+}
+
+.Checkpoint .links {
+    grid-area: i;
+    justify-self: center;
+}
+
+.button {
+    border: var(--border);
+    border-color: var(--color-5);
+    border-radius: var(--radius);
+
+    padding: var(--gap-xs);
+
+    background-color: var(--color-4);
+}
