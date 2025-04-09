@@ -5,7 +5,7 @@ import L from "leaflet";
 
 import Map from "./Map/Map";
 
-import CheckpointList from "./CheckpointList";
+import CheckpointList from "./Checkpoint/CheckpointList";
 
 function App() {
     const checkpoints = [
