@@ -1,4 +1,5 @@
-import { } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import Fuse from "fuse.js";
 
 import "./CheckpointList.css";
 
@@ -70,10 +71,84 @@ interface CheckpointListProps {
 }
 
 function CheckpointList(props: CheckpointListProps) {
+    const [filtered, setFiltered] = useState<CheckpointData[]>(props.checkpoints);
+    const [searchKey, setSearchKey] = useState<string>("");
+
+    const [accessibleOnly, setAccessibleOnly] = useState<boolean>(false);
+    const [favoriteOnly, setFavoriteOnly] = useState<boolean>(false);
+
+    const fuse = useMemo(() => {
+        const fuse_options = {
+            keys: [
+                "name",
+                "description",
+                { name: "number", getFn: (item: CheckpointData) => item.number.toString() }
+            ],
+            threshold: 0.3,
+        };
+
+        return new Fuse(props.checkpoints, fuse_options);
+    }, [props.checkpoints]);
+
+    const handleSearch = useCallback((value: string) => {
+        setSearchKey(value);
+
+        let results = (value != "") ? fuse.search(value).map(result => result.item) : props.checkpoints;
+
+        if (accessibleOnly) {
+            results = results.filter(item => item.accessible);
+        }
+
+        if (favoriteOnly) {
+            results = results.filter(item => item.favourite);
+        }
+
+        setFiltered(results);
+    }, [accessibleOnly, favoriteOnly, fuse, props.checkpoints]);
+
+    const handleClear = useCallback(() => {
+        setSearchKey("");
+        handleSearch("");
+    }, [handleSearch])
+
+    function handleAccessibilityToggle() {
+        setAccessibleOnly(!accessibleOnly);
+    }
+
+    function handleFavoriteToggle() {
+        setFavoriteOnly(!favoriteOnly);
+    }
+
+    useEffect(() => {
+        handleSearch(searchKey);
+    }, [accessibleOnly, favoriteOnly, handleSearch, searchKey]);
+
     return (
         <div className="CheckpointList">
+            <div className="Search">
+                <div className="search">
+                    <input type="text" placeholder="Search" value={searchKey} onChange={(e) => handleSearch(e.target.value)} />
+                    <input type="button" value="x" onClick={() => handleClear()} />
+                </div>
+                <div className="toggles">
+                    <span className="toggle accessibility" onClick={() => handleAccessibilityToggle()}>
+                        <AccessibilityIcon
+                            className={`icon ${accessibleOnly ? "enabled" : ""}`}
+                        />
+                    </span>
+                    <span className="toggle favorites" onClick={() => handleFavoriteToggle()}>
+                        <FavoriteIcon
+                            className={`icon ${favoriteOnly ? "enabled" : ""}`}
+                        />
+                    </span>
+                </div>
+            </div>
             {
-                props.checkpoints.map(checkpoint => <Checkpoint data={checkpoint} key={checkpoint.number} />)
+                filtered.length > 0 ? filtered.map(checkpoint => <Checkpoint data={checkpoint} key={checkpoint.number} />) : (
+                    <div className="no-results">
+                        Ei tuloksia
+                    </div>
+                )
             }
         </div>
     );

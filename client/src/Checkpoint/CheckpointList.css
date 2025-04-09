@@ -38,10 +38,8 @@
 }
 
 .Checkpoint .number span {
-    margin: 0;
-    padding: 0;
-    display: inline-block;
-    line-height: 1rem;
+    align-self: center;
+    line-height: 1.5rem;
 }
 
 .Checkpoint .name {
@@ -76,6 +74,7 @@
 
 svg.icon {
     width: 1.5rem;
+    height: 1.5rem;
 }
 
 svg.icon circle {
@@ -89,4 +88,46 @@ svg.icon.enabled circle {
 .Rating span {
     margin-left: 0.5rem;
     font-size: 0.6rem;
+}
+
+.Search {
+    display: grid;
+    grid-template-columns: 1fr auto;
+
+    gap: var(--gap-s);
+    padding: var(--gap-s);
+
+    background-color: var(--color-3);
+    border-radius: var(--radius);
+}
+
+.search {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--gap-xs);
+}
+
+.Search .toggles {
+    align-self: center;
+    display: flex;
+    grid-template-columns: auto auto;
+    gap: var(--gap-xs);
+}
+
+.Search .toggles .icon {
+    align-self: center;
+    display: flex;
+}
+
+.no-results {
+    padding: var(--gap-s);
+
+    background-color: var(--color-5);
+    border-radius: var(--radius);
+
+    text-align: center;
+    font-style: italic;
+
+    color: var(--color-2);
+    font-size: 0.8rem;
 }
