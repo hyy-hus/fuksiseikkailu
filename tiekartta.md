@@ -14,8 +14,8 @@ välttämättömiä ne ovat.
 Kaikista välttämättömimmät ominaisuudet, jotta sovellusta on yleensäkään
 mahdollista käyttää.
 
-[ ] Listaus rasteista
-[ ] Rastit kartalla
+[x] Listaus rasteista
+[x] Rastit kartalla
 [ ] Rastien ja joukkueiden hallinta
 [ ] Pisteiden kirjaaminen
 
@@ -34,7 +34,7 @@ _Nice to have_ ominaisuuksia, joiden toteutuminen ei ole välttämätöntä, mut
 ne olisi kuitenkin kiva saada.
 
 [ ] Asukilpailun äänestys
-[ ] Rastien sijoittaminen kartalla
+[x] Rastien sijoittaminen kartalla
 [ ] Rakennusten sisätilakartat
 
 ## Aikataulu

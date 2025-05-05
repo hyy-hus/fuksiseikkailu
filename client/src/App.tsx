@@ -14,7 +14,7 @@ interface CheckpointData {
     number: number,
     name: string,
     description: string,
-    location: number,
+    location: [number, number],
     address: string,
     area: string,
     accessible: boolean,
@@ -25,12 +25,12 @@ interface CheckpointData {
 }
 
 function App() {
-    const checkpoints = [
+    const checkpoints: CheckpointData[] = [
         {
             number: 112,
             name: "Testirasti",
             description: "Rastillamme pelataan mölkkyä",
-            location: 0,
+            location: [60.206731, 24.827003],
             address: "Uusi ylioppilastalo, Mannerheimintie 5A",
             area: "Uusi ylioppilastalo",
             accessible: false,
@@ -43,7 +43,7 @@ function App() {
             number: 113,
             name: "Kultarasti",
             description: "Aloituskohta kulttureitille ja hauskaan ulkoiluun",
-            location: 1,
+            location: [60.16954075518176, 24.940080607961587],
             address: "Kultaportti 4, Helsinki",
             area: "Keskusta",
             accessible: true,
@@ -56,7 +56,7 @@ function App() {
             number: 114,
             name: "Mustarasti",
             description: "Haasteellinen osa metsäreittiä",
-            location: 2,
+            location: [60.218377, 25.009476],
             address: "Metsäaukio 7, Tampere",
             area: "Tampereen ydinkeskusta",
             accessible: false,
@@ -69,7 +69,7 @@ function App() {
             number: 115,
             name: "Peurarasti",
             description: "Nopeat ja ketterät reitit luonnossa",
-            location: 3,
+            location: [60.237062, 24.844343],
             address: "Eläintie 3, Espoo",
             area: "Espoon laitamet",
             accessible: true,
@@ -82,7 +82,7 @@ function App() {
             number: 116,
             name: "Jättirasti",
             description: "Pitkä ja vaativa reitti suurella juoksuosuudella",
-            location: 4,
+            location: [60.180631, 24.828343],
             address: "Räjäytystie 2, Vantaa",
             area: "Vantaan teollisuusalue",
             accessible: false,
@@ -95,7 +95,7 @@ function App() {
             number: 117,
             name: "Kotirasti",
             description: "Helppo ja ystävällinen reitti kotioloihin",
-            location: 5,
+            location: [60.156237, 24.961499],
             address: "Kotikatu 12, Oulu",
             area: "Oulun keskustan laidat",
             accessible: true,
@@ -108,7 +108,7 @@ function App() {
             number: 118,
             name: "Vesirasti",
             description: "Luonnon kosketus ja tiheä vehreys",
-            location: 6,
+            location: [60.133184, 24.875675],
             address: "Vesitie 5, Jyväskylä",
             area: "Jyväskylän rannikko",
             accessible: true,
@@ -121,7 +121,7 @@ function App() {
             number: 119,
             name: "Lumirasti",
             description: "Talvinen versio, jossa viileä tunnelma on taattu",
-            location: 7,
+            location: [60.207986, 24.972584],
             address: "Lumitie 8, Rovaniemi",
             area: "Revontulikylä",
             accessible: false,
@@ -134,7 +134,7 @@ function App() {
             number: 120,
             name: "Kalliorasti",
             description: "Kivikko reitti, jossa vuoriston henki henkii",
-            location: 8,
+            location: [60.156453, 24.984994],
             address: "Kalliontie 14, Kuopio",
             area: "Kuopion laidunta",
             accessible: false,
@@ -147,7 +147,7 @@ function App() {
             number: 121,
             name: "Silta Rasti",
             description: "Kävelyreitti yli kauniin sillan",
-            location: 9,
+            location: [60.227132, 24.821820],
             address: "Siltakatu 1, Lahti",
             area: "Lahti",
             accessible: true,
@@ -160,7 +160,7 @@ function App() {
             number: 122,
             name: "Luonnonrasti",
             description: "Reitti halki vehreiden peltojen ja metsien",
-            location: 10,
+            location: [60.226698, 25.015479],
             address: "Luontotie 16, Seinäjoki",
             area: "Seinäjoen maaseutu",
             accessible: true,
@@ -173,7 +173,7 @@ function App() {
             number: 123,
             name: "Historia Rasti",
             description: "Reitti, joka johdattaa menneisyyden jännittäviin tarinoihin",
-            location: 11,
+            location: [60.170830, 24.863534],
             address: "Historiankuja 3, Porvoo",
             area: "Vanha Porvoo",
             accessible: true,
@@ -186,7 +186,7 @@ function App() {
             number: 124,
             name: "Taide Rasti",
             description: "Käyntikortti paikallisiin gallerioihin ja taidemuseoihin",
-            location: 12,
+            location: [60.244866, 24.914246],
             address: "Taidekatu 8, Turku",
             area: "Turun kulttuurikeskus",
             accessible: true,
@@ -199,7 +199,7 @@ function App() {
             number: 125,
             name: "Rantirasti",
             description: "Reitti merenrannalla kauniin maiseman äärellä",
-            location: 13,
+            location: [60.141130, 24.847081],
             address: "Rantatie 20, Hanko",
             area: "Hankon ranta",
             accessible: true,
@@ -212,7 +212,7 @@ function App() {
             number: 126,
             name: "Kuusirasti",
             description: "Kävely reitin varrella, jonka varjossa kuuset kohoavat",
-            location: 14,
+            location: [60.231699, 24.989043],
             address: "Kuusikatu 15, Kuopio",
             area: "Kuopion metsäalue",
             accessible: false,
@@ -225,7 +225,7 @@ function App() {
             number: 127,
             name: "Kevätrasti",
             description: "Reitti, joka juhlii kevään kukkaloistoa",
-            location: 15,
+            location: [60.226855, 25.024325],
             address: "Kukkatie 9, Joensuu",
             area: "Joensuun puistot",
             accessible: true,
@@ -238,7 +238,7 @@ function App() {
             number: 128,
             name: "Syyrirasti",
             description: "Reitti, jossa syksyn värit ovat huipussaan",
-            location: 16,
+            location: [60.194347, 25.092472],
             address: "Syystie 4, Lappeenranta",
             area: "Lappeenrannan luonnonkauneus",
             accessible: false,
@@ -251,7 +251,7 @@ function App() {
             number: 129,
             name: "Yö Rasti",
             description: "Rasti, jossa yövalaistus tuo mystiikkaa reittiin",
-            location: 17,
+            location: [60.175424, 24.974571],
             address: "Yötie 12, Oulu",
             area: "Oulun yötunnelma",
             accessible: false,
@@ -264,7 +264,7 @@ function App() {
             number: 130,
             name: "Marja Rasti",
             description: "Reitti, jossa luonnon marjat ovat parhaimmillaan",
-            location: 18,
+            location: [60.229529, 24.993186],
             address: "Marjakatu 7, Kokkola",
             area: "Kokkola",
             accessible: true,
@@ -277,7 +277,7 @@ function App() {
             number: 131,
             name: "Seikkailu Rasti",
             description: "Loppurasti seikkailun ystäville täydellisenä huipentumana",
-            location: 19,
+            location: [60.233405, 24.981659],
             address: "Seikkailukatu 1, Rovaniemi",
             area: "Rovaniemen seikkailualue",
             accessible: true,
@@ -287,13 +287,15 @@ function App() {
             completed: true,
         }
     ];
-    function handleClick(event: L.LeafletMouseEvent, map: L.Map) {
-        console.log(event.latlng, map);
-    }
+
+    // function handleClick(event: L.LeafletMouseEvent, map: L.Map) {
+    //     console.log(event.latlng, map);
+    // }
+
     const [selected, setSelected] = useState<CheckpointData | undefined>();
 
-    function handleSelect(value: number) {
-        const filtered = checkpoints.filter(item => item.number === value)
+    function handleSelect(checkpoint: CheckpointData) {
+        const filtered = checkpoints.filter(item => item.name === checkpoint.name)
         if (filtered) {
             setSelected(filtered[0]);
         }
@@ -308,7 +310,7 @@ function App() {
                     <Checkpoint data={selected} />
                 ) : <div />
             }
-            <Map clickCallback={handleClick} />
+            <Map clickCallback={handleSelect} checkpoints={checkpoints} selected={selected} />
         </div>
     )
 }

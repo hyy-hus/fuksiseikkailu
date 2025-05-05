@@ -18,11 +18,12 @@ function Rating(props: RatingProps) {
     );
 }
 
+
 interface CheckpointData {
     number: number,
     name: string,
     description: string,
-    location: number,
+    location: [number, number],
     address: string,
     area: string,
     accessible: boolean,
@@ -37,6 +38,11 @@ interface CheckpointProps {
 }
 
 function Checkpoint(props: CheckpointProps) {
+    function navigate_to_checkpoint(event: React.MouseEvent<HTMLAnchorElement>) {
+        event.preventDefault();
+        console.log(props.data);
+    }
+
     return (
         <div className="Checkpoint">
             <div className="circle number">
@@ -60,7 +66,7 @@ function Checkpoint(props: CheckpointProps) {
                 {props.data.address}
             </div>
             <div className="nav">
-                <a className="nav button" href="">Löydä rastille!</a>
+                <a className="nav button" href="" onClick={navigate_to_checkpoint} >Löydä rastille!</a>
             </div>
             <div className="host">
                 {props.data.host_description}

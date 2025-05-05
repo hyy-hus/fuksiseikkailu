@@ -6,40 +6,38 @@ import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
-interface MapProps {
-    clickCallback: (e: L.LeafletMouseEvent, map: L.Map) => void;
+interface CheckpointData {
+    number: number,
+    name: string,
+    description: string,
+    location: [number, number],
+    address: string,
+    area: string,
+    accessible: boolean,
+    host_description: string,
+    rating: number,
+    favourite: boolean,
+    completed: boolean,
 }
 
-const Map: React.FC<MapProps> = ({ clickCallback }) => {
+interface MapProps {
+    clickCallback: (checkpoint: CheckpointData) => void;
+    checkpoints: CheckpointData[];
+    selected: CheckpointData | undefined;
+}
+
+const Map: React.FC<MapProps> = (props: MapProps) => {
     // const [points, setPoints] = useState([]);
 
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const mapRef = useRef<L.Map | null>(null);
 
-    const checkpoints = [
-        {
-            lat: 60.169571042096045,
-            lng: 24.93995298815067,
-            name: "A",
-        },
-        {
-            lat: 60.169389587135456, lng: 24.94110123570203,
-            name: "B",
-        },
-        {
-            lat: 60.16973648545139, lng: 24.94120854855727,
-            name: "C",
-        },
-        {
-            lat: 60.16990206144352, lng: 24.93937765498991,
-            name: "D",
-        }
-    ];
-
     useEffect(() => {
+        const default_coordinates: [number, number] = props.selected ? props.selected.location : [60.16936416230424, 24.94024164353307];
+
         if (!mapRef.current && mapContainerRef.current) {
             // Initialize map only if it's not done before
-            mapRef.current = L.map(mapContainerRef.current).setView([60.16936416230424, 24.94024164353307], 18);
+            mapRef.current = L.map(mapContainerRef.current).setView(default_coordinates, 14);
 
             // Add tile layer
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -52,7 +50,7 @@ const Map: React.FC<MapProps> = ({ clickCallback }) => {
             //     .addTo(mapRef.current)
             //     .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
             //     .openPopup();
-            
+
             const blueIcon = L.divIcon({
                 className: "custom-circle",
                 html: "<div style='width:20px;height:20px;border-radius:50%;background:blue;'></div>",
@@ -68,25 +66,26 @@ const Map: React.FC<MapProps> = ({ clickCallback }) => {
             })
 
 
-            const markers = checkpoints.map((point) => {
-                return L.marker([point.lat, point.lng], {
+            const markers = props.checkpoints.map((checkpoint: CheckpointData) => {
+                return L.marker([checkpoint.location[0], checkpoint.location[1]], {
                     icon: blueIcon,
                     draggable: false,
                 })
-                .bindTooltip(point.name, {
+                    .bindTooltip(checkpoint.name, {
                         direction: "top",
                         permanent: true,
-                        offset: L.point(0,0),
+                        offset: L.point(0, 0),
                     })
-                .on("dragend", (e) => {
+                    .on("dragend", (e) => {
                         const newPos = e.target.getLatLng();
                         console.log("New position:", newPos);
                         e.target.setIcon(blueIcon);
                         e.target.dragging.disable();
                     })
-                .on("click", (e) => {
+                    .on("click", (e) => {
                         e.target.setIcon(redIcon);
                         e.target.dragging.enable();
+                        props.clickCallback(checkpoint);
                     })
             });
 
@@ -103,12 +102,12 @@ const Map: React.FC<MapProps> = ({ clickCallback }) => {
 
         return () => {
             if (mapRef.current) {
-                mapRef.current.off("click", () => {});
+                mapRef.current.off("click", () => { });
                 mapRef.current.remove();
                 mapRef.current = null;
             }
         }
-    }, [clickCallback]);
+    }, [props]);
 
     // useEffect(() => {
     //     console.log(points);
@@ -118,6 +117,6 @@ const Map: React.FC<MapProps> = ({ clickCallback }) => {
     // }, [points])
 
     return <div ref={mapContainerRef} style={{ height: "800px", width: "100%" }} />;
-    };
+};
 
 export default Map

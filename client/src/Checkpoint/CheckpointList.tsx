@@ -12,7 +12,7 @@ interface CheckpointData {
     number: number,
     name: string,
     description: string,
-    location: number,
+    location: [number, number],
     address: string,
     area: string,
     accessible: boolean,
@@ -37,12 +37,12 @@ function Rating(props: RatingProps) {
 
 interface CheckpointProps {
     data: CheckpointData,
-    handleSelect: (value: number) => void;
+    handleSelect: (checkpoint: CheckpointData) => void;
 }
 
 function Checkpoint(props: CheckpointProps) {
     return (
-        <li className="CheckpointItem" onClick={() => props.handleSelect(props.data.number)}>
+        <li className="CheckpointItem" onClick={() => props.handleSelect(props.data)}>
             <div className="number"><span>{props.data.number}</span></div>
             <span className="name">{props.data.name}</span>
             <Rating data={props.data} />
@@ -69,7 +69,7 @@ function Checkpoint(props: CheckpointProps) {
 
 interface CheckpointListProps {
     checkpoints: CheckpointData[]
-    handleSelect: (value: number) => void
+    handleSelect: (checkpoint: CheckpointData) => void
 }
 
 function CheckpointList(props: CheckpointListProps) {
@@ -125,7 +125,7 @@ function CheckpointList(props: CheckpointListProps) {
         handleSearch(searchKey);
     }, [accessibleOnly, favoriteOnly, handleSearch, searchKey]);
 
-    function handleSelect(checkpoint: number) {
+    function handleSelect(checkpoint: CheckpointData) {
         props.handleSelect(checkpoint);
     }
 
