@@ -14,10 +14,10 @@ välttämättömiä ne ovat.
 Kaikista välttämättömimmät ominaisuudet, jotta sovellusta on yleensäkään
 mahdollista käyttää.
 
-[x] Listaus rasteista
-[x] Rastit kartalla
-[ ] Rastien ja joukkueiden hallinta
-[ ] Pisteiden kirjaaminen
+-[x] Listaus rasteista
+-[x] Rastit kartalla
+-[ ] Rastien ja joukkueiden hallinta
+-[ ] Pisteiden kirjaaminen
 
 ### Prioriteettitaso 2:
 Ei aivan välttämättömiä ominaisuuksia, mutta kuitenkin sellaisia, jotka
@@ -25,17 +25,17 @@ tarvitaan jottei fuksiseikkailun järjestäminen tuota liian suurta vaivaa
 järjestäjille. Käytännössä vastaa vanhan ladattavan fuksiseikkailusovelluksen
 ominaisuuksia.
 
-[ ] Tulostaulukko
-[ ] Uutiset ja ilmoitukset
-[ ] Datan tuonti ja vienti
+-[ ] Tulostaulukko
+-[ ] Uutiset ja ilmoitukset
+-[ ] Datan tuonti ja vienti
 
 ### Prioriteettitaso 3:
 _Nice to have_ ominaisuuksia, joiden toteutuminen ei ole välttämätöntä, mutta
 ne olisi kuitenkin kiva saada.
 
-[ ] Asukilpailun äänestys
-[x] Rastien sijoittaminen kartalla
-[ ] Rakennusten sisätilakartat
+-[ ] Asukilpailun äänestys
+-[x] Rastien sijoittaminen kartalla
+-[ ] Rakennusten sisätilakartat
 
 ## Aikataulu
 Sovellus on tarkoitus saada valmiiksi (tai julkaista ensimmäinen versio)

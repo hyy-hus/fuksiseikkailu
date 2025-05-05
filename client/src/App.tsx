@@ -2,7 +2,7 @@ import { useState } from 'react'
 import "./reset.css";
 import './App.css'
 
-import L from "leaflet";
+// import L from "leaflet";
 
 import Map from "./Map/Map";
 
