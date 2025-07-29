@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import select
 from app.models.users import DBUser, PublicUser, UpdateUser, CreateUser
 from app.core.db import get_session
@@ -8,15 +8,29 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.get("/", response_model=list[PublicUser])
-def list_users(session: Session = Depends(get_session)):
-    return session.exec(select(DBUser).where(DBUser.active)).all()
+def list_users(
+    include_inactive: bool = Query(False, description="Include inactive users"),
+    session: Session = Depends(get_session),
+):
+    query = select(DBUser)
+    if not include_inactive:
+        query = query.where(DBUser.active)
+
+    users = session.exec(query).all()
+    return users
 
 
 @router.get("/{user_id}", response_model=PublicUser)
-def fetch_user(user_id: int, session: Session = Depends(get_session)):
-    db_user = session.exec(
-        select(DBUser).where(DBUser.id == user_id).where(DBUser.active)
-    ).one_or_none()
+def fetch_user(
+    user_id: int,
+    include_inactive: bool = Query(False, description="Include inactive users"),
+    session: Session = Depends(get_session),
+):
+    query = select(DBUser)
+    if not include_inactive:
+        query = query.where(DBUser.active)
+
+    db_user = session.exec(query.where(DBUser.id == user_id)).one_or_none()
 
     if not db_user:
         raise HTTPException(
