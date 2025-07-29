@@ -1,7 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlmodel import select
-from app.models.users import DBUser, PublicUser, UpdateUser, CreateUser
+from app.deps import get_current_user
+from app.models.users import DBUser, PublicUser, UpdateUser, CreateUser, Role
 from app.core.db import get_session
+from app.core.security import hash_password
 from sqlmodel import Session
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -11,13 +13,20 @@ router = APIRouter(prefix="/users", tags=["users"])
 def list_users(
     include_inactive: bool = Query(False, description="Include inactive users"),
     session: Session = Depends(get_session),
+    current_user: DBUser | None = Depends(get_current_user),
 ):
+    if include_inactive:
+        if not current_user or current_user.role != Role.admin:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Admin privileges required to include inactive users.",
+            )
+
     query = select(DBUser)
     if not include_inactive:
         query = query.where(DBUser.active)
 
-    users = session.exec(query).all()
-    return users
+    return session.exec(query).all()
 
 
 @router.get("/{user_id}", response_model=PublicUser)
@@ -25,7 +34,15 @@ def fetch_user(
     user_id: int,
     include_inactive: bool = Query(False, description="Include inactive users"),
     session: Session = Depends(get_session),
+    current_user: DBUser | None = Depends(get_current_user),
 ):
+    if include_inactive:
+        if not current_user or current_user.role != Role.admin:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Admin privileges required to include inactive users.",
+            )
+
     query = select(DBUser)
     if not include_inactive:
         query = query.where(DBUser.active)
@@ -42,7 +59,14 @@ def fetch_user(
 
 @router.post("/", response_model=PublicUser)
 def create_user(user_data: CreateUser, session: Session = Depends(get_session)):
-    db_user = DBUser.model_validate(user_data)
+    hashed = hash_password(user_data.password)
+
+    db_user = DBUser(
+        username=user_data.username,
+        email=user_data.email,
+        hash=hashed,
+    )
+
     session.add(db_user)
     session.commit()
     session.refresh(db_user)
@@ -64,6 +88,10 @@ def update_user(
         )
 
     user_data = user.model_dump(exclude_unset=True)
+
+    if "password" in user_data and user_data.password != "":
+        db_user.hash = hash_password(user_data.pop("password"))
+
     db_user.sqlmodel_update(user_data)
 
     session.add(db_user)
