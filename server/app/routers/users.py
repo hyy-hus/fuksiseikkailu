@@ -100,6 +100,12 @@ def update_user(
             raise HTTPException(status_code=403, detail="Only admins can update roles")
         db_user.role = user_data.pop("role")
 
+    if "active" in user_data:
+        if current_user.role != "admin":
+            raise HTTPException(status_code=403, detail="Only admins can update roles")
+
+        db_user.active = user_data.pop("active")
+
     db_user.sqlmodel_update(user_data)
 
     session.add(db_user)
