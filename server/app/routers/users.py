@@ -81,9 +81,11 @@ def update_user(
     session: Session = Depends(get_session),
     current_user: DBUser = Depends(get_current_user),
 ):
-    db_user = session.exec(
-        select(DBUser).where(DBUser.id == user_id, DBUser.active)
-    ).one_or_none()
+    query = select(DBUser).where(DBUser.id == user_id)
+    if current_user.role != Role.admin:
+        query = query.where(DBUser.active)
+
+    db_user = session.exec(query).one_or_none()
 
     if not db_user:
         raise HTTPException(
