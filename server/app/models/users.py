@@ -1,5 +1,6 @@
 from sqlmodel import SQLModel, Field
 from enum import Enum
+from typing import Optional
 
 
 class Role(str, Enum):
@@ -33,8 +34,9 @@ class CreateUser(BaseUser):
 class UpdateUser(BaseUser):
     username: str
     email: str
-    password: str | None
-    role: Role | None
+    password: Optional[str] = None
+    role: Optional[Role] = None
+    active: Optional[bool] = None
 
 
 class PublicUser(BaseUser):
