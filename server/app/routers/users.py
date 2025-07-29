@@ -76,7 +76,10 @@ def create_user(user_data: CreateUser, session: Session = Depends(get_session)):
 
 @router.patch("/{user_id}", response_model=PublicUser)
 def update_user(
-    user_id: int, user: UpdateUser, session: Session = Depends(get_session)
+    user_id: int,
+    user: UpdateUser,
+    session: Session = Depends(get_session),
+    current_user: DBUser = Depends(get_current_user),
 ):
     db_user = session.exec(
         select(DBUser).where(DBUser.id == user_id, DBUser.active)
@@ -89,8 +92,13 @@ def update_user(
 
     user_data = user.model_dump(exclude_unset=True)
 
-    if "password" in user_data and user_data.password != "":
+    if "password" in user_data and user_data["password"]:
         db_user.hash = hash_password(user_data.pop("password"))
+
+    if "role" in user_data:
+        if current_user.role != "admin":
+            raise HTTPException(status_code=403, detail="Only admins can update roles")
+        db_user.role = user_data.pop("role")
 
     db_user.sqlmodel_update(user_data)
 

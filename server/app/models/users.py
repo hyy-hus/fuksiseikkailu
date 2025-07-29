@@ -34,6 +34,7 @@ class UpdateUser(BaseUser):
     username: str
     email: str
     password: str | None
+    role: Role | None
 
 
 class PublicUser(BaseUser):
