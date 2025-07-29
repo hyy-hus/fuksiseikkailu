@@ -110,7 +110,11 @@ def update_user(
 
 
 @router.delete("/{user_id}")
-def delete_user(user_id: int, session: Session = Depends(get_session)):
+def delete_user(
+    user_id: int,
+    session: Session = Depends(get_session),
+    current_user: DBUser = Depends(get_current_user),
+):
     db_user = session.exec(
         select(DBUser).where(DBUser.id == user_id).where(DBUser.active)
     ).one_or_none()
@@ -120,8 +124,13 @@ def delete_user(user_id: int, session: Session = Depends(get_session)):
             status_code=404, detail=f"User with id '{user_id}' not found"
         )
 
-    db_user.active = False
+    # Only admins or the user themselves can delete
+    if current_user.role != "admin" and current_user.id != user_id:
+        raise HTTPException(
+            status_code=403, detail="Not authorized to delete this user"
+        )
 
+    db_user.active = False
     session.add(db_user)
     session.commit()
 
