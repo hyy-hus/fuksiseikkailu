@@ -9,6 +9,8 @@ import Map from "./Map/Map";
 import CheckpointList from "./Checkpoint/CheckpointList";
 import Checkpoint from "./Checkpoint/Checkpoint";
 
+import { UserList, LoginForm } from "./components";
+
 
 interface CheckpointData {
     number: number,
@@ -304,13 +306,15 @@ function App() {
     return (
         <div className="App">
             <h1>Fuksiseikkailu</h1>
-            <CheckpointList checkpoints={checkpoints} handleSelect={handleSelect} />
-            {
-                (selected) ? (
-                    <Checkpoint data={selected} />
-                ) : <div />
-            }
-            <Map clickCallback={handleSelect} checkpoints={checkpoints} selected={selected} />
+            <LoginForm />
+            <UserList />
+            {/* <CheckpointList checkpoints={checkpoints} handleSelect={handleSelect} /> */}
+            {/* { */}
+            {/*     (selected) ? ( */}
+            {/*         <Checkpoint data={selected} /> */}
+            {/*     ) : <div /> */}
+            {/* } */}
+            {/* <Map clickCallback={handleSelect} checkpoints={checkpoints} selected={selected} /> */}
         </div>
     )
 }
