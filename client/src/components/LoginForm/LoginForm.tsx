@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLoginAuthLoginPost } from '@api'
 import { useAuth } from '@auth';
 import { navigate } from '../../router/navigate';
+import { Button } from '@components/Button';
 
 export function LoginForm() {
     const [username, setUsername] = useState<string>("");
@@ -66,11 +67,9 @@ export function LoginForm() {
                         disabled={loginMutation.isPending}
                     />
                 </label>
-                <button type="submit"
-                    disabled={loginMutation.isPending}
-                >
+                <Button type="submit" disabled={loginMutation.isPending}>
                     {loginMutation.isPending ? "Logging in..." : "Login"}
-                </button>
+                </Button>
 
                 {showError && (
                     <div className="error">
