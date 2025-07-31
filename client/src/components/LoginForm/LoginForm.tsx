@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useLoginAuthLoginPost } from '../../api/endpoints'
-import { useAuth } from '../../contexts/';
+import { useLoginAuthLoginPost } from '@api'
+import { useAuth } from '@auth';
 import { navigate } from '../../router/navigate';
 
 export function LoginForm() {

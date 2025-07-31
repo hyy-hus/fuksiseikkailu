@@ -26,14 +26,16 @@ interface MapProps {
     selected: CheckpointData | undefined;
 }
 
-const Map: React.FC<MapProps> = (props: MapProps) => {
+export function Map({
+    clickCallback, checkpoints, selected
+}: MapProps) {
     // const [points, setPoints] = useState([]);
 
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const mapRef = useRef<L.Map | null>(null);
 
     useEffect(() => {
-        const default_coordinates: [number, number] = props.selected ? props.selected.location : [60.16936416230424, 24.94024164353307];
+        const default_coordinates: [number, number] = selected ? selected.location : [60.16936416230424, 24.94024164353307];
 
         if (!mapRef.current && mapContainerRef.current) {
             // Initialize map only if it's not done before
@@ -66,7 +68,7 @@ const Map: React.FC<MapProps> = (props: MapProps) => {
             })
 
 
-            const markers = props.checkpoints.map((checkpoint: CheckpointData) => {
+            const markers = checkpoints.map((checkpoint: CheckpointData) => {
                 return L.marker([checkpoint.location[0], checkpoint.location[1]], {
                     icon: blueIcon,
                     draggable: false,
@@ -85,7 +87,7 @@ const Map: React.FC<MapProps> = (props: MapProps) => {
                     .on("click", (e) => {
                         e.target.setIcon(redIcon);
                         e.target.dragging.enable();
-                        props.clickCallback(checkpoint);
+                        clickCallback(checkpoint);
                     })
             });
 
@@ -107,7 +109,7 @@ const Map: React.FC<MapProps> = (props: MapProps) => {
                 mapRef.current = null;
             }
         }
-    }, [props]);
+    }, []);
 
     // useEffect(() => {
     //     console.log(points);
@@ -119,4 +121,3 @@ const Map: React.FC<MapProps> = (props: MapProps) => {
     return <div ref={mapContainerRef} style={{ height: "800px", width: "100%" }} />;
 };
 
-export default Map
