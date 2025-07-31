@@ -27,9 +27,11 @@ export function LoginForm() {
         );
     }
 
-    if (loginMutation.isSuccess) {
-        console.log(`Token: ${loginMutation.data}`)
-    }
+    const showError = loginMutation.isError;
+    const errorMessage =
+        showError && (loginMutation.error as any)?.response?.data?.detail
+            ? (loginMutation.error as any).response.data.detail
+            : "Invalid username or password";
 
     if (!currentToken) {
 
@@ -37,13 +39,36 @@ export function LoginForm() {
             <form className="LoginForm" onSubmit={handleLogin}>
                 <label htmlFor="username">
                     <span>Username</span>
-                    <input type="text" name="username" id="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Keijo" />
+                    <input type="text"
+                        name="username"
+                        id="username"
+                        value={username}
+                        placeholder="Keijo"
+                        onChange={(e) => setUsername(e.target.value)}
+                        disabled={loginMutation.isPending}
+                    />
                 </label>
                 <label htmlFor="password">
                     <span>Password</span>
-                    <input type="password" name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <input type="password"
+                        name="password"
+                        id="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        disabled={loginMutation.isPending}
+                    />
                 </label>
-                <button type="submit">Login</button>
+                <button type="submit"
+                    disabled={loginMutation.isPending}
+                >
+                    {loginMutation.isPending ? "Logging in..." : "Login"}
+                </button>
+
+                {showError && (
+                    <div className="error">
+                        {errorMessage}
+                    </div>
+                )}
             </form>
         )
     }
