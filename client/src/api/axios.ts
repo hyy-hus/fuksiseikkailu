@@ -21,6 +21,9 @@ axiosInstance.interceptors.response.use(
     (error) => {
         console.log("Error:", error);
         if (error.response?.status === 401 && error.response?.data?.detail === "Not authenticated") {
+            const currentPath = window.location.pathname + window.location.search;
+            localStorage.setItem("postLoginRedirect", currentPath);
+
             setCurrentToken(null);
             navigate("/login");
         }
