@@ -6,10 +6,17 @@ from app.core.db import get_session
 from sqlmodel import select, Session
 from app.models.users import DBUser
 
+from pydantic import BaseModel
+
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/login")
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+@router.post("/login", response_model=Token)
 def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     session: Session = Depends(get_session),
