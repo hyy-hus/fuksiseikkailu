@@ -24,4 +24,4 @@ COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["sh", "-c", "while true; do sleep 1000; done"]
+# CMD ["sh", "-c", "while true; do sleep 1000; done"]
