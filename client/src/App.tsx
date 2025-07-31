@@ -3,7 +3,7 @@ import { Layout } from "./components/Layout";
 import { lazy, Suspense, useEffect } from "react";
 import { setNavigator } from "./router/navigate";
 
-// import { HomePage, UsersPage, LoginPage } from "@pages";
+import "./App.css";
 
 const HomePage = lazy(() => import("./pages/HomePage").then((m) => ({ default: m.HomePage })));
 const UsersPage = lazy(() => import("./pages/UsersPage").then((m) => ({ default: m.UsersPage })));

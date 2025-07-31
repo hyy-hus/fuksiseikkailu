@@ -1,11 +1,6 @@
-.App {
-    margin: var(--gap);
-    padding: var(--gap);
-    border: var(--border);
-    border-radius: var(--radius);
+@import "tailwindcss";
 
-    background-color: var(--color-card);
-
-    display: grid;
-    gap: var(--gap);
+@theme {
+    --font-display: "Poppins", sans-serif;
+    --font-monospace: "Google Sans Code", monospace;
 }
