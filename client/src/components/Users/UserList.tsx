@@ -19,14 +19,12 @@ export function UserList() {
         )
     }
 
-    console.log(data.data);
-
     return (
         <div className="UserList">
             <ul>
                 {
-                    data.data?.map(u => (
-                        <li key={u.id}>{u.name}</li>
+                    data?.data.map(u => (
+                        <li key={u.id}>{u.username}</li>
                     ))
                 }
             </ul>

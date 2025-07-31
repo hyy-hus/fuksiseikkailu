@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLoginAuthLoginPost } from '../../api/endpoints'
 import { useAuth } from '../../contexts/';
+import { navigate } from '../../router/navigate';
 
 export function LoginForm() {
     const [username, setUsername] = useState<string>("");
@@ -22,6 +23,14 @@ export function LoginForm() {
                 onSuccess: (res) => {
                     const token = res.data.access_token;
                     setToken(token);
+
+                    const redirectTo = localStorage.getItem("postLoginRedirect");
+                    if (redirectTo) {
+                        localStorage.removeItem("postLoginRedirect");
+                        navigate(redirectTo);
+                    } else {
+                        navigate("/");
+                    }
                 }
             }
         );
