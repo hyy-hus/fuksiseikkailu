@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { currentToken, setCurrentToken } from "../contexts/";
+import { currentToken, setCurrentToken } from "@auth";
 import { navigate } from '../router/navigate';
 
 const axiosInstance = axios.create({

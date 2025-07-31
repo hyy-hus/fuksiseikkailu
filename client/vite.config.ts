@@ -1,7 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
+import path from 'path';
+
 export default defineConfig({
     plugins: [react()],
     server: {
@@ -11,6 +12,15 @@ export default defineConfig({
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/api/, ''),
             }
+        }
+    },
+    resolve: {
+        alias: {
+            "@api": path.resolve(__dirname, "src/api"),
+            "@auth": path.resolve(__dirname, "src/auth"),
+            "@components": path.resolve(__dirname, "src/components"),
+            "@pages": path.resolve(__dirname, "src/pages"),
+            "@hooks": path.resolve(__dirname, "src/hooks"),
         }
     }
 })
