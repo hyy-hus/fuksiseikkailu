@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useLoginAuthLoginPost } from '../../api/endpoints'
-import { useAuth, currentToken } from '../../contexts/';
+import { useAuth } from '../../contexts/';
 
 export function LoginForm() {
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
 
-    const { setToken, logout } = useAuth();
+    const { token, setToken, logout } = useAuth();
     const loginMutation = useLoginAuthLoginPost()
 
     function handleLogin(e: React.FormEvent) {
@@ -33,8 +33,7 @@ export function LoginForm() {
             ? (loginMutation.error as any).response.data.detail
             : "Invalid username or password";
 
-    if (!currentToken) {
-
+    if (!token) {
         return (
             <form className="LoginForm" onSubmit={handleLogin}>
                 <label htmlFor="username">
