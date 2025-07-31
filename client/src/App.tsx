@@ -1,6 +1,8 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { HomePage, UsersPage, LoginPage } from "./pages";
+import { useEffect } from "react";
+import { setNavigator } from "./router/navigate";
 
 export function App() {
     return (
@@ -12,4 +14,13 @@ export function App() {
             </Route>
         </Routes >
     )
+}
+
+export function NavigatorRegistrar() {
+    const navigate = useNavigate()
+    useEffect(() => {
+        setNavigator(navigate)
+    }, [navigate])
+
+    return null
 }

@@ -1,1 +1,1 @@
-export { AuthProvider, useAuth, currentToken } from "./AuthContext";
+export { AuthProvider, useAuth, currentToken, setCurrentToken } from "./AuthContext";
