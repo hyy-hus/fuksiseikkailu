@@ -10,6 +10,8 @@ import { BrowserRouter } from "react-router-dom";
 
 import { AuthProvider } from "@auth";
 
+import "./i18n";
+
 const queryClient = new QueryClient()
 
 createRoot(document.getElementById('root')!).render(
