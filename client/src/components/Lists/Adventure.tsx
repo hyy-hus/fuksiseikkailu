@@ -40,42 +40,56 @@ function List<T>({ items, columns }: ListProps<T>) {
 
     return (
         <div
-            className="grid gap-2"
+            className="grid border border-gray-400 dark:border-slate-600 divide-x divide-y divide-gray-300 dark:divide-slate-700 text-sm"
             style={{ gridTemplateColumns: gridTemplate }}
         >
-            <div className="font-bold"><input type="checkbox" /></div>
+            {/* Header Row */}
+            <div className="bg-gray-100 dark:bg-slate-800 font-bold p-2 flex items-center justify-center">
+                <input type="checkbox" />
+            </div>
 
             {columns.map((col) => (
-                <div key={col.header} className="font-bold">
+                <div
+                    key={col.header}
+                    className="bg-gray-100 dark:bg-slate-800 font-bold p-2 flex items-center"
+                >
                     {t(col.header)}
                 </div>
             ))}
-            <div className="font-bold"></div>
-            <div className="font-bold"></div>
+            <div className="bg-gray-100 dark:bg-slate-800 font-bold p-2"></div>
+            <div className="bg-gray-100 dark:bg-slate-800 font-bold p-2"></div>
 
-            {
-                items.map((item, idx) => (
-                    <Fragment key={idx}>
-                        <div key={idx}>
-                            <input
-                                type="checkbox"
-                                checked={selected.has(idx)}
-                                onChange={() => toggleSelect(idx)}
-                            />
+            {/* Rows */}
+            {items.map((item, idx) => (
+                <Fragment key={idx}>
+                    <div className="p-2 flex items-center justify-center">
+                        <input
+                            type="checkbox"
+                            checked={selected.has(idx)}
+                            onChange={() => toggleSelect(idx)}
+                        />
+                    </div>
+                    {columns.map((col) => (
+                        <div key={col.header} className="p-2 flex items-center">
+                            {col.render(item)}
                         </div>
-                        {
-                            columns.map((col) => (
-                                <div key={col.header}>{col.render(item)}</div>
-                            ))
-                        }
-                        <div className="font-bold"><Button variant="transparent"><FaEdit /></Button></div>
-                        <div className="font-bold"><Button variant="transparent"><FaTrash /></Button></div>
-                    </Fragment>
-                ))
-            }
+                    ))}
+                    <div className="p-2 flex items-center justify-center">
+                        <Button variant="transparent" aria-label="Edit">
+                            <FaEdit />
+                        </Button>
+                    </div>
+                    <div className="p-2 flex items-center justify-center">
+                        <Button variant="transparent" aria-label="Delete">
+                            <FaTrash />
+                        </Button>
+                    </div>
+                </Fragment>
+            ))}
         </div>
-    )
+    );
 }
+
 
 export function AdventureList() {
     const { data, isLoading, isError, error } = useListAdventuresAdventuresGet();
