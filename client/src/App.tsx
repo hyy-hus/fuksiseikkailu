@@ -10,6 +10,7 @@ const AdminHomePage = lazy(() => import("./pages/AdminHomePage").then((m) => ({ 
 const UsersPage = lazy(() => import("./pages/UsersPage").then((m) => ({ default: m.UsersPage })));
 const LoginPage = lazy(() => import("./pages/LoginPage").then((m) => ({ default: m.LoginPage })));
 const PlaygroundPage = lazy(() => import("./pages/PlaygroundPage").then((m) => ({ default: m.PlaygroundPage })));
+const NotFound = lazy(() => import("./pages/NotFound").then((m) => ({ default: m.NotFound })));
 const LoadingPage = lazy(() => import("./pages/LoadingPage").then((m) => ({ default: m.LoadingPage })));
 
 export function App() {
@@ -21,9 +22,11 @@ export function App() {
                     <Route path="users" element={<UsersPage />} />
                     <Route path="login" element={<LoginPage />} />
                     <Route path="playground" element={<PlaygroundPage />} />
+                    <Route path="*" element={<NotFound />} />
                 </Route>
                 <Route path="/" element={<Layout variant="guest" />}>
                     <Route index element={<GuestHomePage />} />
+                    <Route path="*" element={<NotFound />} />
                 </Route>
                 <Route path="loading" element={<LoadingPage />} />
             </Routes>
