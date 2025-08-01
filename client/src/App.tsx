@@ -3,11 +3,12 @@ import { Layout } from "./components/Layout";
 import { lazy, Suspense, useEffect } from "react";
 import { setNavigator } from "./router/navigate";
 
-// import { HomePage, UsersPage, LoginPage } from "@pages";
+import "./App.css";
 
 const HomePage = lazy(() => import("./pages/HomePage").then((m) => ({ default: m.HomePage })));
 const UsersPage = lazy(() => import("./pages/UsersPage").then((m) => ({ default: m.UsersPage })));
 const LoginPage = lazy(() => import("./pages/LoginPage").then((m) => ({ default: m.LoginPage })));
+const PlaygroundPage = lazy(() => import("./pages/PlaygroundPage").then((m) => ({ default: m.PlaygroundPage })));
 
 export function App() {
     return (
@@ -17,6 +18,7 @@ export function App() {
                     <Route index element={<HomePage />} />
                     <Route path="users" element={<UsersPage />} />
                     <Route path="login" element={<LoginPage />} />
+                    <Route path="playground" element={<PlaygroundPage />} />
                 </Route>
             </Routes>
         </Suspense>

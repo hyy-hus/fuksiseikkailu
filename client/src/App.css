@@ -1,11 +1,39 @@
-.App {
-    margin: var(--gap);
-    padding: var(--gap);
-    border: var(--border);
-    border-radius: var(--radius);
+@import "tailwindcss";
 
-    background-color: var(--color-card);
+@theme {
+    --font-display: "Poppins", sans-serif;
+    --font-monospace: "Google Sans Code", monospace;
+}
 
-    display: grid;
-    gap: var(--gap);
+@custom-variant dark (&:where(.dark, .dark *));
+
+input:-webkit-autofill {
+    -webkit-text-fill-color: #1c1917 !important;
+    /* dark text */
+    box-shadow: 0 0 0px 1000px #e4e4e7 inset !important;
+    /* zinc-200 */
+    -webkit-box-shadow: 0 0 0px 1000px #e4e4e7 inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* When parent has focus-within (i.e., active input) */
+.group:focus-within input:-webkit-autofill {
+    box-shadow: 0 0 0px 1000px #d4d4d8 inset !important;
+    /* zinc-300 */
+    -webkit-box-shadow: 0 0 0px 1000px #d4d4d8 inset !important;
+}
+
+/* Dark mode */
+.dark input:-webkit-autofill {
+    -webkit-text-fill-color: #cbd5e1 !important;
+    /* slate-300 text */
+    box-shadow: 0 0 0px 1000px #0f172a inset !important;
+    /* slate-900 */
+    -webkit-box-shadow: 0 0 0px 1000px #0f172a inset !important;
+}
+
+.dark .group:focus-within input:-webkit-autofill {
+    box-shadow: 0 0 0px 1000px #1e293b inset !important;
+    /* slate-800 */
+    -webkit-box-shadow: 0 0 0px 1000px #1e293b inset !important;
 }
