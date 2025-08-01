@@ -1,9 +1,9 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@auth";
 import { Button } from "@components/Button";
 import { IoMenu } from "react-icons/io5";
 import { FaSun, FaMoon } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { navigate } from "../../router/navigate";
 
 export function Layout() {
@@ -11,6 +11,15 @@ export function Layout() {
 
     const [darkMode, setDarkMode] = useState<boolean>(document.documentElement.classList.contains("dark"));
     const [sidebarOpen, setSidebarOpen] = useState<boolean>(localStorage.getItem("sidebar") === "open");
+
+    const location = useLocation();
+
+    useEffect(() => {
+        if (window.innerWidth < 768) {
+            setSidebarOpen(false);
+            localStorage.setItem("sidebar", "closed");
+        }
+    }, [location])
 
     function toggleSidebar() {
         if (sidebarOpen) {
