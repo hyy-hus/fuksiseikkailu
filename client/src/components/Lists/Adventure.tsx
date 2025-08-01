@@ -1,37 +1,72 @@
 import { useListAdventuresAdventuresGet } from "@api/endpoints";
 import { PublicAdventure } from "@api/model";
-import { ReactNode } from "react";
+import { useState, Fragment } from "react";
 
 import { FaTrash, FaEdit } from "react-icons/fa";
 
-interface ListProps {
-    children: ReactNode;
+interface ColumnDef<T> {
+    header: string;
+    render: (item: T) => React.ReactNode;
 }
 
-function List({ children }: ListProps) {
+interface ListProps<T> {
+    items: T[];
+    columns: ColumnDef<T>[];
+}
+
+function List<T>({ items, columns }: ListProps<T>) {
+    const [selected, setSelected] = useState<Set<number>>(new Set());
+
+    function toggleSelect(index: number) {
+        const newSet = new Set(selected);
+        if (newSet.has(index)) {
+            newSet.delete(index);
+        } else {
+            newSet.add(index);
+        }
+        setSelected(newSet);
+    }
+
+    const columnCount = columns.length + 3;
+    const gridTemplate = `repeat(${columnCount}, auto)`;
+
+    console.log(items);
+
     return (
-        <div className="grid grid-cols-[repeat(3,auto)_1fr_repeat(4,auto)] gap-2">
-            {children}
+        <div
+            className="grid gap-2"
+            style={{ gridTemplateColumns: gridTemplate }}
+        >
+            <div className="font-bold">select</div>
+            {columns.map((col) => (
+                <div key={col.header} className="font-bold">
+                    {col.header}
+                </div>
+            ))}
+            <div className="font-bold">Edit</div>
+            <div className="font-bold">Remove</div>
+
+            {
+                items.map((item, idx) => (
+                    <Fragment key={idx}>
+                        <div key={idx}>
+                            <input
+                                type="checkbox"
+                                checked={selected.has(idx)}
+                                onChange={() => toggleSelect(idx)}
+                            />
+                        </div>
+                        {
+                            columns.map((col) => (
+                                <div key={col.header}>{col.render(item)}</div>
+                            ))
+                        }
+                        <div className="font-bold"><FaEdit /></div>
+                        <div className="font-bold"><FaTrash /></div>
+                    </Fragment>
+                ))
+            }
         </div>
-    )
-}
-
-interface AdventureListItemProps {
-    adventure: PublicAdventure;
-}
-
-function AdventureListItem({ adventure }: AdventureListItemProps) {
-    return (
-        <ul className="contents">
-            <li><input type="checkbox" /></li>
-            <li>{adventure.id}</li>
-            <li>{adventure.year}</li>
-            <li>{adventure.name}</li>
-            <li>{adventure.ongoing}</li>
-            <li>{adventure.test}</li>
-            <li><FaEdit /></li>
-            <li><FaTrash /></li>
-        </ul>
     )
 }
 
@@ -56,14 +91,18 @@ export function AdventureList() {
         return <div>No adventures found</div>
     }
 
+    const columns = [
+        { header: "id", render: (a: PublicAdventure) => a.id },
+        { header: "year", render: (a: PublicAdventure) => a.year },
+        { header: "name", render: (a: PublicAdventure) => a.name },
+        { header: "ongoing", render: (a: PublicAdventure) => a.ongoing },
+        { header: "test", render: (a: PublicAdventure) => a.test },
+    ]
+
     return (
         <>
             <h3>Adventures</h3>
-            <List>
-                {
-                    data.data.map(adventure => <AdventureListItem adventure={adventure} />)
-                }
-            </List>
+            <List items={data.data} columns={columns} />
         </>
     )
 }
