@@ -3,7 +3,7 @@ import { MouseEventHandler, ReactNode } from "react";
 import { cva } from "class-variance-authority";
 
 const button = cva(
-    "px-4 py-2 rounded font-medium disabled:opacity-50 cursor-pointer disabled:cursor-default",
+    "px-4 py-2 rounded font-medium disabled:opacity-50 cursor-pointer disabled:cursor-default inline-flex gap-2 items-center justify-center",
     {
         variants: {
             variant: {
