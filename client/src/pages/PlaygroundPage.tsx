@@ -13,10 +13,18 @@ export function PlaygroundPage() {
                 <div className="grid grid-cols-2 gap-4">
                     <Button variant="blue">Blue</Button>
                     <Button variant="blue" disabled={true}>Blue</Button>
+
                     <Button variant="red">Red</Button>
                     <Button variant="red" disabled={true}>Red</Button>
+
                     <Button variant="green">Green</Button>
                     <Button variant="green" disabled={true}>Green</Button>
+
+                    <Button variant="gray">gray</Button>
+                    <Button variant="gray" disabled={true}>gray</Button>
+
+                    <Button variant="transparent">transparent</Button>
+                    <Button variant="transparent" disabled={true}>transparent</Button>
                 </div>
             </div>
             <div className="flex flex-col gap-4">
