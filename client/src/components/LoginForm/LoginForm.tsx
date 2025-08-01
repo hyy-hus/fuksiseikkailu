@@ -5,6 +5,7 @@ import { navigate } from '../../router/navigate';
 import { Button } from '@components/Button';
 import { Input } from '@components/Input';
 import { AxiosError } from 'axios';
+import { useTranslation } from 'react-i18next';
 
 interface APIError {
     detail: string;
@@ -16,6 +17,8 @@ export function LoginForm() {
 
     const { token, setToken, logout } = useAuth();
     const loginMutation = useLoginAuthLoginPost()
+
+    const { t } = useTranslation();
 
     function handleLogin(e: React.FormEvent) {
         e.preventDefault();
@@ -47,13 +50,13 @@ export function LoginForm() {
     const errorMessage =
         showError && ((loginMutation.error as AxiosError)?.response?.data as APIError)?.detail
             ? ((loginMutation.error as AxiosError)?.response?.data as APIError)?.detail
-            : "Invalid username or password";
+            : t("invalid-username-or-password");
 
     if (!token) {
         return (
             <form className="LoginForm flex flex-col gap-4" onSubmit={handleLogin}>
                 <Input type="text"
-                    label="Username"
+                    label={t("username")}
                     name="username"
                     placeholder="Keijo"
                     value={username}
@@ -61,8 +64,8 @@ export function LoginForm() {
                     disabled={loginMutation.isPending}
                 />
                 <Input type="password"
-                    label="Password"
-                    name="username"
+                    label={t("password")}
+                    name="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={loginMutation.isPending}
@@ -73,7 +76,7 @@ export function LoginForm() {
                     </div>
                 )}
                 <Button type="submit" disabled={loginMutation.isPending} variant="blue">
-                    {loginMutation.isPending ? "Logging in..." : "Login"}
+                    {loginMutation.isPending ? t("logging-in") : t("login")}
                 </Button>
             </form>
         )
@@ -82,7 +85,7 @@ export function LoginForm() {
     return (
         <div>
             <button type="button" onClick={() => logout()}>
-                Logout
+                {t("logout")}
             </button>
         </div>
     )
