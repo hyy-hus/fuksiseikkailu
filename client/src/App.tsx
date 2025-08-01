@@ -9,10 +9,11 @@ const HomePage = lazy(() => import("./pages/HomePage").then((m) => ({ default: m
 const UsersPage = lazy(() => import("./pages/UsersPage").then((m) => ({ default: m.UsersPage })));
 const LoginPage = lazy(() => import("./pages/LoginPage").then((m) => ({ default: m.LoginPage })));
 const PlaygroundPage = lazy(() => import("./pages/PlaygroundPage").then((m) => ({ default: m.PlaygroundPage })));
+const LoadingPage = lazy(() => import("./pages/LoadingPage").then((m) => ({ default: m.LoadingPage })));
 
 export function App() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<LoadingPage />}>
             <Routes>
                 <Route path="/" element={<Layout />}>
                     <Route index element={<HomePage />} />
@@ -20,6 +21,7 @@ export function App() {
                     <Route path="login" element={<LoginPage />} />
                     <Route path="playground" element={<PlaygroundPage />} />
                 </Route>
+                <Route path="loading" element={<LoadingPage />} />
             </Routes>
         </Suspense>
     )

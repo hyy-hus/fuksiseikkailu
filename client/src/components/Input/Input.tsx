@@ -40,7 +40,7 @@ export function Input({
                 </span>
                 <input
                     name={name ?? ""}
-                    className="w-full text-sm outline-none px-3 py-3 bg-transparent disabled:text-slate-500"
+                    className="w-full text-base outline-none px-3 py-3 bg-transparent disabled:text-slate-500"
                     type={type}
                     disabled={disabled}
                     onChange={onChange}

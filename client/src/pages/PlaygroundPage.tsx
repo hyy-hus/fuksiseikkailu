@@ -1,5 +1,6 @@
 import { Button } from "@components/Button";
 import { Input } from "@components/Input";
+import { Spinner } from "@components/Progress";
 
 export function PlaygroundPage() {
     return (
@@ -53,6 +54,12 @@ export function PlaygroundPage() {
 
                     <Input type="text" label="invalid" invalid={true} errorMessage="This value is not good!" />
                     <Input type="text" label="invalid" invalid={true} errorMessage="This value is not good!" disabled={true} />
+                </div>
+            </div>
+            <div className="flex flex-col gap-4">
+                <h3>Progress</h3>
+                <div className="grid grid-cols-2 gap-4">
+                    <Spinner />
                 </div>
             </div>
         </div>
