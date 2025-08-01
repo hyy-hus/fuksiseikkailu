@@ -4,6 +4,11 @@ import { useAuth } from '@auth';
 import { navigate } from '../../router/navigate';
 import { Button } from '@components/Button';
 import { Input } from '@components/Input';
+import { AxiosError } from 'axios';
+
+interface APIError {
+    detail: string;
+}
 
 export function LoginForm() {
     const [username, setUsername] = useState<string>("");
@@ -40,8 +45,8 @@ export function LoginForm() {
 
     const showError = loginMutation.isError;
     const errorMessage =
-        showError && (loginMutation.error as any)?.response?.data?.detail
-            ? (loginMutation.error as any).response.data.detail
+        showError && ((loginMutation.error as AxiosError)?.response?.data as APIError)?.detail
+            ? ((loginMutation.error as AxiosError)?.response?.data as APIError)?.detail
             : "Invalid username or password";
 
     if (!token) {
