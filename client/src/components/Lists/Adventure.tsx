@@ -1,12 +1,16 @@
 import { useListAdventuresAdventuresGet } from "@api/endpoints";
 import { PublicAdventure } from "@api/model";
+import { t } from "i18next";
 import { useState, Fragment } from "react";
+
+import { Button } from "@components/Button";
 
 import { FaTrash, FaEdit } from "react-icons/fa";
 
 interface ColumnDef<T> {
     header: string;
     render: (item: T) => React.ReactNode;
+    width?: string;
 }
 
 interface ListProps<T> {
@@ -27,24 +31,27 @@ function List<T>({ items, columns }: ListProps<T>) {
         setSelected(newSet);
     }
 
-    const columnCount = columns.length + 3;
-    const gridTemplate = `repeat(${columnCount}, auto)`;
-
-    console.log(items);
+    const gridTemplate = [
+        "auto",
+        ...columns.map(col => col.width ?? "auto"),
+        "auto",
+        "auto",
+    ].join(" ");
 
     return (
         <div
             className="grid gap-2"
             style={{ gridTemplateColumns: gridTemplate }}
         >
-            <div className="font-bold">select</div>
+            <div className="font-bold"><input type="checkbox" /></div>
+
             {columns.map((col) => (
                 <div key={col.header} className="font-bold">
-                    {col.header}
+                    {t(col.header)}
                 </div>
             ))}
-            <div className="font-bold">Edit</div>
-            <div className="font-bold">Remove</div>
+            <div className="font-bold"></div>
+            <div className="font-bold"></div>
 
             {
                 items.map((item, idx) => (
@@ -61,8 +68,8 @@ function List<T>({ items, columns }: ListProps<T>) {
                                 <div key={col.header}>{col.render(item)}</div>
                             ))
                         }
-                        <div className="font-bold"><FaEdit /></div>
-                        <div className="font-bold"><FaTrash /></div>
+                        <div className="font-bold"><Button variant="transparent"><FaEdit /></Button></div>
+                        <div className="font-bold"><Button variant="transparent"><FaTrash /></Button></div>
                     </Fragment>
                 ))
             }
@@ -94,9 +101,9 @@ export function AdventureList() {
     const columns = [
         { header: "id", render: (a: PublicAdventure) => a.id },
         { header: "year", render: (a: PublicAdventure) => a.year },
-        { header: "name", render: (a: PublicAdventure) => a.name },
-        { header: "ongoing", render: (a: PublicAdventure) => a.ongoing },
-        { header: "test", render: (a: PublicAdventure) => a.test },
+        { header: "name", render: (a: PublicAdventure) => a.name, width: "1fr" },
+        { header: "ongoing", render: (a: PublicAdventure) => a.ongoing ? "true" : "false" },
+        { header: "test", render: (a: PublicAdventure) => a.test ? "true" : "false" },
     ]
 
     return (
