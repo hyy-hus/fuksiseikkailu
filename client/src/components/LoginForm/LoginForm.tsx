@@ -3,6 +3,7 @@ import { useLoginAuthLoginPost } from '@api'
 import { useAuth } from '@auth';
 import { navigate } from '../../router/navigate';
 import { Button } from '@components/Button';
+import { Input } from '@components/Input';
 
 export function LoginForm() {
     const [username, setUsername] = useState<string>("");
@@ -45,37 +46,30 @@ export function LoginForm() {
 
     if (!token) {
         return (
-            <form className="LoginForm" onSubmit={handleLogin}>
-                <label htmlFor="username">
-                    <span>Username</span>
-                    <input type="text"
-                        name="username"
-                        id="username"
-                        value={username}
-                        placeholder="Keijo"
-                        onChange={(e) => setUsername(e.target.value)}
-                        disabled={loginMutation.isPending}
-                    />
-                </label>
-                <label htmlFor="password">
-                    <span>Password</span>
-                    <input type="password"
-                        name="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        disabled={loginMutation.isPending}
-                    />
-                </label>
-                <Button type="submit" disabled={loginMutation.isPending}>
-                    {loginMutation.isPending ? "Logging in..." : "Login"}
-                </Button>
-
+            <form className="LoginForm flex flex-col gap-4" onSubmit={handleLogin}>
+                <Input type="text"
+                    label="Username"
+                    name="username"
+                    placeholder="Keijo"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    disabled={loginMutation.isPending}
+                />
+                <Input type="password"
+                    label="Password"
+                    name="username"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={loginMutation.isPending}
+                />
                 {showError && (
-                    <div className="error">
+                    <div className="flex items-center justify-center bg-red-200 border-2 border-red-300 rounded text-red-950 p-4 text-sm">
                         {errorMessage}
                     </div>
                 )}
+                <Button type="submit" disabled={loginMutation.isPending} variant="blue">
+                    {loginMutation.isPending ? "Logging in..." : "Login"}
+                </Button>
             </form>
         )
     }
