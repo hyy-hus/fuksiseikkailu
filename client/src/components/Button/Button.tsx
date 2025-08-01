@@ -7,9 +7,9 @@ const button = cva(
     {
         variants: {
             variant: {
-                blue: "bg-blue-400 hover:bg-blue-500 disabled:hover:bg-blue-400 text-blue-50",
-                red: "bg-red-400 hover:bg-red-500 disabled:hover:bg-red-400 text-red-50",
-                green: "bg-green-500 hover:bg-green-600 disabled:hover:gb-green-500 text-green-50",
+                blue: "bg-blue-400 hover:bg-blue-500 disabled:hover:bg-blue-400 text-blue-50 dark:bg-slate-800 dark:hover:bg-slate-700 dark:disabled:hover:bg-slate-800 dark:text-slate-300",
+                red: "bg-rose-400 hover:bg-rose-500 disabled:hover:bg-rose-400 text-rose-50 dark:bg-pink-900 dark:hover:bg-pink-800 dark:disabled:hover:bg-pink-900 dark:text-pink-200",
+                green: "bg-emerald-500 hover:bg-emerald-600 disabled:hover:bg-emerald-500 text-emerald-50 dark:bg-emerald-900 dark:hover:bg-emerald-800 dark:disabled:hover:bg-emerald-900 dark:text-emerald-200",
             },
         },
         defaultVariants: {
