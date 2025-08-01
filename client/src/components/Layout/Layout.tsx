@@ -39,8 +39,16 @@ export function Layout() {
     return (
         <div className={`h-screen grid grid-rows-[auto_1fr] ${sidebarOpen ? "grid-cols-[1fr_0] md:grid-cols-[auto_1fr]" : "grid-cols-[1fr]"} font-display text-zinc-900 dark:text-zinc-50`}>
 
-            <nav className="col-span-2 bg-zinc-300 dark:bg-slate-900 border-b border-zinc-400 dark:border-slate-700 flex items-center p-4 gap-4 overflow-x-auto">
+            <nav className="col-span-2 bg-zinc-300 dark:bg-slate-900 border-b border-zinc-400 dark:border-slate-700 grid grid-cols-[auto_1fr_auto] items-center p-2">
                 <Button variant="transparent" onClick={() => toggleSidebar()}><IoMenu /></Button>
+                <h1 className="font-bold hover:underline flex content-center justify-center-safe"><Link to="/">Fuksiseikkailu</Link></h1>
+                <div className="inline">
+                    {
+                        !token ?
+                            <Button variant="transparent" onClick={() => navigate("/login")}>Login</Button>
+                            : <Button variant="red" onClick={() => logout()} >Logout</Button>
+                    }
+                </div>
 
             </nav>
 
@@ -49,10 +57,6 @@ export function Layout() {
                     <li><Link to="/" className="hover:underline">Home</Link></li>
                     <li><Link to="/users" className="hover:underline">Users</Link></li>
                     <li><Link to="/playground" className="hover:underline">Playground</Link></li>
-                    <li>{!token ? <Button onClick={() => navigate("/login")}>Login</Button> :
-                        (
-                            <Button variant="red" onClick={() => logout()} >Logout</Button>
-                        )}</li>
                     <li></li>
                     <li className="flex items-center justify-center">
                         <Button onClick={toggleTheme} variant="transparent">
