@@ -1,9 +1,9 @@
 import "./Checkpoint.css";
 
-import FavoriteIcon from "../assets/icons/FavoritePlain";
-import CompleteIcon from "../assets/icons/CompletedPlain";
-import AccessibilityIcon from "../assets/icons/AccessibilityPlain";
-import StarsRating from "../assets/icons/StarsRating.tsx";
+import FavoriteIcon from "../../assets/icons/FavoritePlain";
+import CompleteIcon from "../../assets/icons/CompletedPlain";
+import AccessibilityIcon from "../../assets/icons/AccessibilityPlain";
+import StarsRating from "../../assets/icons/StarsRating.tsx";
 
 interface RatingProps {
     data: CheckpointData
