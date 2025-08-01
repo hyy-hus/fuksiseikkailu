@@ -109,7 +109,7 @@ export function Map({
                 mapRef.current = null;
             }
         }
-    }, []);
+    }, [checkpoints, clickCallback, selected]);
 
     // useEffect(() => {
     //     console.log(points);
