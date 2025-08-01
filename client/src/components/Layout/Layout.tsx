@@ -9,6 +9,7 @@ export function Layout() {
     const { token, logout } = useAuth();
 
     const [darkMode, setDarkMode] = useState<boolean>(document.documentElement.classList.contains("dark"));
+    const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
     function toggleTheme() {
         const html = document.documentElement;
@@ -25,10 +26,10 @@ export function Layout() {
     }
 
     return (
-        <div className="h-screen grid grid-rows-[auto_1fr] grid-cols-[20rem_1fr] font-display text-zinc-900 dark:text-zinc-50">
+        <div className={`h-screen grid grid-rows-[auto_1fr] ${sidebarOpen ? "grid-cols-[1fr_0] md:grid-cols-[auto_1fr]" : "grid-cols-[1fr]"} font-display text-zinc-900 dark:text-zinc-50`}>
 
-            <nav className="col-span-2 bg-zinc-300 dark:bg-slate-900 border-b border-zinc-400 dark:border-slate-700 flex items-center p-4 gap-4">
-                <Button variant="transparent"><IoMenu /></Button>
+            <nav className="col-span-2 bg-zinc-300 dark:bg-slate-900 border-b border-zinc-400 dark:border-slate-700 flex items-center p-4 gap-4 overflow-x-auto">
+                <Button variant="transparent" onClick={() => setSidebarOpen((prev) => !prev)}><IoMenu /></Button>
                 <Link to="/" className="hover:underline">Home</Link>
                 <Link to="/users" className="hover:underline">Users</Link>
                 <Link to="/playground" className="hover:underline">Playground</Link>
@@ -39,17 +40,26 @@ export function Layout() {
 
             </nav>
 
-            <aside className="Sidebar bg-zinc-300 dark:bg-slate-900 border-r border-zinc-400 dark:border-slate-700 p-4">
-                <p>Sidebar content</p>
-                <Button onClick={toggleTheme} variant="transparent">
-                    <span>Theme:</span> {darkMode ?
-                        <FaSun /> :
-                        <FaMoon />
-                    }
-                </Button>
+            <aside className={`Sidebar bg-zinc-300 dark:bg-slate-900 border-r border-zinc-400 dark:border-slate-700 p-4 ${sidebarOpen ? "w-full" : "overflow-hidden sr-only"}`}>
+                <ul className="grid h-full grid-rows-[repeat(2,_auto)_1fr_auto] gap-4">
+                    <li>Sidebar content</li>
+                    <li>Another one</li>
+                    <li></li>
+                    <li className="flex items-center justify-center">
+                        <Button onClick={toggleTheme} variant="transparent">
+                            <span>Theme:</span> {darkMode ?
+                                <FaSun /> :
+                                <FaMoon />
+                            }
+                        </Button>
+                        <Button variant="transparent">
+                            <span>Lang: EN</span>
+                        </Button>
+                    </li>
+                </ul>
             </aside>
 
-            <main className="bg-zinc-200 dark:bg-slate-900 dark:text-zinc-100 p-4 overflow-y-auto">
+            <main className={`bg-zinc-200 dark:bg-slate-900 dark:text-zinc-100 p-4 overflow-y-auto ${sidebarOpen ? "hidden md:block md:w-full" : ""}`}>
                 <Outlet />
             </main>
         </div >
