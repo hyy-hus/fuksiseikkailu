@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 
-import { currentToken, setCurrentToken } from "@auth";
+import { authStore } from "@auth";
 import { navigate } from '../router/navigate';
 
 const axiosInstance = axios.create({
@@ -8,30 +8,33 @@ const axiosInstance = axios.create({
 })
 
 axiosInstance.interceptors.request.use((config) => {
-    if (currentToken) {
+    const token = authStore.getToken();
+
+    if (token) {
         config.headers = config.headers ?? {}
-        config.headers.Authorization = `Bearer ${currentToken}`
+        config.headers.Authorization = `Bearer ${token}`
     }
 
     return config
 })
 
 axiosInstance.interceptors.response.use(
-    (response) => response,
+    (res) => res,
     (error) => {
-        console.log("Error:", error);
-        if (error.response?.status === 401 && error.response?.data?.detail === "Not authenticated") {
+        if (
+            error.response?.status === 401 &&
+            error.response?.data?.detail === "Not authenticated"
+        ) {
             const currentPath = window.location.pathname + window.location.search;
             localStorage.setItem("postLoginRedirect", currentPath);
 
-            setCurrentToken(null);
+            authStore.setToken(null);
             navigate("/login");
         }
-
         return Promise.reject(error);
     }
 );
 
-export const customInstance = <T>(config: any) => {
+export const customInstance = <T>(config: AxiosRequestConfig) => {
     return axiosInstance.request<T>(config);
 }
