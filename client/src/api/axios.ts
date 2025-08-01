@@ -29,7 +29,12 @@ axiosInstance.interceptors.response.use(
             localStorage.setItem("postLoginRedirect", currentPath);
 
             authStore.setToken(null);
-            navigate("/login");
+
+            if (window.location.pathname.includes("admin")) {
+                navigate("/admin/login");
+            } else {
+                navigate("/")
+            }
         }
         return Promise.reject(error);
     }
