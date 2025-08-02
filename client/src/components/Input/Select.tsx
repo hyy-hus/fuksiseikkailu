@@ -1,34 +1,29 @@
-import { ChangeEventHandler, ReactNode } from "react";
+import { Option } from "@components/Forms/Form";
+import { ChangeEventHandler } from "react";
 
-export type FieldType = "text" | "password" | "email" | "tel" | "url" | "number" | "datetime-local" | "date" | "time" | "search" | "toggle" | "option";
-
-interface InputProps {
-    type?: FieldType,
+interface SelectProps {
     disabled?: boolean;
-    children?: ReactNode;
     className?: string;
     name?: string;
     label?: string;
     value?: string | number;
-    placeholder?: string;
     invalid?: boolean;
     errorMessage?: string;
-    onChange?: ChangeEventHandler<HTMLInputElement>;
+    options?: Option[];
+    onChange?: ChangeEventHandler<HTMLSelectElement>;
 }
 
-export function Input({
-    type = "text",
+export function Select({
     disabled = false,
     invalid = false,
     errorMessage,
-    children,
+    options = [],
     className,
     name,
     label,
     value,
-    placeholder,
     onChange,
-}: InputProps) {
+}: SelectProps) {
     const colors = invalid ? "border-pink-700/30 bg-pink-900/30" : "bg-zinc-200 dark:bg-slate-900 focus-within:bg-zinc-300 dark:focus-within:bg-slate-800 border-zinc-400 dark:border-slate-700 dark:hover:border-slate-600 dark:has-[:disabled]:hover:border-slate-700 dark:text-slate-300";
 
     return (
@@ -43,17 +38,19 @@ export function Input({
                 {
 
                 }
-                <input
+                <select
                     name={name ?? ""}
                     className="w-full text-base outline-none px-3 py-3 bg-transparent disabled:text-slate-500"
-                    type={type}
                     disabled={disabled}
                     onChange={onChange}
-                    placeholder={placeholder}
                     value={value}
                 >
-                    {children}
-                </input>
+                    {
+                        options.map(opt => (
+                            <option key={opt.key} value={opt.key}>{opt.value}</option>
+                        ))
+                    }
+                </select>
             </label>
             {invalid && errorMessage && (
                 <div className="mt-1 text-sm text-red-600 dark:text-rose-400/50">
