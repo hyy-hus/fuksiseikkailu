@@ -35,34 +35,36 @@ function List<T>({ items, columns }: ListProps<T>) {
         "auto",
         ...columns.map(col => col.width ?? "auto"),
         "auto",
-        "auto",
     ].join(" ");
 
     return (
         <div
-            className="grid border border-gray-400 dark:border-slate-600 divide-x divide-y divide-gray-300 dark:divide-slate-700 text-sm"
+            className="parent grid border border-gray-400 dark:border-slate-700 overflow-x-auto text-xs"
             style={{ gridTemplateColumns: gridTemplate }}
         >
             {/* Header Row */}
-            <div className="bg-gray-100 dark:bg-slate-800 font-bold p-2 flex items-center justify-center">
-                <input type="checkbox" />
-            </div>
-
-            {columns.map((col) => (
-                <div
-                    key={col.header}
-                    className="bg-gray-100 dark:bg-slate-800 font-bold p-2 flex items-center"
-                >
-                    {t(col.header)}
+            <div className="contents">
+                <div className="bg-gray-100 dark:bg-slate-800 font-bold p-1 md:p-2 flex items-center justify-center border-b border-gray-400 dark:border-slate-700">
+                    <input type="checkbox" />
                 </div>
-            ))}
-            <div className="bg-gray-100 dark:bg-slate-800 font-bold p-2"></div>
-            <div className="bg-gray-100 dark:bg-slate-800 font-bold p-2"></div>
+
+                {columns.map((col) => (
+                    <div
+                        key={col.header}
+                        className="bg-gray-100 dark:bg-slate-800 font-bold p-2 md:p-2 flex items-center border-b border-gray-400 dark:border-slate-700"
+                    >
+                        {t(col.header)}
+                    </div>
+                ))}
+                <div className="bg-gray-100 dark:bg-slate-800 font-bold p-2 border-b border-gray-400 dark:border-slate-700 flex items-center justify-center">
+                    {t("controls")}
+                </div>
+            </div>
 
             {/* Rows */}
             {items.map((item, idx) => (
-                <Fragment key={idx}>
-                    <div className="p-2 flex items-center justify-center">
+                <div key={idx} className="contents divide-x divide-slate-700 odd:bg-zinc-300 dark:odd:bg-slate-800">
+                    <div className="p-2 flex items-center justify-center bg-inherit">
                         <input
                             type="checkbox"
                             checked={selected.has(idx)}
@@ -70,21 +72,19 @@ function List<T>({ items, columns }: ListProps<T>) {
                         />
                     </div>
                     {columns.map((col) => (
-                        <div key={col.header} className="p-2 flex items-center">
+                        <div key={col.header} className="p-2 flex items-center bg-inherit">
                             {col.render(item)}
                         </div>
                     ))}
-                    <div className="p-2 flex items-center justify-center">
+                    <div className="p-2 flex items-center justify-center bg-inherit">
                         <Button variant="transparent" aria-label="Edit">
                             <FaEdit />
                         </Button>
-                    </div>
-                    <div className="p-2 flex items-center justify-center">
                         <Button variant="transparent" aria-label="Delete">
                             <FaTrash />
                         </Button>
                     </div>
-                </Fragment>
+                </div>
             ))}
         </div>
     );
