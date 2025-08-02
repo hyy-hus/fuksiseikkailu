@@ -1,0 +1,130 @@
+from sqlmodel import SQLModel, Field, Relationship
+
+from app.models.adventures import PublicAdventure, DBAdventure
+
+
+class BaseCheckpoint(SQLModel):
+    org_name: str
+    org_abbreviation: str
+    category: str
+    latitude: str
+    longitude: str
+    address: str
+    checkpoint_description: str
+    org_description: str
+    org_link: str
+    accessible: bool
+
+
+class DBCheckpoint(BaseCheckpoint, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+
+    org_name: str = Field()
+    org_abbreviation: str | None = Field()
+    contact_person: str = Field()
+    contact_email: str = Field()
+    contact_phone: str = Field()
+    category: str = Field()
+    latitude: str | None = Field()
+    longitude: str | None = Field()
+    address: str = Field()
+    requirements: str = Field()
+    lanes: int = Field()
+    checkpoint_description: str = Field()
+    org_description: str | None = Field()
+    org_link: str | None = Field()
+
+    photo_permission: bool = Field(default=True)
+    accessible: bool = Field(default=True)
+
+    adventure_id: int | None = Field(default=None, foreign_key="dbadventure.id")
+    adventure: DBAdventure | None = Relationship(back_populates="checkpoints")
+
+    active: bool = Field(default=True)
+
+
+class AdminCheckpoint(BaseCheckpoint):
+    id: int
+    org_name: str
+    org_abbreviation: str
+    contact_person: str
+    contact_email: str
+    contact_phone: str
+    category: str
+    latitude: str
+    longitude: str
+    address: str
+    requirements: str
+    lanes: int
+    checkpoint_description: str
+    org_description: str
+    org_link: str
+
+    photo_permission: bool
+    accessible: bool
+
+    adventure: PublicAdventure
+    active: bool
+
+
+class PublicCheckpoint(BaseCheckpoint):
+    id: int
+    org_name: str
+    org_abbreviation: str
+    category: str
+    latitude: str
+    longitude: str
+    address: str
+    checkpoint_description: str
+    org_description: str
+    org_link: str
+    accessible: bool
+
+
+class CreateCheckpoint(BaseCheckpoint):
+    adventure_id: int
+    org_name: str
+    org_abbreviation: str
+    contact_person: str
+    contact_email: str
+    contact_phone: str
+    category: str
+    latitude: str
+    longitude: str
+    address: str
+    requirements: str
+    lanes: int
+    checkpoint_description: str
+    org_description: str
+    org_link: str
+
+    photo_permission: bool
+    accessible: bool
+
+
+class ModifyCheckpoint(BaseCheckpoint):
+    adventure_id: int
+    org_name: str
+    org_abbreviation: str
+    contact_person: str
+    contact_email: str
+    contact_phone: str
+    category: str
+    latitude: str
+    longitude: str
+    address: str
+    requirements: str
+    lanes: int
+    checkpoint_description: str
+    org_description: str
+    org_link: str
+
+    photo_permission: bool
+    accessible: bool
+
+
+# AdminCheckpoint.model_rebuild()
+# PublicCheckpoint.model_rebuild()
+# ModifyCheckpoint.model_rebuild()
+# CreateCheckpoint.model_rebuild()
+# DBCheckpoint.model_rebuild()
