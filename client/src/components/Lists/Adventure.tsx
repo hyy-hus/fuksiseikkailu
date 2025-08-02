@@ -23,7 +23,7 @@ interface ListProps<T> {
 
     onChange?: (items: T[]) => void;
     handleEdit?: (item: T) => void;
-    handleRemove?: (item: T) => void;
+    handleRemove?: (items: T[]) => void;
 }
 
 function List<T extends Record<string, any>>({ items, columns, defaultSortCol, getKey, onChange, handleEdit, handleRemove }: ListProps<T>) {
@@ -94,7 +94,7 @@ function List<T extends Record<string, any>>({ items, columns, defaultSortCol, g
             <div className={`grid ${selected.size > 0 ? "grid-cols-[1fr_auto]" : "grid-cols-1"} gap-4 items-end`}>
                 <Input type="search" label={t("search")} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                 {selected.size > 0 && (
-                    <Button variant="red" aria-label="Delete" onClick={() => console.log("Remove all")} className="text-sm h-12">
+                    <Button variant="red" aria-label="Delete" onClick={() => handleRemove?.(items.filter(item => selected.has(getKey(item))))} className="text-sm h-12">
                         {t("remove-selected")}
                         <FaTrash />
                     </Button>
@@ -178,7 +178,7 @@ function List<T extends Record<string, any>>({ items, columns, defaultSortCol, g
                                     <Button variant="transparent" aria-label="Edit" onClick={() => handleEdit?.(item)}>
                                         <FaEdit />
                                     </Button>
-                                    <Button variant="transparent" aria-label="Delete" onClick={() => handleRemove?.(item)}>
+                                    <Button variant="transparent" aria-label="Delete" onClick={() => handleRemove?.([item])}>
                                         <FaTrash />
                                     </Button>
                                 </div>
