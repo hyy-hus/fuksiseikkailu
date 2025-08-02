@@ -8,7 +8,10 @@ from app.models.teams import (
     ModifyTeam,
     CreateTeam,
 )
+from app.models.users import DBUser
+
 from app.core.db import get_session
+from app.deps import require_user
 
 router = APIRouter(
     prefix="/adventures/{adventure_id}/teams",
@@ -76,6 +79,7 @@ def fetch_team(
 def list_admin_teams(
     adventure_id: int = Path(..., description="ID of the adventure"),
     session: Session = Depends(get_session),
+    user: DBUser = Depends(require_user),
 ):
     query = select(DBTeam).where(DBTeam.adventure_id == adventure_id)
     return session.exec(query).all()
@@ -97,6 +101,7 @@ def fetch_admin_team(
     adventure_id: int = Path(..., description="ID of the adventure"),
     team_id: int = Path(..., description="ID of the team"),
     session: Session = Depends(get_session),
+    user: DBUser = Depends(require_user),
 ):
     query = select(DBTeam).where(
         and_(DBTeam.id == team_id, DBTeam.adventure_id == adventure_id)
@@ -122,6 +127,7 @@ def create_team(
     team: CreateTeam,
     adventure_id: int = Path(..., description="ID of the adventure"),
     session: Session = Depends(get_session),
+    user: DBUser = Depends(require_user),
 ):
     db_team = DBTeam.model_validate(team)
     db_team.adventure_id = adventure_id
@@ -149,6 +155,7 @@ def update_team(
     team_id: int = Path(..., description="ID of the team"),
     adventure_id: int = Path(..., description="ID of the adventure"),
     session: Session = Depends(get_session),
+    user: DBUser = Depends(require_user),
 ):
     query = select(DBTeam).where(
         and_(DBTeam.id == team_id, DBTeam.adventure_id == adventure_id, DBTeam.active)
@@ -185,6 +192,7 @@ def delete_team(
     team_id: int,
     adventure_id: int,
     session: Session = Depends(get_session),
+    user: DBUser = Depends(require_user),
 ):
     db_team = session.exec(
         select(DBTeam).where(
