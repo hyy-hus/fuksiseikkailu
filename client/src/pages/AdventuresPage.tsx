@@ -1,5 +1,6 @@
 import { getListAdventuresAdventuresGetQueryKey, useDeleteAdventureAdventuresAdventureIdDelete } from "@api/endpoints";
 import { PublicAdventure } from "@api/model";
+import { CreateAdventureForm, ModifyAdventureForm } from "@components/Forms/";
 import { AdventureList } from "@components/Lists";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -14,7 +15,7 @@ export function AdventuresPage() {
     const deleteAdventureMutation = useDeleteAdventureAdventuresAdventureIdDelete();
 
     function handleRemove(items: PublicAdventure[]) {
-        const confirmed = confirm(`Are you sure you want to delete these adventures: ${items.map(item => item.name).join(", ")}`)
+        const confirmed = confirm(`${t("confirm-delete-adventures")}: ${items.map(item => item.name).join(", ")}?`)
 
         if (!confirmed) {
             return;
@@ -47,21 +48,14 @@ export function AdventuresPage() {
                 handleEdit={(item: PublicAdventure) => setSelected([item])}
                 handleRemove={handleRemove}
             />
-            {
-                selected.length === 0 && (
-                    <span>None selected</span>
-                )
-            }
-            {
-                selected.length === 1 && (
-                    <span>One selected: {selected[0].name}</span>
-                )
-            }
-            {
-                selected.length > 1 && (
-                    <span>Multiple selected</span>
-                )
-            }
+            <div className={selected.length === 0 ? "block" : "hidden"}>
+                <h3>{t("create-adventure")}</h3>
+                <CreateAdventureForm />
+            </div>
+            <div className={selected?.length === 1 ? "block" : "hidden"}>
+                <h3>{t("modify-adventure")} {selected[0]?.name ?? ""}</h3>
+                <ModifyAdventureForm adventureId={selected[0]?.id ?? 0} />
+            </div>
         </div>
     )
 }

@@ -1,7 +1,9 @@
 import { ChangeEventHandler, ReactNode } from "react";
 
+export type FieldType = "text" | "password" | "email" | "tel" | "url" | "number" | "datetime-local" | "date" | "time" | "search" | "toggle";
+
 interface InputProps {
-    type?: "text" | "password" | "email" | "tel" | "url" | "number" | "datetime-local" | "date" | "time";
+    type?: FieldType,
     disabled?: boolean;
     children?: ReactNode;
     className?: string;
@@ -38,6 +40,9 @@ export function Input({
                     <span className="relative z-20 dark:text-slate-400 dark:group-has-[:disabled]:text-slate-600">{label}</span>
                     <div className={`absolute left-0 bottom-[1px] inline h-2 w-10 ${!invalid ? "bg-zinc-200 dark:bg-slate-900 group-focus-within:bg-zinc-300 dark:group-focus-within:bg-slate-800" : "bg-pink-transparent border-pink-700"} z-10 w-full group-has-[:invalid]:bg-transparent`}></div>
                 </span>
+                {
+
+                }
                 <input
                     name={name ?? ""}
                     className="w-full text-base outline-none px-3 py-3 bg-transparent disabled:text-slate-500"

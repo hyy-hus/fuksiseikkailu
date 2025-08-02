@@ -28,7 +28,7 @@ def fetch_adventure(
     query = select(DBAdventure).where(
         DBAdventure.id == adventure_id and DBAdventure.active
     )
-    db_adventure = session.exec(query.one_or_none())
+    db_adventure = session.exec(query).one_or_none()
 
     if not db_adventure:
         raise HTTPException(

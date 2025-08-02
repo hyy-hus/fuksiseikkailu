@@ -81,9 +81,9 @@ export function List<T extends Record<string, any>>({ items, columns, defaultSor
         setFilteredItems(filtered);
     }, [searchQuery, items]);
 
-    useEffect(() => {
-        setSelected(new Set());
-    }, [items]);
+    // useEffect(() => {
+    // setSelected(new Set());
+    // }, [items]);
 
     const gridTemplate = [
         "auto",
@@ -172,7 +172,9 @@ export function List<T extends Record<string, any>>({ items, columns, defaultSor
                                     />
                                 </div>
                                 {columns.map((col) => (
-                                    <div key={col.header} className="py-2 px-4 flex items-center bg-inherit">
+                                    <div key={col.header} className="py-2 px-4 flex items-center bg-inherit"
+                                        onClick={() => setSelected(new Set([key]))}
+                                    >
                                         {col.render(item)}
                                     </div>
                                 ))}
