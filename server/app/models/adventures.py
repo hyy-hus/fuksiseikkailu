@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from app.models.checkpoints import DBCheckpoint, PublicCheckpoint
+    from app.models.teams import DBTeam, PublicTeam
 
 
 class BaseAdventure(SQLModel):
@@ -21,6 +22,7 @@ class DBAdventure(BaseAdventure, table=True):
     active: bool = Field(default=True)
 
     checkpoints: list["DBCheckpoint"] = Relationship(back_populates="adventure")
+    teams: list["DBTeam"] = Relationship(back_populates="adventure")
 
 
 class PublicAdventure(BaseAdventure):
@@ -30,6 +32,7 @@ class PublicAdventure(BaseAdventure):
 class LinkedAdventure(BaseAdventure):
     id: int
     checkpoints: list["PublicCheckpoint"]
+    teams: list["PublicTeam"]
 
 
 class CreateAdventure(BaseAdventure):
@@ -41,10 +44,3 @@ class ModifyAdventure(BaseAdventure):
     year: int | None = None
     ongoing: bool | None = None
     test: bool | None = None
-
-
-# LinkedAdventure.model_rebuild()
-# PublicAdventure.model_rebuild()
-# ModifyAdventure.model_rebuild()
-# CreateAdventure.model_rebuild()
-# DBAdventure.model_rebuild()
