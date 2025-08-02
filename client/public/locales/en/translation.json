@@ -31,5 +31,9 @@
     "ongoing": "is ongoing",
     "test": "is a test",
     "controls": "controls",
-    "no-results-found": "No results found"
+    "no-results-found": "No results found",
+
+    "create-adventure": "Create a new adventure",
+    "modify-adventure": "Modify adventure",
+    "confirm-delete-adventures": "Are you sure you want to remove these adventuers"
 }
