@@ -117,7 +117,7 @@ export function List<T extends Record<string, any>>({ items, columns, defaultSor
                         <div
                             key={col.header}
                             onClick={() => setSort(col.header)}
-                            className="bg-gray-100 dark:bg-slate-800 font-bold px-4 py-2 flex items-center border-b border-gray-400 dark:border-slate-700"
+                            className="bg-gray-100 dark:bg-slate-800 font-bold px-4 py-2 flex items-center border-b border-gray-400 dark:border-slate-700 cursor-pointer select-none"
                         >
                             {t(col.header)}
                             {col.header === sortColumn ?
