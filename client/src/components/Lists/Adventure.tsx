@@ -17,9 +17,10 @@ interface ColumnDef<T> {
 interface ListProps<T> {
     items: T[];
     columns: ColumnDef<T>[];
+    defaultSortCol?: keyof T & string;
 }
 
-function List<T extends Record<string, any>>({ items, columns }: ListProps<T>) {
+function List<T extends Record<string, any>>({ items, columns, defaultSortCol }: ListProps<T>) {
     const [selected, setSelected] = useState<Set<number>>(new Set());
 
     function toggleSelect(index: number) {
@@ -34,7 +35,7 @@ function List<T extends Record<string, any>>({ items, columns }: ListProps<T>) {
 
     type SortDirection = "asc" | "desc";
 
-    const [sortColumn, setSortColumn] = useState<string>(columns[0].header);
+    const [sortColumn, setSortColumn] = useState<string>(defaultSortCol ?? columns[0].header);
     const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
     function setSort(col: string) {
@@ -58,7 +59,6 @@ function List<T extends Record<string, any>>({ items, columns }: ListProps<T>) {
                 className="parent grid border border-gray-400 dark:border-slate-700 overflow-x-auto text-xs"
                 style={{ gridTemplateColumns: gridTemplate }}
             >
-                {/* Header Row */}
                 <div className="contents">
                     <div className="bg-gray-100 dark:bg-slate-800 font-bold px-4 py-2 flex items-center justify-center border-b border-gray-400 dark:border-slate-700">
                         <input type="checkbox" />
@@ -168,7 +168,7 @@ export function AdventureList() {
 
     return (
         <>
-            <List items={data.data} columns={columns} />
+            <List items={data.data} columns={columns} defaultSortCol="year" />
         </>
     )
 }
