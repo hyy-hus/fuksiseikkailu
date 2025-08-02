@@ -21,5 +21,15 @@
     "participants": "Participants",
     "username": "Username",
     "password": "Password",
-    "logging-in": "Logging in..."
+    "logging-in": "Logging in...",
+
+    "search": "Search",
+    "remove-selected": "Remove selected",
+    "id": "ID",
+    "year": "year",
+    "name": "name",
+    "ongoing": "is ongoing",
+    "test": "is a test",
+    "controls": "controls",
+    "no-results-found": "No results found"
 }

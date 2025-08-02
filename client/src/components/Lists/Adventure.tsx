@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@components/Button";
 
 import { FaTrash, FaEdit, FaAngleUp, FaAngleDown } from "react-icons/fa";
+import { Input } from "@components/Input";
 
 interface ColumnDef<T> {
     header: keyof T & string;
@@ -45,7 +46,7 @@ function List<T extends Record<string, any>>({ items, columns, defaultSortCol, o
 
     function selectAll() {
         if (selected.size !== items.length) {
-            const newSet = new Set(items.map((_, idx) => idx));
+            const newSet = new Set(filteredItems.map((_, idx) => idx));
             setSelected(newSet);
         } else {
             setSelected(new Set());
@@ -66,6 +67,21 @@ function List<T extends Record<string, any>>({ items, columns, defaultSortCol, o
         }
     }
 
+    const [searchQuery, setSearchQuery] = useState<string>("");
+    const [filteredItems, setFilteredItems] = useState<T[]>([]);
+
+    useEffect(() => {
+        const filtered =
+            items.filter(item =>
+                Object.values(item).some(val =>
+                    String(val).toLowerCase().includes(searchQuery.toLowerCase())
+                )
+            )
+            ;
+
+        setFilteredItems(filtered);
+    }, [searchQuery]);
+
     const gridTemplate = [
         "auto",
         ...columns.map(col => col.width ?? "auto"),
@@ -73,7 +89,16 @@ function List<T extends Record<string, any>>({ items, columns, defaultSortCol, o
     ].join(" ");
 
     return (
-        <div>
+        <div className="flex flex-col gap-4">
+            <div className={`grid ${selected.size > 0 ? "grid-cols-[1fr_auto]" : "grid-cols-1"} gap-4 items-end`}>
+                <Input type="search" label={t("search")} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                {selected.size > 0 && (
+                    <Button variant="red" aria-label="Delete" onClick={() => console.log("Remove all")} className="text-sm h-12">
+                        {t("remove-selected")}
+                        <FaTrash />
+                    </Button>
+                )}
+            </div>
             <div
                 className="parent grid border border-gray-400 dark:border-slate-700 overflow-x-auto text-xs"
                 style={{ gridTemplateColumns: gridTemplate }}
@@ -107,7 +132,11 @@ function List<T extends Record<string, any>>({ items, columns, defaultSortCol, o
                 </div>
 
                 {/* Rows */}
-                {items
+                {filteredItems.length === 0 ? (
+                    <div className="py-2 px-4 italic text-zinc-500 dark:text-slate-600 w-full flex items-center justify-center col-span-full">
+                        <span>{t("no-results-found")}</span>
+                    </div>
+                ) : (filteredItems
                     .sort((itemA, itemB) => {
                         const column = columns.find((c) => c.header === sortColumn);
                         if (!column) {
@@ -151,7 +180,7 @@ function List<T extends Record<string, any>>({ items, columns, defaultSortCol, o
                                 </Button>
                             </div>
                         </div>
-                    ))}
+                    )))}
             </div>
         </div>
     );
