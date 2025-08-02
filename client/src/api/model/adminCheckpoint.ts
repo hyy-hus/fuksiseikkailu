@@ -24,6 +24,7 @@ export interface AdminCheckpoint {
   requirements: string;
   lanes: number;
   photo_permission: boolean;
+  adventure_id: number;
   adventure: PublicAdventure;
   active: boolean;
 }

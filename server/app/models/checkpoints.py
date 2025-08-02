@@ -63,6 +63,7 @@ class AdminCheckpoint(BaseCheckpoint):
     photo_permission: bool
     accessible: bool
 
+    adventure_id: int
     adventure: PublicAdventure
     active: bool
 
