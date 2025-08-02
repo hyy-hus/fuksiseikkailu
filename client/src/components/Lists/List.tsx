@@ -81,6 +81,10 @@ export function List<T extends Record<string, any>>({ items, columns, defaultSor
         setFilteredItems(filtered);
     }, [searchQuery, items]);
 
+    useEffect(() => {
+        setSelected(new Set());
+    }, [items]);
+
     const gridTemplate = [
         "auto",
         ...columns.map(col => col.width ?? "auto"),
