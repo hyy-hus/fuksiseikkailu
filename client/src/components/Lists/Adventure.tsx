@@ -20,9 +20,11 @@ interface ListProps<T> {
     defaultSortCol?: keyof T & string;
 
     onChange?: (items: T[]) => void;
+    handleEdit?: (item: T) => void;
+    handleRemove?: (item: T) => void;
 }
 
-function List<T extends Record<string, any>>({ items, columns, defaultSortCol, onChange }: ListProps<T>) {
+function List<T extends Record<string, any>>({ items, columns, defaultSortCol, onChange, handleEdit, handleRemove }: ListProps<T>) {
     const [selected, setSelected] = useState<Set<number>>(new Set());
 
     useEffect(() => {
@@ -141,10 +143,10 @@ function List<T extends Record<string, any>>({ items, columns, defaultSortCol, o
                                 </div>
                             ))}
                             <div className="py-2 px-4 flex items-center justify-center bg-inherit">
-                                <Button variant="transparent" aria-label="Edit">
+                                <Button variant="transparent" aria-label="Edit" onClick={() => handleEdit?.(item)}>
                                     <FaEdit />
                                 </Button>
-                                <Button variant="transparent" aria-label="Delete">
+                                <Button variant="transparent" aria-label="Delete" onClick={() => handleRemove?.(item)}>
                                     <FaTrash />
                                 </Button>
                             </div>
@@ -187,9 +189,11 @@ export function AdventureList() {
 
     return (
         <>
-            <List items={data.data} columns={columns} defaultSortCol="year" onChange={(items) => {
-                console.log(items);
-            }} />
+            <List items={data.data} columns={columns} defaultSortCol="year"
+                onChange={(items) => console.log("selected:", items)}
+                handleEdit={(item) => console.log("edit:", item)}
+                handleRemove={(item) => console.log("remove:", item)}
+            />
         </>
     )
 }
