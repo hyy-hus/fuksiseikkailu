@@ -4,7 +4,15 @@ import { PublicAdventure } from "@api/model";
 import { ColumnDef, List } from "./List";
 import { t } from "i18next";
 
-export function AdventureList() {
+interface AdventureListProps {
+    onChange?: (items: PublicAdventure[]) => void;
+    handleEdit?: (item: PublicAdventure) => void;
+    handleRemove?: (items: PublicAdventure[]) => void;
+}
+
+export function AdventureList(
+    { onChange, handleEdit, handleRemove }: AdventureListProps
+) {
     const { data, isLoading, isError, error } = useListAdventuresAdventuresGet();
 
     if (isLoading) {
@@ -37,9 +45,9 @@ export function AdventureList() {
         <>
             <List items={data.data} columns={columns} defaultSortCol="year"
                 getKey={(item) => item.id}
-                onChange={(items) => console.log("selected:", items)}
-                handleEdit={(item) => console.log("edit:", item)}
-                handleRemove={(item) => console.log("remove:", item)}
+                onChange={onChange}
+                handleEdit={handleEdit}
+                handleRemove={handleRemove}
             />
         </>
     )
