@@ -25,10 +25,13 @@ import type {
 
 import type {
   BodyLoginAuthLoginPost,
+  CreateAdventure,
   CreateUser,
   FetchUserUsersUserIdGetParams,
   HTTPValidationError,
   ListUsersUsersGetParams,
+  ModifyAdventure,
+  PublicAdventure,
   PublicUser,
   Token,
   UpdateUser
@@ -492,6 +495,374 @@ export const useLoginAuthLoginPost = <TError = HTTPValidationError,
       > => {
 
       const mutationOptions = getLoginAuthLoginPostMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary List Adventures
+ */
+export const listAdventuresAdventuresGet = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicAdventure[]>(
+      {url: `/adventures/`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getListAdventuresAdventuresGetQueryKey = () => {
+    return [`/adventures/`] as const;
+    }
+
+    
+export const getListAdventuresAdventuresGetQueryOptions = <TData = Awaited<ReturnType<typeof listAdventuresAdventuresGet>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdventuresAdventuresGet>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListAdventuresAdventuresGetQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listAdventuresAdventuresGet>>> = ({ signal }) => listAdventuresAdventuresGet(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listAdventuresAdventuresGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListAdventuresAdventuresGetQueryResult = NonNullable<Awaited<ReturnType<typeof listAdventuresAdventuresGet>>>
+export type ListAdventuresAdventuresGetQueryError = unknown
+
+
+export function useListAdventuresAdventuresGet<TData = Awaited<ReturnType<typeof listAdventuresAdventuresGet>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdventuresAdventuresGet>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAdventuresAdventuresGet>>,
+          TError,
+          Awaited<ReturnType<typeof listAdventuresAdventuresGet>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListAdventuresAdventuresGet<TData = Awaited<ReturnType<typeof listAdventuresAdventuresGet>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdventuresAdventuresGet>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAdventuresAdventuresGet>>,
+          TError,
+          Awaited<ReturnType<typeof listAdventuresAdventuresGet>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListAdventuresAdventuresGet<TData = Awaited<ReturnType<typeof listAdventuresAdventuresGet>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdventuresAdventuresGet>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List Adventures
+ */
+
+export function useListAdventuresAdventuresGet<TData = Awaited<ReturnType<typeof listAdventuresAdventuresGet>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdventuresAdventuresGet>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListAdventuresAdventuresGetQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary Create Adventure
+ */
+export const createAdventureAdventuresPost = (
+    createAdventure: CreateAdventure,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicAdventure>(
+      {url: `/adventures/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createAdventure, signal
+    },
+      );
+    }
+  
+
+
+export const getCreateAdventureAdventuresPostMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAdventureAdventuresPost>>, TError,{data: CreateAdventure}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof createAdventureAdventuresPost>>, TError,{data: CreateAdventure}, TContext> => {
+
+const mutationKey = ['createAdventureAdventuresPost'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createAdventureAdventuresPost>>, {data: CreateAdventure}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createAdventureAdventuresPost(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateAdventureAdventuresPostMutationResult = NonNullable<Awaited<ReturnType<typeof createAdventureAdventuresPost>>>
+    export type CreateAdventureAdventuresPostMutationBody = CreateAdventure
+    export type CreateAdventureAdventuresPostMutationError = HTTPValidationError
+
+    /**
+ * @summary Create Adventure
+ */
+export const useCreateAdventureAdventuresPost = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAdventureAdventuresPost>>, TError,{data: CreateAdventure}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createAdventureAdventuresPost>>,
+        TError,
+        {data: CreateAdventure},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateAdventureAdventuresPostMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Fetch Adventure
+ */
+export const fetchAdventureAdventuresAdventureIdGet = (
+    adventureId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicAdventure>(
+      {url: `/adventures/${adventureId}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getFetchAdventureAdventuresAdventureIdGetQueryKey = (adventureId: number,) => {
+    return [`/adventures/${adventureId}`] as const;
+    }
+
+    
+export const getFetchAdventureAdventuresAdventureIdGetQueryOptions = <TData = Awaited<ReturnType<typeof fetchAdventureAdventuresAdventureIdGet>>, TError = HTTPValidationError>(adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdventureAdventuresAdventureIdGet>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getFetchAdventureAdventuresAdventureIdGetQueryKey(adventureId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof fetchAdventureAdventuresAdventureIdGet>>> = ({ signal }) => fetchAdventureAdventuresAdventureIdGet(adventureId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(adventureId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof fetchAdventureAdventuresAdventureIdGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type FetchAdventureAdventuresAdventureIdGetQueryResult = NonNullable<Awaited<ReturnType<typeof fetchAdventureAdventuresAdventureIdGet>>>
+export type FetchAdventureAdventuresAdventureIdGetQueryError = HTTPValidationError
+
+
+export function useFetchAdventureAdventuresAdventureIdGet<TData = Awaited<ReturnType<typeof fetchAdventureAdventuresAdventureIdGet>>, TError = HTTPValidationError>(
+ adventureId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdventureAdventuresAdventureIdGet>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchAdventureAdventuresAdventureIdGet>>,
+          TError,
+          Awaited<ReturnType<typeof fetchAdventureAdventuresAdventureIdGet>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchAdventureAdventuresAdventureIdGet<TData = Awaited<ReturnType<typeof fetchAdventureAdventuresAdventureIdGet>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdventureAdventuresAdventureIdGet>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchAdventureAdventuresAdventureIdGet>>,
+          TError,
+          Awaited<ReturnType<typeof fetchAdventureAdventuresAdventureIdGet>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchAdventureAdventuresAdventureIdGet<TData = Awaited<ReturnType<typeof fetchAdventureAdventuresAdventureIdGet>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdventureAdventuresAdventureIdGet>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Fetch Adventure
+ */
+
+export function useFetchAdventureAdventuresAdventureIdGet<TData = Awaited<ReturnType<typeof fetchAdventureAdventuresAdventureIdGet>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdventureAdventuresAdventureIdGet>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getFetchAdventureAdventuresAdventureIdGetQueryOptions(adventureId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary Update Adventure
+ */
+export const updateAdventureAdventuresAdventureIdPatch = (
+    adventureId: number,
+    modifyAdventure: ModifyAdventure,
+ ) => {
+      
+      
+      return customInstance<PublicAdventure>(
+      {url: `/adventures/${adventureId}`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: modifyAdventure
+    },
+      );
+    }
+  
+
+
+export const getUpdateAdventureAdventuresAdventureIdPatchMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdventureAdventuresAdventureIdPatch>>, TError,{adventureId: number;data: ModifyAdventure}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof updateAdventureAdventuresAdventureIdPatch>>, TError,{adventureId: number;data: ModifyAdventure}, TContext> => {
+
+const mutationKey = ['updateAdventureAdventuresAdventureIdPatch'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateAdventureAdventuresAdventureIdPatch>>, {adventureId: number;data: ModifyAdventure}> = (props) => {
+          const {adventureId,data} = props ?? {};
+
+          return  updateAdventureAdventuresAdventureIdPatch(adventureId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateAdventureAdventuresAdventureIdPatchMutationResult = NonNullable<Awaited<ReturnType<typeof updateAdventureAdventuresAdventureIdPatch>>>
+    export type UpdateAdventureAdventuresAdventureIdPatchMutationBody = ModifyAdventure
+    export type UpdateAdventureAdventuresAdventureIdPatchMutationError = HTTPValidationError
+
+    /**
+ * @summary Update Adventure
+ */
+export const useUpdateAdventureAdventuresAdventureIdPatch = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdventureAdventuresAdventureIdPatch>>, TError,{adventureId: number;data: ModifyAdventure}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateAdventureAdventuresAdventureIdPatch>>,
+        TError,
+        {adventureId: number;data: ModifyAdventure},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateAdventureAdventuresAdventureIdPatchMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Delete Adventure
+ */
+export const deleteAdventureAdventuresAdventureIdDelete = (
+    adventureId: number,
+ ) => {
+      
+      
+      return customInstance<unknown>(
+      {url: `/adventures/${adventureId}`, method: 'DELETE'
+    },
+      );
+    }
+  
+
+
+export const getDeleteAdventureAdventuresAdventureIdDeleteMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAdventureAdventuresAdventureIdDelete>>, TError,{adventureId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteAdventureAdventuresAdventureIdDelete>>, TError,{adventureId: number}, TContext> => {
+
+const mutationKey = ['deleteAdventureAdventuresAdventureIdDelete'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteAdventureAdventuresAdventureIdDelete>>, {adventureId: number}> = (props) => {
+          const {adventureId} = props ?? {};
+
+          return  deleteAdventureAdventuresAdventureIdDelete(adventureId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteAdventureAdventuresAdventureIdDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof deleteAdventureAdventuresAdventureIdDelete>>>
+    
+    export type DeleteAdventureAdventuresAdventureIdDeleteMutationError = HTTPValidationError
+
+    /**
+ * @summary Delete Adventure
+ */
+export const useDeleteAdventureAdventuresAdventureIdDelete = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAdventureAdventuresAdventureIdDelete>>, TError,{adventureId: number}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteAdventureAdventuresAdventureIdDelete>>,
+        TError,
+        {adventureId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteAdventureAdventuresAdventureIdDeleteMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }

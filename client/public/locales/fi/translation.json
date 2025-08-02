@@ -21,5 +21,15 @@
     "participants": "Osallistujat",
     "username": "Käyttäjänimi",
     "password": "Salasana",
-    "logging-in": "Kirjaudutaan..."
+    "logging-in": "Kirjaudutaan...",
+
+    "search": "Etsi",
+    "remove-selected": "Poista valitut",
+    "id": "ID",
+    "year": "vuosi",
+    "name": "nimi",
+    "ongoing": "on käynnissä",
+    "test": "on testi",
+    "controls": "toiminnot",
+    "no-results-found": "Tuloksia ei löytynyt"
 }
