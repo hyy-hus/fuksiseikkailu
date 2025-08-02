@@ -15,7 +15,14 @@ from app.models.checkpoints import (
     CreateCheckpoint,
 )
 
-# Rebuild AFTER everything is imported
+from app.models.teams import (
+    DBTeam,
+    AdminTeam,
+    PublicTeam,
+    ModifyTeam,
+    CreateTeam,
+)
+
 for model in [
     LinkedAdventure,
     PublicAdventure,
@@ -27,7 +34,12 @@ for model in [
     ModifyCheckpoint,
     CreateCheckpoint,
     DBCheckpoint,
+    DBTeam,
+    AdminTeam,
+    PublicTeam,
+    ModifyTeam,
+    CreateTeam,
 ]:
     model.model_rebuild()
 
-__all__ = ["DBUser", "DBAdventure", "DBCheckpoint"]
+__all__ = ["DBUser", "DBAdventure", "DBCheckpoint", "DBTeam"]
