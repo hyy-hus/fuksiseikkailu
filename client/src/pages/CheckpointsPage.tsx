@@ -1,6 +1,7 @@
-import { getListAdventuresAdventuresGetQueryKey, useDeleteAdventureAdventuresAdventureIdDelete, useDeleteCheckpointCheckpointsCheckpointIdDelete } from "@api/endpoints";
-import { PublicAdventure, PublicCheckpoint } from "@api/model";
-import { CreateAdventureForm, CreateCheckpointForm, ModifyAdventureForm } from "@components/Forms/";
+import { getListAdventuresAdventuresGetQueryKey, useDeleteCheckpointCheckpointsCheckpointIdDelete } from "@api/endpoints";
+import { PublicCheckpoint } from "@api/model";
+import { CreateCheckpointForm } from "@components/Forms/";
+import { ModifyCheckpointForm } from "@components/Forms/ModifyCheckpoint";
 import { CheckpointList } from "@components/Lists";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -54,7 +55,7 @@ export function CheckpointsPage() {
             </div>
             <div className={selected?.length === 1 ? "block" : "hidden"}>
                 <h3>{t("modify-adventure")} {selected[0]?.org_name ?? ""}</h3>
-                <ModifyAdventureForm adventureId={selected[0]?.id ?? 0} />
+                <ModifyCheckpointForm checkpointId={selected[0]?.id ?? 0} />
             </div>
         </div>
     )
