@@ -31,7 +31,7 @@ export function List<T extends Record<string, any>>({ items, columns, defaultSor
         if (onChange) {
             onChange(items.filter((item) => selected.has(getKey(item))));
         }
-    }, [selected, items, onChange, getKey]);
+    }, [selected, onChange]);
 
     function toggleSelect(key: string | number) {
         const newSet = new Set(selected);
