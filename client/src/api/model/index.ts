@@ -5,21 +5,26 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './adminCheckpoint';
 export * from './bodyLoginAuthLoginPost';
 export * from './bodyLoginAuthLoginPostClientId';
 export * from './bodyLoginAuthLoginPostClientSecret';
 export * from './bodyLoginAuthLoginPostGrantType';
 export * from './createAdventure';
+export * from './createCheckpoint';
 export * from './createUser';
 export * from './fetchUserUsersUserIdGetParams';
 export * from './hTTPValidationError';
+export * from './linkedAdventure';
 export * from './listUsersUsersGetParams';
 export * from './modifyAdventure';
 export * from './modifyAdventureName';
 export * from './modifyAdventureOngoing';
 export * from './modifyAdventureTest';
 export * from './modifyAdventureYear';
+export * from './modifyCheckpoint';
 export * from './publicAdventure';
+export * from './publicCheckpoint';
 export * from './publicUser';
 export * from './role';
 export * from './token';

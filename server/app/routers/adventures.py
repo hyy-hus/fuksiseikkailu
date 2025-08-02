@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select
 from app.models.adventures import (
     DBAdventure,
+    LinkedAdventure,
     PublicAdventure,
     ModifyAdventure,
     CreateAdventure,
@@ -12,7 +13,7 @@ from sqlmodel import Session
 router = APIRouter(prefix="/adventures", tags=["adventures"])
 
 
-@router.get("/", response_model=list[PublicAdventure])
+@router.get("/", response_model=list[LinkedAdventure])
 def list_adventures(
     session: Session = Depends(get_session),
 ):
