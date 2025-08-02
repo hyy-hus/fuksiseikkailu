@@ -1,16 +1,17 @@
 import { useListAdventuresAdventuresGet } from "@api/endpoints";
 import { PublicAdventure } from "@api/model";
 import { t } from "i18next";
-import { useState, Fragment } from "react";
+import { useState } from "react";
 
 import { Button } from "@components/Button";
 
-import { FaTrash, FaEdit } from "react-icons/fa";
+import { FaTrash, FaEdit, FaAngleUp, FaAngleDown } from "react-icons/fa";
 
 interface ColumnDef<T> {
-    header: string;
+    header: keyof T & string;
     render: (item: T) => React.ReactNode;
     width?: string;
+    sortAccessor?: (item: T) => string | number;
 }
 
 interface ListProps<T> {
@@ -18,7 +19,7 @@ interface ListProps<T> {
     columns: ColumnDef<T>[];
 }
 
-function List<T>({ items, columns }: ListProps<T>) {
+function List<T extends Record<string, any>>({ items, columns }: ListProps<T>) {
     const [selected, setSelected] = useState<Set<number>>(new Set());
 
     function toggleSelect(index: number) {
@@ -31,6 +32,20 @@ function List<T>({ items, columns }: ListProps<T>) {
         setSelected(newSet);
     }
 
+    type SortDirection = "asc" | "desc";
+
+    const [sortColumn, setSortColumn] = useState<string>(columns[0].header);
+    const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+
+    function setSort(col: string) {
+        if (sortColumn === col) {
+            setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+        } else {
+            setSortDirection("desc");
+            setSortColumn(col);
+        }
+    }
+
     const gridTemplate = [
         "auto",
         ...columns.map(col => col.width ?? "auto"),
@@ -38,54 +53,85 @@ function List<T>({ items, columns }: ListProps<T>) {
     ].join(" ");
 
     return (
-        <div
-            className="parent grid border border-gray-400 dark:border-slate-700 overflow-x-auto text-xs"
-            style={{ gridTemplateColumns: gridTemplate }}
-        >
-            {/* Header Row */}
-            <div className="contents">
-                <div className="bg-gray-100 dark:bg-slate-800 font-bold px-4 py-2 flex items-center justify-center border-b border-gray-400 dark:border-slate-700">
-                    <input type="checkbox" />
-                </div>
-
-                {columns.map((col) => (
-                    <div
-                        key={col.header}
-                        className="bg-gray-100 dark:bg-slate-800 font-bold px-4 py-2 flex items-center border-b border-gray-400 dark:border-slate-700"
-                    >
-                        {t(col.header)}
+        <div>
+            <div
+                className="parent grid border border-gray-400 dark:border-slate-700 overflow-x-auto text-xs"
+                style={{ gridTemplateColumns: gridTemplate }}
+            >
+                {/* Header Row */}
+                <div className="contents">
+                    <div className="bg-gray-100 dark:bg-slate-800 font-bold px-4 py-2 flex items-center justify-center border-b border-gray-400 dark:border-slate-700">
+                        <input type="checkbox" />
                     </div>
-                ))}
-                <div className="bg-gray-100 dark:bg-slate-800 font-bold px-4 py-2 border-b border-gray-400 dark:border-slate-700 flex items-center justify-center">
-                    {t("controls")}
-                </div>
-            </div>
 
-            {/* Rows */}
-            {items.map((item, idx) => (
-                <div key={idx} className="contents divide-x divide-slate-700 odd:bg-zinc-300 dark:odd:bg-slate-800">
-                    <div className="py-2 px-4 flex items-center justify-center bg-inherit">
-                        <input
-                            type="checkbox"
-                            checked={selected.has(idx)}
-                            onChange={() => toggleSelect(idx)}
-                        />
-                    </div>
                     {columns.map((col) => (
-                        <div key={col.header} className="py-2 px-4 flex items-center bg-inherit">
-                            {col.render(item)}
+                        <div
+                            key={col.header}
+                            onClick={() => setSort(col.header)}
+                            className="bg-gray-100 dark:bg-slate-800 font-bold px-4 py-2 flex items-center border-b border-gray-400 dark:border-slate-700"
+                        >
+                            {t(col.header)}
+                            {col.header === sortColumn ?
+                                <span className="w-2">
+                                    {
+                                        sortDirection === "asc" ? <FaAngleUp /> : <FaAngleDown />
+                                    }
+                                </span> :
+                                <span className="w-2"></span>}
                         </div>
                     ))}
-                    <div className="py-2 px-4 flex items-center justify-center bg-inherit">
-                        <Button variant="transparent" aria-label="Edit">
-                            <FaEdit />
-                        </Button>
-                        <Button variant="transparent" aria-label="Delete">
-                            <FaTrash />
-                        </Button>
+                    <div className="bg-gray-100 dark:bg-slate-800 font-bold px-4 py-2 border-b border-gray-400 dark:border-slate-700 flex items-center justify-center">
+                        {t("controls")}
                     </div>
                 </div>
-            ))}
+
+                {/* Rows */}
+                {items
+                    .sort((itemA, itemB) => {
+                        const column = columns.find((c) => c.header === sortColumn);
+                        if (!column) {
+                            return 0;
+                        }
+
+                        const getValue = column.sortAccessor ?? ((i: T) => (i as any)[column.header]);
+
+                        const a = getValue(itemA);
+                        const b = getValue(itemB);
+
+                        if (a === b) {
+                            return 0;
+                        }
+                        if (a < b) {
+                            return sortDirection === "asc" ? -1 : 1;
+                        }
+
+                        return sortDirection === "asc" ? 1 : -1;
+                    })
+                    .map((item, idx) => (
+                        <div key={idx} className="contents divide-x divide-slate-700 odd:bg-zinc-300 dark:odd:bg-slate-800">
+                            <div className="py-2 px-4 flex items-center justify-center bg-inherit">
+                                <input
+                                    type="checkbox"
+                                    checked={selected.has(idx)}
+                                    onChange={() => toggleSelect(idx)}
+                                />
+                            </div>
+                            {columns.map((col) => (
+                                <div key={col.header} className="py-2 px-4 flex items-center bg-inherit">
+                                    {col.render(item)}
+                                </div>
+                            ))}
+                            <div className="py-2 px-4 flex items-center justify-center bg-inherit">
+                                <Button variant="transparent" aria-label="Edit">
+                                    <FaEdit />
+                                </Button>
+                                <Button variant="transparent" aria-label="Delete">
+                                    <FaTrash />
+                                </Button>
+                            </div>
+                        </div>
+                    ))}
+            </div>
         </div>
     );
 }
@@ -112,7 +158,7 @@ export function AdventureList() {
         return <div>No adventures found</div>
     }
 
-    const columns = [
+    const columns: ColumnDef<PublicAdventure>[] = [
         { header: "id", render: (a: PublicAdventure) => a.id },
         { header: "year", render: (a: PublicAdventure) => a.year },
         { header: "name", render: (a: PublicAdventure) => a.name, width: "1fr" },
