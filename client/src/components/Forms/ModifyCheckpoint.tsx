@@ -1,17 +1,25 @@
 import {
+    useFetchAdminCheckpointCheckpointsAdminCheckpointIdGet,
+    useUpdateCheckpointCheckpointsCheckpointIdPatch,
+    useListAdventuresAdventuresGet,
     getListAdminCheckpointsCheckpointsAdminGetQueryKey,
-    useCreateCheckpointCheckpointsPost,
-    useListAdventuresAdventuresGet
+    getFetchAdminCheckpointCheckpointsAdminCheckpointIdGetQueryKey,
 } from "@api/endpoints";
 import { Form, FieldDef, Option } from "./Form";
-import { CreateCheckpoint } from "@api/model";
+import { ModifyCheckpoint } from "@api/model";
 import { t } from "i18next";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
-export function CreateCheckpointForm() {
+interface CheckpointFormProps {
+    checkpointId: number;
+}
+
+export function ModifyCheckpointForm({ checkpointId }: CheckpointFormProps) {
     const queryClient = useQueryClient();
-    const createMutation = useCreateCheckpointCheckpointsPost();
+    const { data, isLoading, isError, error } = useFetchAdminCheckpointCheckpointsAdminCheckpointIdGet(checkpointId);
+    const updateMutation = useUpdateCheckpointCheckpointsCheckpointIdPatch();
+
     const getAdventures = useListAdventuresAdventuresGet();
 
     const [adventureOptions, setAdventureOptions] = useState<Option[]>([]);
@@ -22,18 +30,41 @@ export function CreateCheckpointForm() {
         }
     }, [getAdventures.data?.data])
 
-    function handleCreate(item: CreateCheckpoint) {
-        createMutation.mutateAsync(
-            { data: item }
+
+    if (isLoading) {
+        return (
+            <div>{t("loading")}</div>
+        );
+    }
+
+    if (isError || updateMutation.isError) {
+        return (
+            <div className="text-red-600">
+                {t("network-error")}: {String((error as any || updateMutation.error)?.message ?? error)}
+            </div>
+        )
+    }
+
+    if (!data) {
+        return <div>{t("not-found")}</div>
+    }
+
+    function handleSave(item: ModifyCheckpoint) {
+        updateMutation.mutateAsync(
+            { checkpointId: checkpointId, data: item }
         ).then(() => {
             queryClient.invalidateQueries({
                 queryKey: getListAdminCheckpointsCheckpointsAdminGetQueryKey(),
+            })
+
+            queryClient.invalidateQueries({
+                queryKey: getFetchAdminCheckpointCheckpointsAdminCheckpointIdGetQueryKey(checkpointId),
             })
         })
     }
 
 
-    const fields: FieldDef<CreateCheckpoint>[] = [
+    const fields: FieldDef<ModifyCheckpoint>[] = [
         { key: "adventure_id", name: t("adventure-id"), type: "option", options: adventureOptions },
         { key: "org_name", name: t("org-name"), type: "text" },
         { key: "org_abbreviation", name: t("org-abbreviation"), type: "text" },
@@ -53,9 +84,7 @@ export function CreateCheckpointForm() {
         { key: "photo_permission", name: t("photo-permission"), type: "toggle" },
     ]
 
-    const emptyItem = useMemo(() => ({} as CreateCheckpoint), []);
-
     return (
-        <Form item={emptyItem} fields={fields} onSave={handleCreate} />
+        <Form item={{ ...data.data }} fields={fields} onSave={handleSave} />
     )
 }
