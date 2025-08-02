@@ -44,19 +44,19 @@ function List<T>({ items, columns }: ListProps<T>) {
         >
             {/* Header Row */}
             <div className="contents">
-                <div className="bg-gray-100 dark:bg-slate-800 font-bold p-1 md:p-2 flex items-center justify-center border-b border-gray-400 dark:border-slate-700">
+                <div className="bg-gray-100 dark:bg-slate-800 font-bold px-4 py-2 flex items-center justify-center border-b border-gray-400 dark:border-slate-700">
                     <input type="checkbox" />
                 </div>
 
                 {columns.map((col) => (
                     <div
                         key={col.header}
-                        className="bg-gray-100 dark:bg-slate-800 font-bold p-2 md:p-2 flex items-center border-b border-gray-400 dark:border-slate-700"
+                        className="bg-gray-100 dark:bg-slate-800 font-bold px-4 py-2 flex items-center border-b border-gray-400 dark:border-slate-700"
                     >
                         {t(col.header)}
                     </div>
                 ))}
-                <div className="bg-gray-100 dark:bg-slate-800 font-bold p-2 border-b border-gray-400 dark:border-slate-700 flex items-center justify-center">
+                <div className="bg-gray-100 dark:bg-slate-800 font-bold px-4 py-2 border-b border-gray-400 dark:border-slate-700 flex items-center justify-center">
                     {t("controls")}
                 </div>
             </div>
@@ -64,7 +64,7 @@ function List<T>({ items, columns }: ListProps<T>) {
             {/* Rows */}
             {items.map((item, idx) => (
                 <div key={idx} className="contents divide-x divide-slate-700 odd:bg-zinc-300 dark:odd:bg-slate-800">
-                    <div className="p-2 flex items-center justify-center bg-inherit">
+                    <div className="py-2 px-4 flex items-center justify-center bg-inherit">
                         <input
                             type="checkbox"
                             checked={selected.has(idx)}
@@ -72,11 +72,11 @@ function List<T>({ items, columns }: ListProps<T>) {
                         />
                     </div>
                     {columns.map((col) => (
-                        <div key={col.header} className="p-2 flex items-center bg-inherit">
+                        <div key={col.header} className="py-2 px-4 flex items-center bg-inherit">
                             {col.render(item)}
                         </div>
                     ))}
-                    <div className="p-2 flex items-center justify-center bg-inherit">
+                    <div className="py-2 px-4 flex items-center justify-center bg-inherit">
                         <Button variant="transparent" aria-label="Edit">
                             <FaEdit />
                         </Button>
@@ -122,7 +122,6 @@ export function AdventureList() {
 
     return (
         <>
-            <h3>Adventures</h3>
             <List items={data.data} columns={columns} />
         </>
     )
