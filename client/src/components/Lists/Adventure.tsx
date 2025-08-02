@@ -1,7 +1,7 @@
 import { useListAdventuresAdventuresGet } from "@api/endpoints";
 import { PublicAdventure } from "@api/model";
 import { t } from "i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@components/Button";
 
@@ -18,10 +18,18 @@ interface ListProps<T> {
     items: T[];
     columns: ColumnDef<T>[];
     defaultSortCol?: keyof T & string;
+
+    onChange?: (items: T[]) => void;
 }
 
-function List<T extends Record<string, any>>({ items, columns, defaultSortCol }: ListProps<T>) {
+function List<T extends Record<string, any>>({ items, columns, defaultSortCol, onChange }: ListProps<T>) {
     const [selected, setSelected] = useState<Set<number>>(new Set());
+
+    useEffect(() => {
+        if (onChange) {
+            onChange(items.filter((_, idx) => selected.has(idx)));
+        }
+    }, [selected, onChange])
 
     function toggleSelect(index: number) {
         const newSet = new Set(selected);
@@ -31,6 +39,15 @@ function List<T extends Record<string, any>>({ items, columns, defaultSortCol }:
             newSet.add(index);
         }
         setSelected(newSet);
+    }
+
+    function selectAll() {
+        if (selected.size !== items.length) {
+            const newSet = new Set(items.map((_, idx) => idx));
+            setSelected(newSet);
+        } else {
+            setSelected(new Set());
+        }
     }
 
     type SortDirection = "asc" | "desc";
@@ -61,7 +78,9 @@ function List<T extends Record<string, any>>({ items, columns, defaultSortCol }:
             >
                 <div className="contents">
                     <div className="bg-gray-100 dark:bg-slate-800 font-bold px-4 py-2 flex items-center justify-center border-b border-gray-400 dark:border-slate-700">
-                        <input type="checkbox" />
+                        <input type="checkbox" onClick={selectAll}
+                            checked={selected.size === items.length} readOnly
+                        />
                     </div>
 
                     {columns.map((col) => (
@@ -168,7 +187,9 @@ export function AdventureList() {
 
     return (
         <>
-            <List items={data.data} columns={columns} defaultSortCol="year" />
+            <List items={data.data} columns={columns} defaultSortCol="year" onChange={(items) => {
+                console.log(items);
+            }} />
         </>
     )
 }
