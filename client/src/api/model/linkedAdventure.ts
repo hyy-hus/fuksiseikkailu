@@ -5,6 +5,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { PublicCheckpoint } from './publicCheckpoint';
+import type { PublicTeam } from './publicTeam';
 
 export interface LinkedAdventure {
   name: string;
@@ -13,4 +14,5 @@ export interface LinkedAdventure {
   test: boolean;
   id: number;
   checkpoints: PublicCheckpoint[];
+  teams: PublicTeam[];
 }

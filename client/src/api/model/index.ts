@@ -6,13 +6,17 @@
  */
 
 export * from './adminCheckpoint';
+export * from './adminTeam';
 export * from './bodyLoginAuthLoginPost';
 export * from './bodyLoginAuthLoginPostClientId';
 export * from './bodyLoginAuthLoginPostClientSecret';
 export * from './bodyLoginAuthLoginPostGrantType';
 export * from './createAdventure';
 export * from './createCheckpoint';
+export * from './createTeam';
 export * from './createUser';
+export * from './dBAdventure';
+export * from './dBAdventureId';
 export * from './fetchUserUsersUserIdGetParams';
 export * from './hTTPValidationError';
 export * from './linkedAdventure';
@@ -23,8 +27,10 @@ export * from './modifyAdventureOngoing';
 export * from './modifyAdventureTest';
 export * from './modifyAdventureYear';
 export * from './modifyCheckpoint';
+export * from './modifyTeam';
 export * from './publicAdventure';
 export * from './publicCheckpoint';
+export * from './publicTeam';
 export * from './publicUser';
 export * from './role';
 export * from './token';
