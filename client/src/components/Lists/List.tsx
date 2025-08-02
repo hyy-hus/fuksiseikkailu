@@ -31,7 +31,7 @@ export function List<T extends Record<string, any>>({ items, columns, defaultSor
         if (onChange) {
             onChange(items.filter((item) => selected.has(getKey(item))));
         }
-    }, [selected, onChange]);
+    }, [selected, onChange, items]);
 
     function toggleSelect(key: string | number) {
         const newSet = new Set(selected);
@@ -79,7 +79,7 @@ export function List<T extends Record<string, any>>({ items, columns, defaultSor
             ;
 
         setFilteredItems(filtered);
-    }, [searchQuery]);
+    }, [searchQuery, items]);
 
     const gridTemplate = [
         "auto",
