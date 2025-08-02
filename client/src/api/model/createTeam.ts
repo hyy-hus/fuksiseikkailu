@@ -7,5 +7,4 @@
 
 export interface CreateTeam {
   name: string;
-  adventure_id: number;
 }

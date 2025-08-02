@@ -7,5 +7,4 @@
 
 export interface ModifyTeam {
   name: string;
-  adventure_id: number;
 }
