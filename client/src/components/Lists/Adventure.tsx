@@ -19,34 +19,35 @@ interface ListProps<T> {
     items: T[];
     columns: ColumnDef<T>[];
     defaultSortCol?: keyof T & string;
+    getKey: (item: T) => string | number;
 
     onChange?: (items: T[]) => void;
     handleEdit?: (item: T) => void;
     handleRemove?: (item: T) => void;
 }
 
-function List<T extends Record<string, any>>({ items, columns, defaultSortCol, onChange, handleEdit, handleRemove }: ListProps<T>) {
-    const [selected, setSelected] = useState<Set<number>>(new Set());
+function List<T extends Record<string, any>>({ items, columns, defaultSortCol, getKey, onChange, handleEdit, handleRemove }: ListProps<T>) {
+    const [selected, setSelected] = useState<Set<string | number>>(new Set());
 
     useEffect(() => {
         if (onChange) {
-            onChange(items.filter((_, idx) => selected.has(idx)));
+            onChange(items.filter((item) => selected.has(getKey(item))));
         }
-    }, [selected, onChange])
+    }, [selected, items, onChange, getKey]);
 
-    function toggleSelect(index: number) {
+    function toggleSelect(key: string | number) {
         const newSet = new Set(selected);
-        if (newSet.has(index)) {
-            newSet.delete(index);
+        if (newSet.has(key)) {
+            newSet.delete(key);
         } else {
-            newSet.add(index);
+            newSet.add(key);
         }
         setSelected(newSet);
     }
 
     function selectAll() {
-        if (selected.size !== items.length) {
-            const newSet = new Set(filteredItems.map((_, idx) => idx));
+        if (selected.size !== filteredItems.length) {
+            const newSet = new Set(filteredItems.map(getKey));
             setSelected(newSet);
         } else {
             setSelected(new Set());
@@ -106,7 +107,7 @@ function List<T extends Record<string, any>>({ items, columns, defaultSortCol, o
                 <div className="contents">
                     <div className="bg-gray-100 dark:bg-slate-800 font-bold px-4 py-2 flex items-center justify-center border-b border-gray-400 dark:border-slate-700">
                         <input type="checkbox" onClick={selectAll}
-                            checked={selected.size === items.length} readOnly
+                            checked={selected.size === filteredItems.length} readOnly
                         />
                     </div>
 
@@ -157,30 +158,33 @@ function List<T extends Record<string, any>>({ items, columns, defaultSortCol, o
 
                         return sortDirection === "asc" ? 1 : -1;
                     })
-                    .map((item, idx) => (
-                        <div key={idx} className="contents divide-x divide-slate-700 odd:bg-zinc-300 dark:odd:bg-slate-800">
-                            <div className="py-2 px-4 flex items-center justify-center bg-inherit">
-                                <input
-                                    type="checkbox"
-                                    checked={selected.has(idx)}
-                                    onChange={() => toggleSelect(idx)}
-                                />
-                            </div>
-                            {columns.map((col) => (
-                                <div key={col.header} className="py-2 px-4 flex items-center bg-inherit">
-                                    {col.render(item)}
+                    .map((item) => {
+                        const key = getKey(item);
+                        return (
+                            <div key={key} className="contents divide-x divide-slate-700 odd:bg-zinc-300 dark:odd:bg-slate-800">
+                                <div className="py-2 px-4 flex items-center justify-center bg-inherit">
+                                    <input
+                                        type="checkbox"
+                                        checked={selected.has(key)}
+                                        onChange={() => toggleSelect(key)}
+                                    />
                                 </div>
-                            ))}
-                            <div className="py-2 px-4 flex items-center justify-center bg-inherit">
-                                <Button variant="transparent" aria-label="Edit" onClick={() => handleEdit?.(item)}>
-                                    <FaEdit />
-                                </Button>
-                                <Button variant="transparent" aria-label="Delete" onClick={() => handleRemove?.(item)}>
-                                    <FaTrash />
-                                </Button>
+                                {columns.map((col) => (
+                                    <div key={col.header} className="py-2 px-4 flex items-center bg-inherit">
+                                        {col.render(item)}
+                                    </div>
+                                ))}
+                                <div className="py-2 px-4 flex items-center justify-center bg-inherit">
+                                    <Button variant="transparent" aria-label="Edit" onClick={() => handleEdit?.(item)}>
+                                        <FaEdit />
+                                    </Button>
+                                    <Button variant="transparent" aria-label="Delete" onClick={() => handleRemove?.(item)}>
+                                        <FaTrash />
+                                    </Button>
+                                </div>
                             </div>
-                        </div>
-                    )))}
+                        )
+                    }))}
             </div>
         </div>
     );
@@ -219,6 +223,7 @@ export function AdventureList() {
     return (
         <>
             <List items={data.data} columns={columns} defaultSortCol="year"
+                getKey={(item) => item.id}
                 onChange={(items) => console.log("selected:", items)}
                 handleEdit={(item) => console.log("edit:", item)}
                 handleRemove={(item) => console.log("remove:", item)}
