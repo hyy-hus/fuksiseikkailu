@@ -1,16 +1,16 @@
 from sqlmodel import SQLModel, Field, Relationship
+from pydantic import BaseModel, Field as PydanticField
 
 from app.models.adventures import PublicAdventure, DBAdventure
 
 
 class BaseTeam(SQLModel):
-    name: str
+    name: str = Field(description="Name of the team")
 
 
 class DBTeam(BaseTeam, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: int | None = Field(primary_key=True, default=None)
     name: str = Field()
-
     adventure_id: int | None = Field(default=None, foreign_key="dbadventure.id")
     adventure: DBAdventure | None = Relationship(back_populates="teams")
 
@@ -28,17 +28,19 @@ class AdminTeam(BaseTeam):
 
 
 class PublicTeam(BaseTeam):
-    id: int
+    id: int = Field(description="Unique identifier")
     name: str
 
     adventure: PublicAdventure
 
 
-class CreateTeam(BaseTeam):
-    name: str
-    # adventure_id: int
+class CreateTeam(BaseModel):
+    name: str = PydanticField(
+        ..., description="Name of the team", example="Theologian Tigers"
+    )
 
 
-class ModifyTeam(BaseTeam):
-    name: str
-    # adventure_id: int
+class ModifyTeam(BaseModel):
+    name: str = PydanticField(
+        ..., description="Name of the team", example="Evil Engineers"
+    )

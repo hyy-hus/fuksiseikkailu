@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import select
+from fastapi import APIRouter, Depends, HTTPException, Path
+from sqlmodel import select, Session
+from sqlalchemy import and_
 from app.models.teams import (
     DBTeam,
     PublicTeam,
@@ -8,28 +9,48 @@ from app.models.teams import (
     CreateTeam,
 )
 from app.core.db import get_session
-from sqlmodel import Session
 
-router = APIRouter(prefix="/adventures/{adventure_id}/teams", tags=["teams"])
+router = APIRouter(
+    prefix="/adventures/{adventure_id}/teams",
+    tags=["teams"],
+)
 
 
-@router.get("/", response_model=list[PublicTeam])
+@router.get(
+    "/",
+    response_model=list[PublicTeam],
+    operation_id="listTeams",
+    summary="List all teams in an adventure",
+    description="Returns all active teams for the specified adventure.",
+)
 def list_teams(
-    adventure_id: int,
-    session: Session = Depends(get_session),
-):
-    query = select(DBTeam).where(DBTeam.adventure_id == adventure_id and DBTeam.active)
-    return session.exec(query).all()
-
-
-@router.get("/{team_id}", response_model=PublicTeam)
-def fetch_team(
-    team_id: int,
-    adventure_id: int,
+    adventure_id: int = Path(..., description="Adventure ID"),
     session: Session = Depends(get_session),
 ):
     query = select(DBTeam).where(
-        DBTeam.id == team_id and DBTeam.adventure_id == adventure_id and DBTeam.active
+        and_(DBTeam.adventure_id == adventure_id, DBTeam.active)
+    )
+    return session.exec(query).all()
+
+
+@router.get(
+    "/{team_id}",
+    response_model=PublicTeam,
+    operation_id="fetchTeam",
+    summary="Fetch a team in an adventure",
+    description="Returns publicly available information about the team specified by *team_id*.",
+    responses={
+        200: {"description": "Team fetched succesfully"},
+        404: {"description": "Team could not be found"},
+    },
+)
+def fetch_team(
+    team_id: int = Path(..., description="ID of the team"),
+    adventure_id: int = Path(..., description="ID of the adventure"),
+    session: Session = Depends(get_session),
+):
+    query = select(DBTeam).where(
+        and_(DBTeam.id == team_id, DBTeam.adventure_id == adventure_id, DBTeam.active)
     )
     db_team = session.exec(query).one_or_none()
 
@@ -41,23 +62,44 @@ def fetch_team(
     return db_team
 
 
-@router.get("/admin/", response_model=list[AdminTeam])
+@router.get(
+    "/admin/",
+    response_model=list[AdminTeam],
+    operation_id="listAdminTeams",
+    summary="List all teams in an adventure",
+    description="Returns admin level list of all active teams for the specified adventure.",
+    responses={
+        200: {"description": "Team fetched succesfully"},
+    },
+    tags=["admin"],
+)
 def list_admin_teams(
-    adventure_id: int,
+    adventure_id: int = Path(..., description="ID of the adventure"),
     session: Session = Depends(get_session),
 ):
     query = select(DBTeam).where(DBTeam.adventure_id == adventure_id)
     return session.exec(query).all()
 
 
-@router.get("/admin/{team_id}", response_model=AdminTeam)
+@router.get(
+    "/admin/{team_id}",
+    response_model=AdminTeam,
+    operation_id="fetchAdminTeam",
+    summary="Fetch a single team in an adventure",
+    description="Fetches a team in an adventure specified by it's id",
+    responses={
+        200: {"description": "Team fetched succesfully"},
+        404: {"description": "Team could not be found"},
+    },
+    tags=["admin"],
+)
 def fetch_admin_team(
-    adventure_id: int,
-    team_id: int,
+    adventure_id: int = Path(..., description="ID of the adventure"),
+    team_id: int = Path(..., description="ID of the team"),
     session: Session = Depends(get_session),
 ):
     query = select(DBTeam).where(
-        DBTeam.id == team_id and DBTeam.adventure_id == adventure_id
+        and_(DBTeam.id == team_id, DBTeam.adventure_id == adventure_id)
     )
     db_team = session.exec(query).one_or_none()
 
@@ -69,9 +111,17 @@ def fetch_admin_team(
     return db_team
 
 
-@router.post("/", response_model=PublicTeam)
+@router.post(
+    "/",
+    response_model=PublicTeam,
+    operation_id="createTeam",
+    summary="Create a team",
+    description="Creates a new team specified by *request body*",
+)
 def create_team(
-    team: CreateTeam, adventure_id, session: Session = Depends(get_session)
+    team: CreateTeam,
+    adventure_id: int = Path(..., description="ID of the adventure"),
+    session: Session = Depends(get_session),
 ):
     db_team = DBTeam.model_validate(team)
     db_team.adventure_id = adventure_id
@@ -83,15 +133,25 @@ def create_team(
     return db_team
 
 
-@router.patch("/{team_id}", response_model=PublicTeam)
+@router.patch(
+    "/{team_id}",
+    response_model=PublicTeam,
+    operation_id="patchTeam",
+    summary="Update a team",
+    description="Update team specified by *team_id* and *adventure_id*",
+    responses={
+        200: {"description": "Team updated succesfully"},
+        404: {"description": "Team could not be found"},
+    },
+)
 def update_team(
-    team_id: int,
-    adventure_id: int,
     team: ModifyTeam,
+    team_id: int = Path(..., description="ID of the team"),
+    adventure_id: int = Path(..., description="ID of the adventure"),
     session: Session = Depends(get_session),
 ):
     query = select(DBTeam).where(
-        DBTeam.id == team_id and DBTeam.adventure_id == adventure_id and DBTeam.active
+        and_(DBTeam.id == team_id, DBTeam.adventure_id == adventure_id, DBTeam.active)
     )
     db_team = session.exec(query).one_or_none()
 
@@ -111,7 +171,16 @@ def update_team(
     return db_team
 
 
-@router.delete("/{team_id}")
+@router.delete(
+    "/{team_id}",
+    operation_id="deleteTeam",
+    summary="Delete a team",
+    description="Delete team specified by *team_id* and *adventure_id*",
+    responses={
+        200: {"description": "Team deleted succesfully"},
+        404: {"description": "Team could not be found"},
+    },
+)
 def delete_team(
     team_id: int,
     adventure_id: int,
@@ -119,9 +188,7 @@ def delete_team(
 ):
     db_team = session.exec(
         select(DBTeam).where(
-            DBTeam.id == team_id
-            and DBTeam.adventure_id == adventure_id
-            and DBTeam.active
+            (DBTeam.id == team_id, DBTeam.adventure_id == adventure_id, DBTeam.active)
         )
     ).one_or_none()
 
