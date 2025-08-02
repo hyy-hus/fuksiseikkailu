@@ -36,9 +36,9 @@ class PublicTeam(BaseTeam):
 
 class CreateTeam(BaseTeam):
     name: str
-    adventure_id: int
+    # adventure_id: int
 
 
 class ModifyTeam(BaseTeam):
     name: str
-    adventure_id: int
+    # adventure_id: int
