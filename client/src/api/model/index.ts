@@ -17,6 +17,7 @@ export * from './createTeam';
 export * from './createUser';
 export * from './dBAdventure';
 export * from './dBAdventureId';
+export * from './deleteResponse';
 export * from './fetchUserUsersUserIdGetParams';
 export * from './hTTPValidationError';
 export * from './linkedAdventure';

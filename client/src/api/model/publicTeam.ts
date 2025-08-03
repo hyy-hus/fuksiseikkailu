@@ -8,6 +8,7 @@ import type { PublicAdventure } from './publicAdventure';
 
 export interface PublicTeam {
   name: string;
+  /** Unique identifier */
   id: number;
   adventure: PublicAdventure;
 }

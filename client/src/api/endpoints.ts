@@ -31,6 +31,7 @@ import type {
   CreateCheckpoint,
   CreateTeam,
   CreateUser,
+  DeleteResponse,
   FetchUserUsersUserIdGetParams,
   HTTPValidationError,
   LinkedAdventure,
@@ -1421,9 +1422,10 @@ export function useFetchAdminCheckpointCheckpointsAdminCheckpointIdGet<TData = A
 
 
 /**
- * @summary List Teams
+ * Returns all active teams for the specified adventure.
+ * @summary List all teams in an adventure
  */
-export const listTeamsAdventuresAdventureIdTeamsGet = (
+export const listTeams = (
     adventureId: number,
  signal?: AbortSignal
 ) => {
@@ -1436,67 +1438,67 @@ export const listTeamsAdventuresAdventureIdTeamsGet = (
     }
   
 
-export const getListTeamsAdventuresAdventureIdTeamsGetQueryKey = (adventureId: number,) => {
+export const getListTeamsQueryKey = (adventureId: number,) => {
     return [`/adventures/${adventureId}/teams/`] as const;
     }
 
     
-export const getListTeamsAdventuresAdventureIdTeamsGetQueryOptions = <TData = Awaited<ReturnType<typeof listTeamsAdventuresAdventureIdTeamsGet>>, TError = HTTPValidationError>(adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTeamsAdventuresAdventureIdTeamsGet>>, TError, TData>>, }
+export const getListTeamsQueryOptions = <TData = Awaited<ReturnType<typeof listTeams>>, TError = HTTPValidationError>(adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTeams>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getListTeamsAdventuresAdventureIdTeamsGetQueryKey(adventureId);
+  const queryKey =  queryOptions?.queryKey ?? getListTeamsQueryKey(adventureId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof listTeamsAdventuresAdventureIdTeamsGet>>> = ({ signal }) => listTeamsAdventuresAdventureIdTeamsGet(adventureId, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listTeams>>> = ({ signal }) => listTeams(adventureId, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, enabled: !!(adventureId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listTeamsAdventuresAdventureIdTeamsGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: !!(adventureId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listTeams>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type ListTeamsAdventuresAdventureIdTeamsGetQueryResult = NonNullable<Awaited<ReturnType<typeof listTeamsAdventuresAdventureIdTeamsGet>>>
-export type ListTeamsAdventuresAdventureIdTeamsGetQueryError = HTTPValidationError
+export type ListTeamsQueryResult = NonNullable<Awaited<ReturnType<typeof listTeams>>>
+export type ListTeamsQueryError = HTTPValidationError
 
 
-export function useListTeamsAdventuresAdventureIdTeamsGet<TData = Awaited<ReturnType<typeof listTeamsAdventuresAdventureIdTeamsGet>>, TError = HTTPValidationError>(
- adventureId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTeamsAdventuresAdventureIdTeamsGet>>, TError, TData>> & Pick<
+export function useListTeams<TData = Awaited<ReturnType<typeof listTeams>>, TError = HTTPValidationError>(
+ adventureId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTeams>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listTeamsAdventuresAdventureIdTeamsGet>>,
+          Awaited<ReturnType<typeof listTeams>>,
           TError,
-          Awaited<ReturnType<typeof listTeamsAdventuresAdventureIdTeamsGet>>
+          Awaited<ReturnType<typeof listTeams>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListTeamsAdventuresAdventureIdTeamsGet<TData = Awaited<ReturnType<typeof listTeamsAdventuresAdventureIdTeamsGet>>, TError = HTTPValidationError>(
- adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTeamsAdventuresAdventureIdTeamsGet>>, TError, TData>> & Pick<
+export function useListTeams<TData = Awaited<ReturnType<typeof listTeams>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTeams>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listTeamsAdventuresAdventureIdTeamsGet>>,
+          Awaited<ReturnType<typeof listTeams>>,
           TError,
-          Awaited<ReturnType<typeof listTeamsAdventuresAdventureIdTeamsGet>>
+          Awaited<ReturnType<typeof listTeams>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListTeamsAdventuresAdventureIdTeamsGet<TData = Awaited<ReturnType<typeof listTeamsAdventuresAdventureIdTeamsGet>>, TError = HTTPValidationError>(
- adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTeamsAdventuresAdventureIdTeamsGet>>, TError, TData>>, }
+export function useListTeams<TData = Awaited<ReturnType<typeof listTeams>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTeams>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary List Teams
+ * @summary List all teams in an adventure
  */
 
-export function useListTeamsAdventuresAdventureIdTeamsGet<TData = Awaited<ReturnType<typeof listTeamsAdventuresAdventureIdTeamsGet>>, TError = HTTPValidationError>(
- adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTeamsAdventuresAdventureIdTeamsGet>>, TError, TData>>, }
+export function useListTeams<TData = Awaited<ReturnType<typeof listTeams>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTeams>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getListTeamsAdventuresAdventureIdTeamsGetQueryOptions(adventureId,options)
+  const queryOptions = getListTeamsQueryOptions(adventureId,options)
 
   const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1509,10 +1511,11 @@ export function useListTeamsAdventuresAdventureIdTeamsGet<TData = Awaited<Return
 
 
 /**
- * @summary Create Team
+ * Creates a new team specified by *request body*
+ * @summary Create a team
  */
-export const createTeamAdventuresAdventureIdTeamsPost = (
-    adventureId: unknown,
+export const createTeam = (
+    adventureId: number,
     createTeam: CreateTeam,
  signal?: AbortSignal
 ) => {
@@ -1528,11 +1531,11 @@ export const createTeamAdventuresAdventureIdTeamsPost = (
   
 
 
-export const getCreateTeamAdventuresAdventureIdTeamsPostMutationOptions = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTeamAdventuresAdventureIdTeamsPost>>, TError,{adventureId: unknown;data: CreateTeam}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof createTeamAdventuresAdventureIdTeamsPost>>, TError,{adventureId: unknown;data: CreateTeam}, TContext> => {
+export const getCreateTeamMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTeam>>, TError,{adventureId: number;data: CreateTeam}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof createTeam>>, TError,{adventureId: number;data: CreateTeam}, TContext> => {
 
-const mutationKey = ['createTeamAdventuresAdventureIdTeamsPost'];
+const mutationKey = ['createTeam'];
 const {mutation: mutationOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -1542,10 +1545,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createTeamAdventuresAdventureIdTeamsPost>>, {adventureId: unknown;data: CreateTeam}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createTeam>>, {adventureId: number;data: CreateTeam}> = (props) => {
           const {adventureId,data} = props ?? {};
 
-          return  createTeamAdventuresAdventureIdTeamsPost(adventureId,data,)
+          return  createTeam(adventureId,data,)
         }
 
         
@@ -1553,31 +1556,32 @@ const {mutation: mutationOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type CreateTeamAdventuresAdventureIdTeamsPostMutationResult = NonNullable<Awaited<ReturnType<typeof createTeamAdventuresAdventureIdTeamsPost>>>
-    export type CreateTeamAdventuresAdventureIdTeamsPostMutationBody = CreateTeam
-    export type CreateTeamAdventuresAdventureIdTeamsPostMutationError = HTTPValidationError
+    export type CreateTeamMutationResult = NonNullable<Awaited<ReturnType<typeof createTeam>>>
+    export type CreateTeamMutationBody = CreateTeam
+    export type CreateTeamMutationError = HTTPValidationError
 
     /**
- * @summary Create Team
+ * @summary Create a team
  */
-export const useCreateTeamAdventuresAdventureIdTeamsPost = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTeamAdventuresAdventureIdTeamsPost>>, TError,{adventureId: unknown;data: CreateTeam}, TContext>, }
+export const useCreateTeam = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTeam>>, TError,{adventureId: number;data: CreateTeam}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof createTeamAdventuresAdventureIdTeamsPost>>,
+        Awaited<ReturnType<typeof createTeam>>,
         TError,
-        {adventureId: unknown;data: CreateTeam},
+        {adventureId: number;data: CreateTeam},
         TContext
       > => {
 
-      const mutationOptions = getCreateTeamAdventuresAdventureIdTeamsPostMutationOptions(options);
+      const mutationOptions = getCreateTeamMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }
     
 /**
- * @summary Fetch Team
+ * Returns publicly available information about the team specified by *team_id*.
+ * @summary Fetch a team in an adventure
  */
-export const fetchTeamAdventuresAdventureIdTeamsTeamIdGet = (
+export const fetchTeam = (
     adventureId: number,
     teamId: number,
  signal?: AbortSignal
@@ -1591,73 +1595,73 @@ export const fetchTeamAdventuresAdventureIdTeamsTeamIdGet = (
     }
   
 
-export const getFetchTeamAdventuresAdventureIdTeamsTeamIdGetQueryKey = (adventureId: number,
+export const getFetchTeamQueryKey = (adventureId: number,
     teamId: number,) => {
     return [`/adventures/${adventureId}/teams/${teamId}`] as const;
     }
 
     
-export const getFetchTeamAdventuresAdventureIdTeamsTeamIdGetQueryOptions = <TData = Awaited<ReturnType<typeof fetchTeamAdventuresAdventureIdTeamsTeamIdGet>>, TError = HTTPValidationError>(adventureId: number,
-    teamId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchTeamAdventuresAdventureIdTeamsTeamIdGet>>, TError, TData>>, }
+export const getFetchTeamQueryOptions = <TData = Awaited<ReturnType<typeof fetchTeam>>, TError = void | HTTPValidationError>(adventureId: number,
+    teamId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchTeam>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getFetchTeamAdventuresAdventureIdTeamsTeamIdGetQueryKey(adventureId,teamId);
+  const queryKey =  queryOptions?.queryKey ?? getFetchTeamQueryKey(adventureId,teamId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof fetchTeamAdventuresAdventureIdTeamsTeamIdGet>>> = ({ signal }) => fetchTeamAdventuresAdventureIdTeamsTeamIdGet(adventureId,teamId, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof fetchTeam>>> = ({ signal }) => fetchTeam(adventureId,teamId, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, enabled: !!(adventureId && teamId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof fetchTeamAdventuresAdventureIdTeamsTeamIdGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: !!(adventureId && teamId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof fetchTeam>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type FetchTeamAdventuresAdventureIdTeamsTeamIdGetQueryResult = NonNullable<Awaited<ReturnType<typeof fetchTeamAdventuresAdventureIdTeamsTeamIdGet>>>
-export type FetchTeamAdventuresAdventureIdTeamsTeamIdGetQueryError = HTTPValidationError
+export type FetchTeamQueryResult = NonNullable<Awaited<ReturnType<typeof fetchTeam>>>
+export type FetchTeamQueryError = void | HTTPValidationError
 
 
-export function useFetchTeamAdventuresAdventureIdTeamsTeamIdGet<TData = Awaited<ReturnType<typeof fetchTeamAdventuresAdventureIdTeamsTeamIdGet>>, TError = HTTPValidationError>(
+export function useFetchTeam<TData = Awaited<ReturnType<typeof fetchTeam>>, TError = void | HTTPValidationError>(
  adventureId: number,
-    teamId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchTeamAdventuresAdventureIdTeamsTeamIdGet>>, TError, TData>> & Pick<
+    teamId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchTeam>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof fetchTeamAdventuresAdventureIdTeamsTeamIdGet>>,
+          Awaited<ReturnType<typeof fetchTeam>>,
           TError,
-          Awaited<ReturnType<typeof fetchTeamAdventuresAdventureIdTeamsTeamIdGet>>
+          Awaited<ReturnType<typeof fetchTeam>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useFetchTeamAdventuresAdventureIdTeamsTeamIdGet<TData = Awaited<ReturnType<typeof fetchTeamAdventuresAdventureIdTeamsTeamIdGet>>, TError = HTTPValidationError>(
+export function useFetchTeam<TData = Awaited<ReturnType<typeof fetchTeam>>, TError = void | HTTPValidationError>(
  adventureId: number,
-    teamId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchTeamAdventuresAdventureIdTeamsTeamIdGet>>, TError, TData>> & Pick<
+    teamId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchTeam>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof fetchTeamAdventuresAdventureIdTeamsTeamIdGet>>,
+          Awaited<ReturnType<typeof fetchTeam>>,
           TError,
-          Awaited<ReturnType<typeof fetchTeamAdventuresAdventureIdTeamsTeamIdGet>>
+          Awaited<ReturnType<typeof fetchTeam>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useFetchTeamAdventuresAdventureIdTeamsTeamIdGet<TData = Awaited<ReturnType<typeof fetchTeamAdventuresAdventureIdTeamsTeamIdGet>>, TError = HTTPValidationError>(
+export function useFetchTeam<TData = Awaited<ReturnType<typeof fetchTeam>>, TError = void | HTTPValidationError>(
  adventureId: number,
-    teamId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchTeamAdventuresAdventureIdTeamsTeamIdGet>>, TError, TData>>, }
+    teamId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchTeam>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Fetch Team
+ * @summary Fetch a team in an adventure
  */
 
-export function useFetchTeamAdventuresAdventureIdTeamsTeamIdGet<TData = Awaited<ReturnType<typeof fetchTeamAdventuresAdventureIdTeamsTeamIdGet>>, TError = HTTPValidationError>(
+export function useFetchTeam<TData = Awaited<ReturnType<typeof fetchTeam>>, TError = void | HTTPValidationError>(
  adventureId: number,
-    teamId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchTeamAdventuresAdventureIdTeamsTeamIdGet>>, TError, TData>>, }
+    teamId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchTeam>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getFetchTeamAdventuresAdventureIdTeamsTeamIdGetQueryOptions(adventureId,teamId,options)
+  const queryOptions = getFetchTeamQueryOptions(adventureId,teamId,options)
 
   const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1670,9 +1674,10 @@ export function useFetchTeamAdventuresAdventureIdTeamsTeamIdGet<TData = Awaited<
 
 
 /**
- * @summary Update Team
+ * Update team specified by *team_id* and *adventure_id*
+ * @summary Update a team
  */
-export const updateTeamAdventuresAdventureIdTeamsTeamIdPatch = (
+export const patchTeam = (
     adventureId: number,
     teamId: number,
     modifyTeam: ModifyTeam,
@@ -1689,11 +1694,11 @@ export const updateTeamAdventuresAdventureIdTeamsTeamIdPatch = (
   
 
 
-export const getUpdateTeamAdventuresAdventureIdTeamsTeamIdPatchMutationOptions = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTeamAdventuresAdventureIdTeamsTeamIdPatch>>, TError,{adventureId: number;teamId: number;data: ModifyTeam}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof updateTeamAdventuresAdventureIdTeamsTeamIdPatch>>, TError,{adventureId: number;teamId: number;data: ModifyTeam}, TContext> => {
+export const getPatchTeamMutationOptions = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchTeam>>, TError,{adventureId: number;teamId: number;data: ModifyTeam}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof patchTeam>>, TError,{adventureId: number;teamId: number;data: ModifyTeam}, TContext> => {
 
-const mutationKey = ['updateTeamAdventuresAdventureIdTeamsTeamIdPatch'];
+const mutationKey = ['patchTeam'];
 const {mutation: mutationOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -1703,10 +1708,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateTeamAdventuresAdventureIdTeamsTeamIdPatch>>, {adventureId: number;teamId: number;data: ModifyTeam}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof patchTeam>>, {adventureId: number;teamId: number;data: ModifyTeam}> = (props) => {
           const {adventureId,teamId,data} = props ?? {};
 
-          return  updateTeamAdventuresAdventureIdTeamsTeamIdPatch(adventureId,teamId,data,)
+          return  patchTeam(adventureId,teamId,data,)
         }
 
         
@@ -1714,37 +1719,38 @@ const {mutation: mutationOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type UpdateTeamAdventuresAdventureIdTeamsTeamIdPatchMutationResult = NonNullable<Awaited<ReturnType<typeof updateTeamAdventuresAdventureIdTeamsTeamIdPatch>>>
-    export type UpdateTeamAdventuresAdventureIdTeamsTeamIdPatchMutationBody = ModifyTeam
-    export type UpdateTeamAdventuresAdventureIdTeamsTeamIdPatchMutationError = HTTPValidationError
+    export type PatchTeamMutationResult = NonNullable<Awaited<ReturnType<typeof patchTeam>>>
+    export type PatchTeamMutationBody = ModifyTeam
+    export type PatchTeamMutationError = void | HTTPValidationError
 
     /**
- * @summary Update Team
+ * @summary Update a team
  */
-export const useUpdateTeamAdventuresAdventureIdTeamsTeamIdPatch = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTeamAdventuresAdventureIdTeamsTeamIdPatch>>, TError,{adventureId: number;teamId: number;data: ModifyTeam}, TContext>, }
+export const usePatchTeam = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchTeam>>, TError,{adventureId: number;teamId: number;data: ModifyTeam}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof updateTeamAdventuresAdventureIdTeamsTeamIdPatch>>,
+        Awaited<ReturnType<typeof patchTeam>>,
         TError,
         {adventureId: number;teamId: number;data: ModifyTeam},
         TContext
       > => {
 
-      const mutationOptions = getUpdateTeamAdventuresAdventureIdTeamsTeamIdPatchMutationOptions(options);
+      const mutationOptions = getPatchTeamMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }
     
 /**
- * @summary Delete Team
+ * Delete team specified by *team_id* and *adventure_id*
+ * @summary Delete a team
  */
-export const deleteTeamAdventuresAdventureIdTeamsTeamIdDelete = (
+export const deleteTeam = (
     adventureId: number,
     teamId: number,
  ) => {
       
       
-      return customInstance<unknown>(
+      return customInstance<DeleteResponse>(
       {url: `/adventures/${adventureId}/teams/${teamId}`, method: 'DELETE'
     },
       );
@@ -1752,11 +1758,11 @@ export const deleteTeamAdventuresAdventureIdTeamsTeamIdDelete = (
   
 
 
-export const getDeleteTeamAdventuresAdventureIdTeamsTeamIdDeleteMutationOptions = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTeamAdventuresAdventureIdTeamsTeamIdDelete>>, TError,{adventureId: number;teamId: number}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof deleteTeamAdventuresAdventureIdTeamsTeamIdDelete>>, TError,{adventureId: number;teamId: number}, TContext> => {
+export const getDeleteTeamMutationOptions = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTeam>>, TError,{adventureId: number;teamId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteTeam>>, TError,{adventureId: number;teamId: number}, TContext> => {
 
-const mutationKey = ['deleteTeamAdventuresAdventureIdTeamsTeamIdDelete'];
+const mutationKey = ['deleteTeam'];
 const {mutation: mutationOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -1766,10 +1772,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteTeamAdventuresAdventureIdTeamsTeamIdDelete>>, {adventureId: number;teamId: number}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteTeam>>, {adventureId: number;teamId: number}> = (props) => {
           const {adventureId,teamId} = props ?? {};
 
-          return  deleteTeamAdventuresAdventureIdTeamsTeamIdDelete(adventureId,teamId,)
+          return  deleteTeam(adventureId,teamId,)
         }
 
         
@@ -1777,31 +1783,32 @@ const {mutation: mutationOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type DeleteTeamAdventuresAdventureIdTeamsTeamIdDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof deleteTeamAdventuresAdventureIdTeamsTeamIdDelete>>>
+    export type DeleteTeamMutationResult = NonNullable<Awaited<ReturnType<typeof deleteTeam>>>
     
-    export type DeleteTeamAdventuresAdventureIdTeamsTeamIdDeleteMutationError = HTTPValidationError
+    export type DeleteTeamMutationError = void | HTTPValidationError
 
     /**
- * @summary Delete Team
+ * @summary Delete a team
  */
-export const useDeleteTeamAdventuresAdventureIdTeamsTeamIdDelete = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTeamAdventuresAdventureIdTeamsTeamIdDelete>>, TError,{adventureId: number;teamId: number}, TContext>, }
+export const useDeleteTeam = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTeam>>, TError,{adventureId: number;teamId: number}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteTeamAdventuresAdventureIdTeamsTeamIdDelete>>,
+        Awaited<ReturnType<typeof deleteTeam>>,
         TError,
         {adventureId: number;teamId: number},
         TContext
       > => {
 
-      const mutationOptions = getDeleteTeamAdventuresAdventureIdTeamsTeamIdDeleteMutationOptions(options);
+      const mutationOptions = getDeleteTeamMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }
     
 /**
- * @summary List Admin Teams
+ * Returns admin level list of all active teams for the specified adventure.
+ * @summary List all teams in an adventure
  */
-export const listAdminTeamsAdventuresAdventureIdTeamsAdminGet = (
+export const listAdminTeams = (
     adventureId: number,
  signal?: AbortSignal
 ) => {
@@ -1814,67 +1821,67 @@ export const listAdminTeamsAdventuresAdventureIdTeamsAdminGet = (
     }
   
 
-export const getListAdminTeamsAdventuresAdventureIdTeamsAdminGetQueryKey = (adventureId: number,) => {
+export const getListAdminTeamsQueryKey = (adventureId: number,) => {
     return [`/adventures/${adventureId}/teams/admin/`] as const;
     }
 
     
-export const getListAdminTeamsAdventuresAdventureIdTeamsAdminGetQueryOptions = <TData = Awaited<ReturnType<typeof listAdminTeamsAdventuresAdventureIdTeamsAdminGet>>, TError = HTTPValidationError>(adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminTeamsAdventuresAdventureIdTeamsAdminGet>>, TError, TData>>, }
+export const getListAdminTeamsQueryOptions = <TData = Awaited<ReturnType<typeof listAdminTeams>>, TError = HTTPValidationError>(adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminTeams>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getListAdminTeamsAdventuresAdventureIdTeamsAdminGetQueryKey(adventureId);
+  const queryKey =  queryOptions?.queryKey ?? getListAdminTeamsQueryKey(adventureId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof listAdminTeamsAdventuresAdventureIdTeamsAdminGet>>> = ({ signal }) => listAdminTeamsAdventuresAdventureIdTeamsAdminGet(adventureId, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listAdminTeams>>> = ({ signal }) => listAdminTeams(adventureId, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, enabled: !!(adventureId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listAdminTeamsAdventuresAdventureIdTeamsAdminGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: !!(adventureId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listAdminTeams>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type ListAdminTeamsAdventuresAdventureIdTeamsAdminGetQueryResult = NonNullable<Awaited<ReturnType<typeof listAdminTeamsAdventuresAdventureIdTeamsAdminGet>>>
-export type ListAdminTeamsAdventuresAdventureIdTeamsAdminGetQueryError = HTTPValidationError
+export type ListAdminTeamsQueryResult = NonNullable<Awaited<ReturnType<typeof listAdminTeams>>>
+export type ListAdminTeamsQueryError = HTTPValidationError
 
 
-export function useListAdminTeamsAdventuresAdventureIdTeamsAdminGet<TData = Awaited<ReturnType<typeof listAdminTeamsAdventuresAdventureIdTeamsAdminGet>>, TError = HTTPValidationError>(
- adventureId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminTeamsAdventuresAdventureIdTeamsAdminGet>>, TError, TData>> & Pick<
+export function useListAdminTeams<TData = Awaited<ReturnType<typeof listAdminTeams>>, TError = HTTPValidationError>(
+ adventureId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminTeams>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listAdminTeamsAdventuresAdventureIdTeamsAdminGet>>,
+          Awaited<ReturnType<typeof listAdminTeams>>,
           TError,
-          Awaited<ReturnType<typeof listAdminTeamsAdventuresAdventureIdTeamsAdminGet>>
+          Awaited<ReturnType<typeof listAdminTeams>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListAdminTeamsAdventuresAdventureIdTeamsAdminGet<TData = Awaited<ReturnType<typeof listAdminTeamsAdventuresAdventureIdTeamsAdminGet>>, TError = HTTPValidationError>(
- adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminTeamsAdventuresAdventureIdTeamsAdminGet>>, TError, TData>> & Pick<
+export function useListAdminTeams<TData = Awaited<ReturnType<typeof listAdminTeams>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminTeams>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listAdminTeamsAdventuresAdventureIdTeamsAdminGet>>,
+          Awaited<ReturnType<typeof listAdminTeams>>,
           TError,
-          Awaited<ReturnType<typeof listAdminTeamsAdventuresAdventureIdTeamsAdminGet>>
+          Awaited<ReturnType<typeof listAdminTeams>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListAdminTeamsAdventuresAdventureIdTeamsAdminGet<TData = Awaited<ReturnType<typeof listAdminTeamsAdventuresAdventureIdTeamsAdminGet>>, TError = HTTPValidationError>(
- adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminTeamsAdventuresAdventureIdTeamsAdminGet>>, TError, TData>>, }
+export function useListAdminTeams<TData = Awaited<ReturnType<typeof listAdminTeams>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminTeams>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary List Admin Teams
+ * @summary List all teams in an adventure
  */
 
-export function useListAdminTeamsAdventuresAdventureIdTeamsAdminGet<TData = Awaited<ReturnType<typeof listAdminTeamsAdventuresAdventureIdTeamsAdminGet>>, TError = HTTPValidationError>(
- adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminTeamsAdventuresAdventureIdTeamsAdminGet>>, TError, TData>>, }
+export function useListAdminTeams<TData = Awaited<ReturnType<typeof listAdminTeams>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminTeams>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getListAdminTeamsAdventuresAdventureIdTeamsAdminGetQueryOptions(adventureId,options)
+  const queryOptions = getListAdminTeamsQueryOptions(adventureId,options)
 
   const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1887,9 +1894,10 @@ export function useListAdminTeamsAdventuresAdventureIdTeamsAdminGet<TData = Awai
 
 
 /**
- * @summary Fetch Admin Team
+ * Fetches a team in an adventure specified by it's id
+ * @summary Fetch a single team in an adventure
  */
-export const fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet = (
+export const fetchAdminTeam = (
     adventureId: number,
     teamId: number,
  signal?: AbortSignal
@@ -1903,73 +1911,73 @@ export const fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet = (
     }
   
 
-export const getFetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGetQueryKey = (adventureId: number,
+export const getFetchAdminTeamQueryKey = (adventureId: number,
     teamId: number,) => {
     return [`/adventures/${adventureId}/teams/admin/${teamId}`] as const;
     }
 
     
-export const getFetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGetQueryOptions = <TData = Awaited<ReturnType<typeof fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet>>, TError = HTTPValidationError>(adventureId: number,
-    teamId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet>>, TError, TData>>, }
+export const getFetchAdminTeamQueryOptions = <TData = Awaited<ReturnType<typeof fetchAdminTeam>>, TError = void | HTTPValidationError>(adventureId: number,
+    teamId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminTeam>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getFetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGetQueryKey(adventureId,teamId);
+  const queryKey =  queryOptions?.queryKey ?? getFetchAdminTeamQueryKey(adventureId,teamId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet>>> = ({ signal }) => fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet(adventureId,teamId, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof fetchAdminTeam>>> = ({ signal }) => fetchAdminTeam(adventureId,teamId, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, enabled: !!(adventureId && teamId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: !!(adventureId && teamId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof fetchAdminTeam>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type FetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGetQueryResult = NonNullable<Awaited<ReturnType<typeof fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet>>>
-export type FetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGetQueryError = HTTPValidationError
+export type FetchAdminTeamQueryResult = NonNullable<Awaited<ReturnType<typeof fetchAdminTeam>>>
+export type FetchAdminTeamQueryError = void | HTTPValidationError
 
 
-export function useFetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet<TData = Awaited<ReturnType<typeof fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet>>, TError = HTTPValidationError>(
+export function useFetchAdminTeam<TData = Awaited<ReturnType<typeof fetchAdminTeam>>, TError = void | HTTPValidationError>(
  adventureId: number,
-    teamId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet>>, TError, TData>> & Pick<
+    teamId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminTeam>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet>>,
+          Awaited<ReturnType<typeof fetchAdminTeam>>,
           TError,
-          Awaited<ReturnType<typeof fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet>>
+          Awaited<ReturnType<typeof fetchAdminTeam>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useFetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet<TData = Awaited<ReturnType<typeof fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet>>, TError = HTTPValidationError>(
+export function useFetchAdminTeam<TData = Awaited<ReturnType<typeof fetchAdminTeam>>, TError = void | HTTPValidationError>(
  adventureId: number,
-    teamId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet>>, TError, TData>> & Pick<
+    teamId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminTeam>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet>>,
+          Awaited<ReturnType<typeof fetchAdminTeam>>,
           TError,
-          Awaited<ReturnType<typeof fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet>>
+          Awaited<ReturnType<typeof fetchAdminTeam>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useFetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet<TData = Awaited<ReturnType<typeof fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet>>, TError = HTTPValidationError>(
+export function useFetchAdminTeam<TData = Awaited<ReturnType<typeof fetchAdminTeam>>, TError = void | HTTPValidationError>(
  adventureId: number,
-    teamId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet>>, TError, TData>>, }
+    teamId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminTeam>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Fetch Admin Team
+ * @summary Fetch a single team in an adventure
  */
 
-export function useFetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet<TData = Awaited<ReturnType<typeof fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet>>, TError = HTTPValidationError>(
+export function useFetchAdminTeam<TData = Awaited<ReturnType<typeof fetchAdminTeam>>, TError = void | HTTPValidationError>(
  adventureId: number,
-    teamId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGet>>, TError, TData>>, }
+    teamId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminTeam>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getFetchAdminTeamAdventuresAdventureIdTeamsAdminTeamIdGetQueryOptions(adventureId,teamId,options)
+  const queryOptions = getFetchAdminTeamQueryOptions(adventureId,teamId,options)
 
   const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
