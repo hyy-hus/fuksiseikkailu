@@ -1,9 +1,10 @@
-import { useListAdminTeamsTeamsAdminGet } from "@api/endpoints";
+import { useListAdminTeams } from "@api/endpoints";
 import { AdminTeam } from "@api/model";
 
 import { ColumnDef, List } from "./List";
 import { t } from "i18next";
 import { Link } from "react-router-dom";
+import { useAdventure } from "@contexts/AdventureContext";
 
 interface ListProps {
     onChange?: (items: AdminTeam[]) => void;
@@ -14,7 +15,9 @@ interface ListProps {
 export function TeamList(
     { onChange, handleEdit, handleRemove }: ListProps
 ) {
-    const { data, isLoading, isError, error } = useListAdminTeamsTeamsAdminGet();
+    const { selectedAdventure } = useAdventure();
+    const { data, isLoading, isError, error } = useListAdminTeams(selectedAdventure?.id ?? 0);
+
 
     if (isLoading) {
         return (

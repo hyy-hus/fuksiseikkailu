@@ -3,11 +3,15 @@ import { useAuth } from "@auth";
 import { Button } from "@components/Button";
 import { IoMenu } from "react-icons/io5";
 import { FaSun, FaMoon } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { navigate } from "../../router/navigate";
 
 import { cva } from "class-variance-authority";
 import { useTranslation } from "react-i18next";
+import { useAdventure } from "@contexts/AdventureContext";
+import { Select } from "@components/Input";
+import { PublicAdventure } from "@api/model";
+import { useListAdventuresAdventuresGet } from "@api/endpoints";
 
 
 type LayoutVariant = "guest" | "admin";
@@ -38,6 +42,21 @@ export function Layout({
     useEffect(() => {
         i18n.changeLanguage(selectedLanguage);
     }, [selectedLanguage]);
+
+    const { selectedAdventure, setSelectedAdventure } = useAdventure();
+
+    const { data } = useListAdventuresAdventuresGet();
+
+    const adventureOptions = useMemo(() => {
+        if (!data?.data) {
+            return [];
+        }
+
+        return data.data.map((adventure: PublicAdventure) => ({
+            key: String(adventure.id),
+            value: adventure.name,
+        }));
+    }, [data])
 
     const navbar = cva(
         "col-span-2 border-b grid grid-cols-[auto_1fr_auto] items-center p-2",
@@ -122,6 +141,19 @@ export function Layout({
                     {
                         variant === "admin" ? (
                             <>
+                                <li>
+                                    <Select
+                                        name="adventure"
+                                        label={t("adventure")}
+                                        options={adventureOptions}
+                                        onChange={(e) => {
+                                            const id = Number(e.target.value);
+                                            const name = adventureOptions.find(o => Number(o.key) === id)?.value ?? "unknown";
+                                            setSelectedAdventure({ id, name });
+                                        }}
+                                        value={selectedAdventure?.id ?? ""}
+                                    />
+                                </li>
                                 <li><Link to="/" className="hover:underline">{t("dashboard")}</Link></li>
                                 <li><Hr /></li>
                                 <li><Link to="/admin/teams" className="hover:underline">{t("teams")}</Link></li>
