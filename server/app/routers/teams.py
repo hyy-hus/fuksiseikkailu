@@ -1,6 +1,10 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Path
-from sqlmodel import select, Session
+from sqlmodel import select
+
+from app.schemas.base import DeleteResponse
+from app.deps import SessionDep, UserDep
+
 from app.models.teams import (
     DBTeam,
     PublicTeam,
@@ -8,18 +12,9 @@ from app.models.teams import (
     ModifyTeam,
     CreateTeam,
 )
-from app.models.users import DBUser
-
-from app.schemas.base import DeleteResponse
-
-from app.core.db import get_session
-from app.deps import require_user
 
 AdventureId = Annotated[int, Path(..., description="ID of the adventure")]
 TeamId = Annotated[int, Path(..., description="ID of the team")]
-
-UserDep = Annotated[DBUser, Depends(require_user)]
-SessionDep = Annotated[Session, Depends(get_session)]
 
 
 def get_team(
@@ -63,15 +58,7 @@ def list_teams(
     adventure_id: AdventureId,
     session: SessionDep,
 ) -> list[PublicTeam]:
-    session.exec(select(DBTeam)).all()
-
-    return []
-
-    # query = select(DBTeam).where(
-    #     and_(DBTeam.adventure_id == adventure_id, DBTeam.active)
-    # )
-    # teams: list[DBTeam] = session.exec(query).all()
-    # return teams
+    return session.exec(select(DBTeam)).all()
 
 
 @router.get(
