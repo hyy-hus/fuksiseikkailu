@@ -1,8 +1,8 @@
-import { getListAdventuresAdventuresGetQueryKey, useDeleteCheckpointCheckpointsCheckpointIdDelete } from "@api/endpoints";
+import { getListAdminCheckpointsQueryKey, useDeleteCheckpoint } from "@api/endpoints";
 import { PublicCheckpoint } from "@api/model";
-import { CreateCheckpointForm } from "@components/Forms/";
-import { ModifyCheckpointForm } from "@components/Forms/ModifyCheckpoint";
+import { CreateCheckpointForm, ModifyCheckpointForm } from "@components";
 import { CheckpointList } from "@components/Lists";
+import { useAdventure } from "@contexts/AdventureContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useTranslation } from "react-i18next"
@@ -12,8 +12,10 @@ export function CheckpointsPage() {
 
     const [selected, setSelected] = useState<PublicCheckpoint[]>([]);
 
+    const { selectedAdventure } = useAdventure();
+
     const queryClient = useQueryClient();
-    const deleteCheckpointMutation = useDeleteCheckpointCheckpointsCheckpointIdDelete();
+    const deleteCheckpointMutation = useDeleteCheckpoint();
 
     function handleRemove(items: PublicCheckpoint[]) {
         const confirmed = confirm(`${t("confirm-delete-adventures")}: ${items.map(item => item.org_name).join(", ")}?`)
@@ -24,7 +26,7 @@ export function CheckpointsPage() {
 
         Promise.all(
             items.map((item) =>
-                deleteCheckpointMutation.mutateAsync({ checkpointId: item.id }, {
+                deleteCheckpointMutation.mutateAsync({ adventureId: selectedAdventure?.id ?? 0, checkpointId: item.id }, {
                     onSuccess: () => {
                         console.log(`Checkpoint #${item.id} deleted`);
                     },
@@ -36,7 +38,7 @@ export function CheckpointsPage() {
         )
             .then(() => {
                 queryClient.invalidateQueries({
-                    queryKey: getListAdventuresAdventuresGetQueryKey(),
+                    queryKey: getListAdminCheckpointsQueryKey(selectedAdventure?.id ?? 0),
                 });
             })
     }

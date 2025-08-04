@@ -1,16 +1,19 @@
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Path
 from fastapi.security import OAuth2PasswordBearer
 from app.core.auth import decode_access_token
 from app.core.db import get_session
 from sqlmodel import Session, select
 from app.models.users import DBUser
 
+from typing import Annotated
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+OAuthDep = Annotated[str, Depends(oauth2_scheme)]
+
+SessionDep = Annotated[Session, Depends(get_session)]
 
 
-def get_current_user(
-    token: str = Depends(oauth2_scheme), session: Session = Depends(get_session)
-):
+def get_current_user(session: SessionDep, token: OAuthDep):
     payload = decode_access_token(token)
     if not payload:
         raise HTTPException(
@@ -25,15 +28,24 @@ def get_current_user(
     return user
 
 
-def require_admin(current_user: DBUser = Depends(get_current_user)):
+CurrentUserDep = Annotated[DBUser, Depends(get_current_user)]
+
+
+def require_admin(current_user: CurrentUserDep):
     if current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Allowed only for admins")
 
     return current_user
 
 
-def require_user(current_user: DBUser = Depends(get_current_user)):
+def require_user(current_user: CurrentUserDep):
     if current_user.role not in ("user", "admin"):
         raise HTTPException(status_code=403, detail="Allowed only for users and admins")
 
     return current_user
+
+
+AdventureId = Annotated[int, Path(..., description="ID of the adventure")]
+TeamId = Annotated[int, Path(..., description="ID of the team")]
+
+UserDep = Annotated[DBUser, Depends(require_user)]

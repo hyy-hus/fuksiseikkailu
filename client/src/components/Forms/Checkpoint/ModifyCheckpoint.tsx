@@ -1,15 +1,14 @@
 import {
-    useFetchAdminCheckpointCheckpointsAdminCheckpointIdGet,
-    useUpdateCheckpointCheckpointsCheckpointIdPatch,
-    useListAdventuresAdventuresGet,
-    getListAdminCheckpointsCheckpointsAdminGetQueryKey,
-    getFetchAdminCheckpointCheckpointsAdminCheckpointIdGetQueryKey,
+    getFetchAdminCheckpointQueryKey,
+    getListAdminCheckpointsQueryKey,
+    useFetchAdminCheckpoint,
+    usePatchCheckpoint,
 } from "@api/endpoints";
-import { Form, FieldDef, Option } from "./Form";
+import { Form, FieldDef } from "../Form";
 import { ModifyCheckpoint } from "@api/model";
 import { t } from "i18next";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useAdventure } from "@contexts/AdventureContext";
 
 interface CheckpointFormProps {
     checkpointId: number;
@@ -17,19 +16,10 @@ interface CheckpointFormProps {
 
 export function ModifyCheckpointForm({ checkpointId }: CheckpointFormProps) {
     const queryClient = useQueryClient();
-    const { data, isLoading, isError, error } = useFetchAdminCheckpointCheckpointsAdminCheckpointIdGet(checkpointId);
-    const updateMutation = useUpdateCheckpointCheckpointsCheckpointIdPatch();
+    const { selectedAdventure } = useAdventure();
 
-    const getAdventures = useListAdventuresAdventuresGet();
-
-    const [adventureOptions, setAdventureOptions] = useState<Option[]>([]);
-
-    useEffect(() => {
-        if (getAdventures.data?.data) {
-            setAdventureOptions(getAdventures.data.data.map(a => (({ key: String(a.id), value: a.name } as Option))));
-        }
-    }, [getAdventures.data?.data])
-
+    const { data, isLoading, isError, error } = useFetchAdminCheckpoint(selectedAdventure?.id ?? 0, checkpointId);
+    const updateMutation = usePatchCheckpoint();
 
     if (isLoading) {
         return (
@@ -51,21 +41,20 @@ export function ModifyCheckpointForm({ checkpointId }: CheckpointFormProps) {
 
     function handleSave(item: ModifyCheckpoint) {
         updateMutation.mutateAsync(
-            { checkpointId: checkpointId, data: item }
+            { adventureId: selectedAdventure?.id ?? 0, checkpointId: checkpointId, data: item }
         ).then(() => {
             queryClient.invalidateQueries({
-                queryKey: getListAdminCheckpointsCheckpointsAdminGetQueryKey(),
+                queryKey: getListAdminCheckpointsQueryKey(selectedAdventure?.id ?? 0),
             })
 
             queryClient.invalidateQueries({
-                queryKey: getFetchAdminCheckpointCheckpointsAdminCheckpointIdGetQueryKey(checkpointId),
+                queryKey: getFetchAdminCheckpointQueryKey(selectedAdventure?.id ?? 0, checkpointId),
             })
         })
     }
 
 
     const fields: FieldDef<ModifyCheckpoint>[] = [
-        { key: "adventure_id", name: t("adventure-id"), type: "option", options: adventureOptions },
         { key: "org_name", name: t("org-name"), type: "text" },
         { key: "org_abbreviation", name: t("org-abbreviation"), type: "text" },
         { key: "category", name: t("category"), type: "text" },

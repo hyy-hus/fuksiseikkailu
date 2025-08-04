@@ -1,40 +1,29 @@
-import {
-    getListAdminCheckpointsCheckpointsAdminGetQueryKey,
-    useCreateCheckpointCheckpointsPost,
-    useListAdventuresAdventuresGet
-} from "@api/endpoints";
-import { Form, FieldDef, Option } from "./Form";
+import { Form, FieldDef } from "../Form";
 import { CreateCheckpoint } from "@api/model";
 import { t } from "i18next";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
+import { getListAdminCheckpointsQueryKey, useCreateCheckpoint } from "@api/endpoints";
+import { useAdventure } from "@contexts/AdventureContext";
 
 export function CreateCheckpointForm() {
     const queryClient = useQueryClient();
-    const createMutation = useCreateCheckpointCheckpointsPost();
-    const getAdventures = useListAdventuresAdventuresGet();
+    const createMutation = useCreateCheckpoint();
 
-    const [adventureOptions, setAdventureOptions] = useState<Option[]>([]);
-
-    useEffect(() => {
-        if (getAdventures.data?.data) {
-            setAdventureOptions(getAdventures.data.data.map(a => (({ key: String(a.id), value: a.name } as Option))));
-        }
-    }, [getAdventures.data?.data])
+    const { selectedAdventure } = useAdventure();
 
     function handleCreate(item: CreateCheckpoint) {
         createMutation.mutateAsync(
-            { data: item }
+            { adventureId: selectedAdventure?.id ?? 0, data: item }
         ).then(() => {
             queryClient.invalidateQueries({
-                queryKey: getListAdminCheckpointsCheckpointsAdminGetQueryKey(),
+                queryKey: getListAdminCheckpointsQueryKey(selectedAdventure?.id ?? 0),
             })
         })
     }
 
 
     const fields: FieldDef<CreateCheckpoint>[] = [
-        { key: "adventure_id", name: t("adventure-id"), type: "option", options: adventureOptions },
         { key: "org_name", name: t("org-name"), type: "text" },
         { key: "org_abbreviation", name: t("org-abbreviation"), type: "text" },
         { key: "category", name: t("category"), type: "text" },

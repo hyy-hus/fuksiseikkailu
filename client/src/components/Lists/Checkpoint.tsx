@@ -1,9 +1,10 @@
-import { useListAdminCheckpointsCheckpointsAdminGet } from "@api/endpoints";
 import { AdminCheckpoint } from "@api/model";
 
 import { ColumnDef, List } from "./List";
 import { t } from "i18next";
 import { Link } from "react-router-dom";
+import { useListAdminCheckpoints } from "@api/endpoints";
+import { useAdventure } from "@contexts/AdventureContext";
 
 interface ListProps {
     onChange?: (items: AdminCheckpoint[]) => void;
@@ -14,7 +15,8 @@ interface ListProps {
 export function CheckpointList(
     { onChange, handleEdit, handleRemove }: ListProps
 ) {
-    const { data, isLoading, isError, error } = useListAdminCheckpointsCheckpointsAdminGet();
+    const { selectedAdventure } = useAdventure();
+    const { data, isLoading, isError, error } = useListAdminCheckpoints(selectedAdventure?.id ?? 0);
 
     if (isLoading) {
         return (
