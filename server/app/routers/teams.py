@@ -58,7 +58,7 @@ def list_teams(
     adventure_id: AdventureId,
     session: SessionDep,
 ) -> list[PublicTeam]:
-    return session.exec(select(DBTeam)).all()
+    return session.exec(select(DBTeam).where(DBTeam.active)).all()
 
 
 @router.get(
