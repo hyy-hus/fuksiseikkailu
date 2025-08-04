@@ -21,19 +21,19 @@ interface CheckpointData {
     favourite: boolean,
     completed: boolean,
 }
-const blueIcon = useMemo(() => L.divIcon({
+const blueIcon = L.divIcon({
     className: "custom-circle",
     html: "<div style='width:20px;height:20px;border-radius:50%;background:blue;'></div>",
     iconSize: [20, 20],
     iconAnchor: [10, 0],
-}), []);
+});
 
-const redIcon = useMemo(() => L.divIcon({
+const redIcon = L.divIcon({
     className: "custom-circle",
     html: "<div style='width:20px;height:20px;border-radius:50%;background:red;'></div>",
     iconSize: [20, 20],
     iconAnchor: [10, 0],
-}), []);
+});
 
 interface MapProps {
     clickCallback: (checkpoint: CheckpointData) => void;
