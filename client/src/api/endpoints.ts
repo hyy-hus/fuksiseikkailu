@@ -1271,14 +1271,14 @@ export const listAdminCheckpoints = (
       
       
       return customInstance<AdminCheckpoint[]>(
-      {url: `/adventures/${adventureId}/checkpoints/admin/admin/`, method: 'GET', signal
+      {url: `/adventures/${adventureId}/checkpoints/admin/`, method: 'GET', signal
     },
       );
     }
   
 
 export const getListAdminCheckpointsQueryKey = (adventureId: number,) => {
-    return [`/adventures/${adventureId}/checkpoints/admin/admin/`] as const;
+    return [`/adventures/${adventureId}/checkpoints/admin/`] as const;
     }
 
     
@@ -1361,7 +1361,7 @@ export const fetchAdminCheckpoint = (
       
       
       return customInstance<AdminCheckpoint>(
-      {url: `/adventures/${adventureId}/checkpoints/admin/admin/${checkpointId}`, method: 'GET', signal
+      {url: `/adventures/${adventureId}/checkpoints/admin/${checkpointId}`, method: 'GET', signal
     },
       );
     }
@@ -1369,7 +1369,7 @@ export const fetchAdminCheckpoint = (
 
 export const getFetchAdminCheckpointQueryKey = (adventureId: number,
     checkpointId: number,) => {
-    return [`/adventures/${adventureId}/checkpoints/admin/admin/${checkpointId}`] as const;
+    return [`/adventures/${adventureId}/checkpoints/admin/${checkpointId}`] as const;
     }
 
     
