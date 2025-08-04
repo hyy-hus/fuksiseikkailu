@@ -878,82 +878,83 @@ export const useDeleteAdventureAdventuresAdventureIdDelete = <TError = HTTPValid
     }
     
 /**
- * @summary List Checkpoints
+ * Returns all active checkpoints for the specified adventure.
+ * @summary List all checkpoints in an adventure
  */
-export const listCheckpointsCheckpointsGet = (
-    
+export const listCheckpoints = (
+    adventureId: number,
  signal?: AbortSignal
 ) => {
       
       
       return customInstance<PublicCheckpoint[]>(
-      {url: `/checkpoints/`, method: 'GET', signal
+      {url: `/adventures/${adventureId}/checkpoints/`, method: 'GET', signal
     },
       );
     }
   
 
-export const getListCheckpointsCheckpointsGetQueryKey = () => {
-    return [`/checkpoints/`] as const;
+export const getListCheckpointsQueryKey = (adventureId: number,) => {
+    return [`/adventures/${adventureId}/checkpoints/`] as const;
     }
 
     
-export const getListCheckpointsCheckpointsGetQueryOptions = <TData = Awaited<ReturnType<typeof listCheckpointsCheckpointsGet>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listCheckpointsCheckpointsGet>>, TError, TData>>, }
+export const getListCheckpointsQueryOptions = <TData = Awaited<ReturnType<typeof listCheckpoints>>, TError = HTTPValidationError>(adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listCheckpoints>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getListCheckpointsCheckpointsGetQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getListCheckpointsQueryKey(adventureId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof listCheckpointsCheckpointsGet>>> = ({ signal }) => listCheckpointsCheckpointsGet(signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listCheckpoints>>> = ({ signal }) => listCheckpoints(adventureId, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listCheckpointsCheckpointsGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: !!(adventureId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listCheckpoints>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type ListCheckpointsCheckpointsGetQueryResult = NonNullable<Awaited<ReturnType<typeof listCheckpointsCheckpointsGet>>>
-export type ListCheckpointsCheckpointsGetQueryError = unknown
+export type ListCheckpointsQueryResult = NonNullable<Awaited<ReturnType<typeof listCheckpoints>>>
+export type ListCheckpointsQueryError = HTTPValidationError
 
 
-export function useListCheckpointsCheckpointsGet<TData = Awaited<ReturnType<typeof listCheckpointsCheckpointsGet>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listCheckpointsCheckpointsGet>>, TError, TData>> & Pick<
+export function useListCheckpoints<TData = Awaited<ReturnType<typeof listCheckpoints>>, TError = HTTPValidationError>(
+ adventureId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listCheckpoints>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listCheckpointsCheckpointsGet>>,
+          Awaited<ReturnType<typeof listCheckpoints>>,
           TError,
-          Awaited<ReturnType<typeof listCheckpointsCheckpointsGet>>
+          Awaited<ReturnType<typeof listCheckpoints>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListCheckpointsCheckpointsGet<TData = Awaited<ReturnType<typeof listCheckpointsCheckpointsGet>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listCheckpointsCheckpointsGet>>, TError, TData>> & Pick<
+export function useListCheckpoints<TData = Awaited<ReturnType<typeof listCheckpoints>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listCheckpoints>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listCheckpointsCheckpointsGet>>,
+          Awaited<ReturnType<typeof listCheckpoints>>,
           TError,
-          Awaited<ReturnType<typeof listCheckpointsCheckpointsGet>>
+          Awaited<ReturnType<typeof listCheckpoints>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListCheckpointsCheckpointsGet<TData = Awaited<ReturnType<typeof listCheckpointsCheckpointsGet>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listCheckpointsCheckpointsGet>>, TError, TData>>, }
+export function useListCheckpoints<TData = Awaited<ReturnType<typeof listCheckpoints>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listCheckpoints>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary List Checkpoints
+ * @summary List all checkpoints in an adventure
  */
 
-export function useListCheckpointsCheckpointsGet<TData = Awaited<ReturnType<typeof listCheckpointsCheckpointsGet>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listCheckpointsCheckpointsGet>>, TError, TData>>, }
+export function useListCheckpoints<TData = Awaited<ReturnType<typeof listCheckpoints>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listCheckpoints>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getListCheckpointsCheckpointsGetQueryOptions(options)
+  const queryOptions = getListCheckpointsQueryOptions(adventureId,options)
 
   const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -966,16 +967,18 @@ export function useListCheckpointsCheckpointsGet<TData = Awaited<ReturnType<type
 
 
 /**
- * @summary Create Checkpoint
+ * Creates a new checkpoint specified by *request body*
+ * @summary Create a checkpoint
  */
-export const createCheckpointCheckpointsPost = (
+export const createCheckpoint = (
+    adventureId: number,
     createCheckpoint: CreateCheckpoint,
  signal?: AbortSignal
 ) => {
       
       
       return customInstance<PublicCheckpoint>(
-      {url: `/checkpoints/`, method: 'POST',
+      {url: `/adventures/${adventureId}/checkpoints/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: createCheckpoint, signal
     },
@@ -984,11 +987,11 @@ export const createCheckpointCheckpointsPost = (
   
 
 
-export const getCreateCheckpointCheckpointsPostMutationOptions = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCheckpointCheckpointsPost>>, TError,{data: CreateCheckpoint}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof createCheckpointCheckpointsPost>>, TError,{data: CreateCheckpoint}, TContext> => {
+export const getCreateCheckpointMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCheckpoint>>, TError,{adventureId: number;data: CreateCheckpoint}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof createCheckpoint>>, TError,{adventureId: number;data: CreateCheckpoint}, TContext> => {
 
-const mutationKey = ['createCheckpointCheckpointsPost'];
+const mutationKey = ['createCheckpoint'];
 const {mutation: mutationOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -998,10 +1001,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createCheckpointCheckpointsPost>>, {data: CreateCheckpoint}> = (props) => {
-          const {data} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createCheckpoint>>, {adventureId: number;data: CreateCheckpoint}> = (props) => {
+          const {adventureId,data} = props ?? {};
 
-          return  createCheckpointCheckpointsPost(data,)
+          return  createCheckpoint(adventureId,data,)
         }
 
         
@@ -1009,104 +1012,112 @@ const {mutation: mutationOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type CreateCheckpointCheckpointsPostMutationResult = NonNullable<Awaited<ReturnType<typeof createCheckpointCheckpointsPost>>>
-    export type CreateCheckpointCheckpointsPostMutationBody = CreateCheckpoint
-    export type CreateCheckpointCheckpointsPostMutationError = HTTPValidationError
+    export type CreateCheckpointMutationResult = NonNullable<Awaited<ReturnType<typeof createCheckpoint>>>
+    export type CreateCheckpointMutationBody = CreateCheckpoint
+    export type CreateCheckpointMutationError = HTTPValidationError
 
     /**
- * @summary Create Checkpoint
+ * @summary Create a checkpoint
  */
-export const useCreateCheckpointCheckpointsPost = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCheckpointCheckpointsPost>>, TError,{data: CreateCheckpoint}, TContext>, }
+export const useCreateCheckpoint = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCheckpoint>>, TError,{adventureId: number;data: CreateCheckpoint}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof createCheckpointCheckpointsPost>>,
+        Awaited<ReturnType<typeof createCheckpoint>>,
         TError,
-        {data: CreateCheckpoint},
+        {adventureId: number;data: CreateCheckpoint},
         TContext
       > => {
 
-      const mutationOptions = getCreateCheckpointCheckpointsPostMutationOptions(options);
+      const mutationOptions = getCreateCheckpointMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }
     
 /**
- * @summary Fetch Checkpoint
+ * Returns publicly available information about the checkpoint specified by *checkpoint_id*
+ * @summary Fetch a checkpoint in an adventure
  */
-export const fetchCheckpointCheckpointsCheckpointIdGet = (
+export const fetchCheckpoint = (
+    adventureId: number,
     checkpointId: number,
  signal?: AbortSignal
 ) => {
       
       
       return customInstance<PublicCheckpoint>(
-      {url: `/checkpoints/${checkpointId}`, method: 'GET', signal
+      {url: `/adventures/${adventureId}/checkpoints/${checkpointId}`, method: 'GET', signal
     },
       );
     }
   
 
-export const getFetchCheckpointCheckpointsCheckpointIdGetQueryKey = (checkpointId: number,) => {
-    return [`/checkpoints/${checkpointId}`] as const;
+export const getFetchCheckpointQueryKey = (adventureId: number,
+    checkpointId: number,) => {
+    return [`/adventures/${adventureId}/checkpoints/${checkpointId}`] as const;
     }
 
     
-export const getFetchCheckpointCheckpointsCheckpointIdGetQueryOptions = <TData = Awaited<ReturnType<typeof fetchCheckpointCheckpointsCheckpointIdGet>>, TError = HTTPValidationError>(checkpointId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchCheckpointCheckpointsCheckpointIdGet>>, TError, TData>>, }
+export const getFetchCheckpointQueryOptions = <TData = Awaited<ReturnType<typeof fetchCheckpoint>>, TError = void | HTTPValidationError>(adventureId: number,
+    checkpointId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchCheckpoint>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getFetchCheckpointCheckpointsCheckpointIdGetQueryKey(checkpointId);
+  const queryKey =  queryOptions?.queryKey ?? getFetchCheckpointQueryKey(adventureId,checkpointId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof fetchCheckpointCheckpointsCheckpointIdGet>>> = ({ signal }) => fetchCheckpointCheckpointsCheckpointIdGet(checkpointId, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof fetchCheckpoint>>> = ({ signal }) => fetchCheckpoint(adventureId,checkpointId, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, enabled: !!(checkpointId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof fetchCheckpointCheckpointsCheckpointIdGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: !!(adventureId && checkpointId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof fetchCheckpoint>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type FetchCheckpointCheckpointsCheckpointIdGetQueryResult = NonNullable<Awaited<ReturnType<typeof fetchCheckpointCheckpointsCheckpointIdGet>>>
-export type FetchCheckpointCheckpointsCheckpointIdGetQueryError = HTTPValidationError
+export type FetchCheckpointQueryResult = NonNullable<Awaited<ReturnType<typeof fetchCheckpoint>>>
+export type FetchCheckpointQueryError = void | HTTPValidationError
 
 
-export function useFetchCheckpointCheckpointsCheckpointIdGet<TData = Awaited<ReturnType<typeof fetchCheckpointCheckpointsCheckpointIdGet>>, TError = HTTPValidationError>(
- checkpointId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchCheckpointCheckpointsCheckpointIdGet>>, TError, TData>> & Pick<
+export function useFetchCheckpoint<TData = Awaited<ReturnType<typeof fetchCheckpoint>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    checkpointId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchCheckpoint>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof fetchCheckpointCheckpointsCheckpointIdGet>>,
+          Awaited<ReturnType<typeof fetchCheckpoint>>,
           TError,
-          Awaited<ReturnType<typeof fetchCheckpointCheckpointsCheckpointIdGet>>
+          Awaited<ReturnType<typeof fetchCheckpoint>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useFetchCheckpointCheckpointsCheckpointIdGet<TData = Awaited<ReturnType<typeof fetchCheckpointCheckpointsCheckpointIdGet>>, TError = HTTPValidationError>(
- checkpointId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchCheckpointCheckpointsCheckpointIdGet>>, TError, TData>> & Pick<
+export function useFetchCheckpoint<TData = Awaited<ReturnType<typeof fetchCheckpoint>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    checkpointId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchCheckpoint>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof fetchCheckpointCheckpointsCheckpointIdGet>>,
+          Awaited<ReturnType<typeof fetchCheckpoint>>,
           TError,
-          Awaited<ReturnType<typeof fetchCheckpointCheckpointsCheckpointIdGet>>
+          Awaited<ReturnType<typeof fetchCheckpoint>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useFetchCheckpointCheckpointsCheckpointIdGet<TData = Awaited<ReturnType<typeof fetchCheckpointCheckpointsCheckpointIdGet>>, TError = HTTPValidationError>(
- checkpointId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchCheckpointCheckpointsCheckpointIdGet>>, TError, TData>>, }
+export function useFetchCheckpoint<TData = Awaited<ReturnType<typeof fetchCheckpoint>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    checkpointId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchCheckpoint>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Fetch Checkpoint
+ * @summary Fetch a checkpoint in an adventure
  */
 
-export function useFetchCheckpointCheckpointsCheckpointIdGet<TData = Awaited<ReturnType<typeof fetchCheckpointCheckpointsCheckpointIdGet>>, TError = HTTPValidationError>(
- checkpointId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchCheckpointCheckpointsCheckpointIdGet>>, TError, TData>>, }
+export function useFetchCheckpoint<TData = Awaited<ReturnType<typeof fetchCheckpoint>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    checkpointId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchCheckpoint>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getFetchCheckpointCheckpointsCheckpointIdGetQueryOptions(checkpointId,options)
+  const queryOptions = getFetchCheckpointQueryOptions(adventureId,checkpointId,options)
 
   const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1119,16 +1130,18 @@ export function useFetchCheckpointCheckpointsCheckpointIdGet<TData = Awaited<Ret
 
 
 /**
- * @summary Update Checkpoint
+ * Update checkpoint specified by *team_id* and *adventure_id*
+ * @summary Update a checkpoint
  */
-export const updateCheckpointCheckpointsCheckpointIdPatch = (
+export const patchCheckpoint = (
+    adventureId: number,
     checkpointId: number,
     modifyCheckpoint: ModifyCheckpoint,
  ) => {
       
       
       return customInstance<PublicCheckpoint>(
-      {url: `/checkpoints/${checkpointId}`, method: 'PATCH',
+      {url: `/adventures/${adventureId}/checkpoints/${checkpointId}`, method: 'PATCH',
       headers: {'Content-Type': 'application/json', },
       data: modifyCheckpoint
     },
@@ -1137,11 +1150,11 @@ export const updateCheckpointCheckpointsCheckpointIdPatch = (
   
 
 
-export const getUpdateCheckpointCheckpointsCheckpointIdPatchMutationOptions = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCheckpointCheckpointsCheckpointIdPatch>>, TError,{checkpointId: number;data: ModifyCheckpoint}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof updateCheckpointCheckpointsCheckpointIdPatch>>, TError,{checkpointId: number;data: ModifyCheckpoint}, TContext> => {
+export const getPatchCheckpointMutationOptions = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchCheckpoint>>, TError,{adventureId: number;checkpointId: number;data: ModifyCheckpoint}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof patchCheckpoint>>, TError,{adventureId: number;checkpointId: number;data: ModifyCheckpoint}, TContext> => {
 
-const mutationKey = ['updateCheckpointCheckpointsCheckpointIdPatch'];
+const mutationKey = ['patchCheckpoint'];
 const {mutation: mutationOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -1151,10 +1164,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateCheckpointCheckpointsCheckpointIdPatch>>, {checkpointId: number;data: ModifyCheckpoint}> = (props) => {
-          const {checkpointId,data} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof patchCheckpoint>>, {adventureId: number;checkpointId: number;data: ModifyCheckpoint}> = (props) => {
+          const {adventureId,checkpointId,data} = props ?? {};
 
-          return  updateCheckpointCheckpointsCheckpointIdPatch(checkpointId,data,)
+          return  patchCheckpoint(adventureId,checkpointId,data,)
         }
 
         
@@ -1162,48 +1175,50 @@ const {mutation: mutationOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type UpdateCheckpointCheckpointsCheckpointIdPatchMutationResult = NonNullable<Awaited<ReturnType<typeof updateCheckpointCheckpointsCheckpointIdPatch>>>
-    export type UpdateCheckpointCheckpointsCheckpointIdPatchMutationBody = ModifyCheckpoint
-    export type UpdateCheckpointCheckpointsCheckpointIdPatchMutationError = HTTPValidationError
+    export type PatchCheckpointMutationResult = NonNullable<Awaited<ReturnType<typeof patchCheckpoint>>>
+    export type PatchCheckpointMutationBody = ModifyCheckpoint
+    export type PatchCheckpointMutationError = void | HTTPValidationError
 
     /**
- * @summary Update Checkpoint
+ * @summary Update a checkpoint
  */
-export const useUpdateCheckpointCheckpointsCheckpointIdPatch = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCheckpointCheckpointsCheckpointIdPatch>>, TError,{checkpointId: number;data: ModifyCheckpoint}, TContext>, }
+export const usePatchCheckpoint = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchCheckpoint>>, TError,{adventureId: number;checkpointId: number;data: ModifyCheckpoint}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof updateCheckpointCheckpointsCheckpointIdPatch>>,
+        Awaited<ReturnType<typeof patchCheckpoint>>,
         TError,
-        {checkpointId: number;data: ModifyCheckpoint},
+        {adventureId: number;checkpointId: number;data: ModifyCheckpoint},
         TContext
       > => {
 
-      const mutationOptions = getUpdateCheckpointCheckpointsCheckpointIdPatchMutationOptions(options);
+      const mutationOptions = getPatchCheckpointMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }
     
 /**
- * @summary Delete Checkpoint
+ * Delete checkpoint specified by *checkpoint_id* and *adventure_id*
+ * @summary Delete a checkpoint
  */
-export const deleteCheckpointCheckpointsCheckpointIdDelete = (
+export const deleteCheckpoint = (
+    adventureId: number,
     checkpointId: number,
  ) => {
       
       
-      return customInstance<unknown>(
-      {url: `/checkpoints/${checkpointId}`, method: 'DELETE'
+      return customInstance<DeleteResponse>(
+      {url: `/adventures/${adventureId}/checkpoints/${checkpointId}`, method: 'DELETE'
     },
       );
     }
   
 
 
-export const getDeleteCheckpointCheckpointsCheckpointIdDeleteMutationOptions = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCheckpointCheckpointsCheckpointIdDelete>>, TError,{checkpointId: number}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof deleteCheckpointCheckpointsCheckpointIdDelete>>, TError,{checkpointId: number}, TContext> => {
+export const getDeleteCheckpointMutationOptions = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCheckpoint>>, TError,{adventureId: number;checkpointId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteCheckpoint>>, TError,{adventureId: number;checkpointId: number}, TContext> => {
 
-const mutationKey = ['deleteCheckpointCheckpointsCheckpointIdDelete'];
+const mutationKey = ['deleteCheckpoint'];
 const {mutation: mutationOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -1213,10 +1228,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteCheckpointCheckpointsCheckpointIdDelete>>, {checkpointId: number}> = (props) => {
-          const {checkpointId} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteCheckpoint>>, {adventureId: number;checkpointId: number}> = (props) => {
+          const {adventureId,checkpointId} = props ?? {};
 
-          return  deleteCheckpointCheckpointsCheckpointIdDelete(checkpointId,)
+          return  deleteCheckpoint(adventureId,checkpointId,)
         }
 
         
@@ -1224,104 +1239,105 @@ const {mutation: mutationOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type DeleteCheckpointCheckpointsCheckpointIdDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof deleteCheckpointCheckpointsCheckpointIdDelete>>>
+    export type DeleteCheckpointMutationResult = NonNullable<Awaited<ReturnType<typeof deleteCheckpoint>>>
     
-    export type DeleteCheckpointCheckpointsCheckpointIdDeleteMutationError = HTTPValidationError
+    export type DeleteCheckpointMutationError = void | HTTPValidationError
 
     /**
- * @summary Delete Checkpoint
+ * @summary Delete a checkpoint
  */
-export const useDeleteCheckpointCheckpointsCheckpointIdDelete = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCheckpointCheckpointsCheckpointIdDelete>>, TError,{checkpointId: number}, TContext>, }
+export const useDeleteCheckpoint = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCheckpoint>>, TError,{adventureId: number;checkpointId: number}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteCheckpointCheckpointsCheckpointIdDelete>>,
+        Awaited<ReturnType<typeof deleteCheckpoint>>,
         TError,
-        {checkpointId: number},
+        {adventureId: number;checkpointId: number},
         TContext
       > => {
 
-      const mutationOptions = getDeleteCheckpointCheckpointsCheckpointIdDeleteMutationOptions(options);
+      const mutationOptions = getDeleteCheckpointMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }
     
 /**
- * @summary List Admin Checkpoints
+ * Returns admin level info of all active teams for the specified adventure.
+ * @summary List all checkpoints in an adventure
  */
-export const listAdminCheckpointsCheckpointsAdminGet = (
-    
+export const listAdminCheckpoints = (
+    adventureId: number,
  signal?: AbortSignal
 ) => {
       
       
       return customInstance<AdminCheckpoint[]>(
-      {url: `/checkpoints/admin/`, method: 'GET', signal
+      {url: `/adventures/${adventureId}/checkpoints/admin/admin/`, method: 'GET', signal
     },
       );
     }
   
 
-export const getListAdminCheckpointsCheckpointsAdminGetQueryKey = () => {
-    return [`/checkpoints/admin/`] as const;
+export const getListAdminCheckpointsQueryKey = (adventureId: number,) => {
+    return [`/adventures/${adventureId}/checkpoints/admin/admin/`] as const;
     }
 
     
-export const getListAdminCheckpointsCheckpointsAdminGetQueryOptions = <TData = Awaited<ReturnType<typeof listAdminCheckpointsCheckpointsAdminGet>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminCheckpointsCheckpointsAdminGet>>, TError, TData>>, }
+export const getListAdminCheckpointsQueryOptions = <TData = Awaited<ReturnType<typeof listAdminCheckpoints>>, TError = HTTPValidationError>(adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminCheckpoints>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getListAdminCheckpointsCheckpointsAdminGetQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getListAdminCheckpointsQueryKey(adventureId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof listAdminCheckpointsCheckpointsAdminGet>>> = ({ signal }) => listAdminCheckpointsCheckpointsAdminGet(signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listAdminCheckpoints>>> = ({ signal }) => listAdminCheckpoints(adventureId, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listAdminCheckpointsCheckpointsAdminGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: !!(adventureId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listAdminCheckpoints>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type ListAdminCheckpointsCheckpointsAdminGetQueryResult = NonNullable<Awaited<ReturnType<typeof listAdminCheckpointsCheckpointsAdminGet>>>
-export type ListAdminCheckpointsCheckpointsAdminGetQueryError = unknown
+export type ListAdminCheckpointsQueryResult = NonNullable<Awaited<ReturnType<typeof listAdminCheckpoints>>>
+export type ListAdminCheckpointsQueryError = HTTPValidationError
 
 
-export function useListAdminCheckpointsCheckpointsAdminGet<TData = Awaited<ReturnType<typeof listAdminCheckpointsCheckpointsAdminGet>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminCheckpointsCheckpointsAdminGet>>, TError, TData>> & Pick<
+export function useListAdminCheckpoints<TData = Awaited<ReturnType<typeof listAdminCheckpoints>>, TError = HTTPValidationError>(
+ adventureId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminCheckpoints>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listAdminCheckpointsCheckpointsAdminGet>>,
+          Awaited<ReturnType<typeof listAdminCheckpoints>>,
           TError,
-          Awaited<ReturnType<typeof listAdminCheckpointsCheckpointsAdminGet>>
+          Awaited<ReturnType<typeof listAdminCheckpoints>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListAdminCheckpointsCheckpointsAdminGet<TData = Awaited<ReturnType<typeof listAdminCheckpointsCheckpointsAdminGet>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminCheckpointsCheckpointsAdminGet>>, TError, TData>> & Pick<
+export function useListAdminCheckpoints<TData = Awaited<ReturnType<typeof listAdminCheckpoints>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminCheckpoints>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listAdminCheckpointsCheckpointsAdminGet>>,
+          Awaited<ReturnType<typeof listAdminCheckpoints>>,
           TError,
-          Awaited<ReturnType<typeof listAdminCheckpointsCheckpointsAdminGet>>
+          Awaited<ReturnType<typeof listAdminCheckpoints>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListAdminCheckpointsCheckpointsAdminGet<TData = Awaited<ReturnType<typeof listAdminCheckpointsCheckpointsAdminGet>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminCheckpointsCheckpointsAdminGet>>, TError, TData>>, }
+export function useListAdminCheckpoints<TData = Awaited<ReturnType<typeof listAdminCheckpoints>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminCheckpoints>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary List Admin Checkpoints
+ * @summary List all checkpoints in an adventure
  */
 
-export function useListAdminCheckpointsCheckpointsAdminGet<TData = Awaited<ReturnType<typeof listAdminCheckpointsCheckpointsAdminGet>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminCheckpointsCheckpointsAdminGet>>, TError, TData>>, }
+export function useListAdminCheckpoints<TData = Awaited<ReturnType<typeof listAdminCheckpoints>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminCheckpoints>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getListAdminCheckpointsCheckpointsAdminGetQueryOptions(options)
+  const queryOptions = getListAdminCheckpointsQueryOptions(adventureId,options)
 
   const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1334,82 +1350,90 @@ export function useListAdminCheckpointsCheckpointsAdminGet<TData = Awaited<Retur
 
 
 /**
- * @summary Fetch Admin Checkpoint
+ * Fetches a checkpoint in an adventure specified by it's id
+ * @summary Fetch a single checkpoint in an adventure
  */
-export const fetchAdminCheckpointCheckpointsAdminCheckpointIdGet = (
+export const fetchAdminCheckpoint = (
+    adventureId: number,
     checkpointId: number,
  signal?: AbortSignal
 ) => {
       
       
       return customInstance<AdminCheckpoint>(
-      {url: `/checkpoints/admin/${checkpointId}`, method: 'GET', signal
+      {url: `/adventures/${adventureId}/checkpoints/admin/admin/${checkpointId}`, method: 'GET', signal
     },
       );
     }
   
 
-export const getFetchAdminCheckpointCheckpointsAdminCheckpointIdGetQueryKey = (checkpointId: number,) => {
-    return [`/checkpoints/admin/${checkpointId}`] as const;
+export const getFetchAdminCheckpointQueryKey = (adventureId: number,
+    checkpointId: number,) => {
+    return [`/adventures/${adventureId}/checkpoints/admin/admin/${checkpointId}`] as const;
     }
 
     
-export const getFetchAdminCheckpointCheckpointsAdminCheckpointIdGetQueryOptions = <TData = Awaited<ReturnType<typeof fetchAdminCheckpointCheckpointsAdminCheckpointIdGet>>, TError = HTTPValidationError>(checkpointId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminCheckpointCheckpointsAdminCheckpointIdGet>>, TError, TData>>, }
+export const getFetchAdminCheckpointQueryOptions = <TData = Awaited<ReturnType<typeof fetchAdminCheckpoint>>, TError = void | HTTPValidationError>(adventureId: number,
+    checkpointId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminCheckpoint>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getFetchAdminCheckpointCheckpointsAdminCheckpointIdGetQueryKey(checkpointId);
+  const queryKey =  queryOptions?.queryKey ?? getFetchAdminCheckpointQueryKey(adventureId,checkpointId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof fetchAdminCheckpointCheckpointsAdminCheckpointIdGet>>> = ({ signal }) => fetchAdminCheckpointCheckpointsAdminCheckpointIdGet(checkpointId, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof fetchAdminCheckpoint>>> = ({ signal }) => fetchAdminCheckpoint(adventureId,checkpointId, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, enabled: !!(checkpointId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof fetchAdminCheckpointCheckpointsAdminCheckpointIdGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: !!(adventureId && checkpointId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof fetchAdminCheckpoint>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type FetchAdminCheckpointCheckpointsAdminCheckpointIdGetQueryResult = NonNullable<Awaited<ReturnType<typeof fetchAdminCheckpointCheckpointsAdminCheckpointIdGet>>>
-export type FetchAdminCheckpointCheckpointsAdminCheckpointIdGetQueryError = HTTPValidationError
+export type FetchAdminCheckpointQueryResult = NonNullable<Awaited<ReturnType<typeof fetchAdminCheckpoint>>>
+export type FetchAdminCheckpointQueryError = void | HTTPValidationError
 
 
-export function useFetchAdminCheckpointCheckpointsAdminCheckpointIdGet<TData = Awaited<ReturnType<typeof fetchAdminCheckpointCheckpointsAdminCheckpointIdGet>>, TError = HTTPValidationError>(
- checkpointId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminCheckpointCheckpointsAdminCheckpointIdGet>>, TError, TData>> & Pick<
+export function useFetchAdminCheckpoint<TData = Awaited<ReturnType<typeof fetchAdminCheckpoint>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    checkpointId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminCheckpoint>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof fetchAdminCheckpointCheckpointsAdminCheckpointIdGet>>,
+          Awaited<ReturnType<typeof fetchAdminCheckpoint>>,
           TError,
-          Awaited<ReturnType<typeof fetchAdminCheckpointCheckpointsAdminCheckpointIdGet>>
+          Awaited<ReturnType<typeof fetchAdminCheckpoint>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useFetchAdminCheckpointCheckpointsAdminCheckpointIdGet<TData = Awaited<ReturnType<typeof fetchAdminCheckpointCheckpointsAdminCheckpointIdGet>>, TError = HTTPValidationError>(
- checkpointId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminCheckpointCheckpointsAdminCheckpointIdGet>>, TError, TData>> & Pick<
+export function useFetchAdminCheckpoint<TData = Awaited<ReturnType<typeof fetchAdminCheckpoint>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    checkpointId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminCheckpoint>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof fetchAdminCheckpointCheckpointsAdminCheckpointIdGet>>,
+          Awaited<ReturnType<typeof fetchAdminCheckpoint>>,
           TError,
-          Awaited<ReturnType<typeof fetchAdminCheckpointCheckpointsAdminCheckpointIdGet>>
+          Awaited<ReturnType<typeof fetchAdminCheckpoint>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useFetchAdminCheckpointCheckpointsAdminCheckpointIdGet<TData = Awaited<ReturnType<typeof fetchAdminCheckpointCheckpointsAdminCheckpointIdGet>>, TError = HTTPValidationError>(
- checkpointId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminCheckpointCheckpointsAdminCheckpointIdGet>>, TError, TData>>, }
+export function useFetchAdminCheckpoint<TData = Awaited<ReturnType<typeof fetchAdminCheckpoint>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    checkpointId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminCheckpoint>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Fetch Admin Checkpoint
+ * @summary Fetch a single checkpoint in an adventure
  */
 
-export function useFetchAdminCheckpointCheckpointsAdminCheckpointIdGet<TData = Awaited<ReturnType<typeof fetchAdminCheckpointCheckpointsAdminCheckpointIdGet>>, TError = HTTPValidationError>(
- checkpointId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminCheckpointCheckpointsAdminCheckpointIdGet>>, TError, TData>>, }
+export function useFetchAdminCheckpoint<TData = Awaited<ReturnType<typeof fetchAdminCheckpoint>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    checkpointId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminCheckpoint>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getFetchAdminCheckpointCheckpointsAdminCheckpointIdGetQueryOptions(checkpointId,options)
+  const queryOptions = getFetchAdminCheckpointQueryOptions(adventureId,checkpointId,options)
 
   const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
