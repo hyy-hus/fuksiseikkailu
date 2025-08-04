@@ -6,6 +6,6 @@
  */
 
 export interface ModifyTeam {
+  /** Name of the team */
   name: string;
-  adventure_id: number;
 }

@@ -9,6 +9,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { BrowserRouter } from "react-router-dom";
 
 import { AuthProvider } from "@auth";
+import { AdventureProvider } from "@contexts";
 
 import "./i18n";
 
@@ -18,11 +19,13 @@ createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <QueryClientProvider client={queryClient}>
             <AuthProvider>
-                <BrowserRouter>
-                    <NavigatorRegistrar />
-                    <App />
-                    <ReactQueryDevtools initialIsOpen={false} />
-                </BrowserRouter>
+                <AdventureProvider>
+                    <BrowserRouter>
+                        <NavigatorRegistrar />
+                        <App />
+                        <ReactQueryDevtools initialIsOpen={false} />
+                    </BrowserRouter>
+                </AdventureProvider>
             </AuthProvider>
         </QueryClientProvider>
     </StrictMode>,

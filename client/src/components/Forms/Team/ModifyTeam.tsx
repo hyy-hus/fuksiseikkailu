@@ -1,15 +1,15 @@
 import {
-    useFetchAdminTeamTeamsAdminTeamIdGet,
-    useUpdateTeamTeamsTeamIdPatch,
-    useListAdventuresAdventuresGet,
-    getListAdminTeamsTeamsAdminGetQueryKey,
-    getFetchAdminTeamTeamsAdminTeamIdGetQueryKey,
+    useFetchAdminTeam,
+    usePatchTeam,
+    getListAdminTeamsQueryKey,
+    getFetchAdminTeamQueryKey,
 } from "@api/endpoints";
-import { Form, FieldDef, Option } from "./Form";
+import { Form } from "@components";
 import { ModifyTeam } from "@api/model";
 import { t } from "i18next";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { FieldDef } from "../Form";
+import { useAdventure } from "@contexts/AdventureContext";
 
 interface TeamFormProps {
     teamId: number;
@@ -17,19 +17,11 @@ interface TeamFormProps {
 
 export function ModifyTeamForm({ teamId }: TeamFormProps) {
     const queryClient = useQueryClient();
-    const { data, isLoading, isError, error } = useFetchAdminTeamTeamsAdminTeamIdGet(teamId);
-    const updateMutation = useUpdateTeamTeamsTeamIdPatch();
 
-    const getAdventures = useListAdventuresAdventuresGet();
+    const { selectedAdventure } = useAdventure();
 
-    const [adventureOptions, setAdventureOptions] = useState<Option[]>([]);
-
-    useEffect(() => {
-        if (getAdventures.data?.data) {
-            setAdventureOptions(getAdventures.data.data.map(a => (({ key: String(a.id), value: a.name } as Option))));
-        }
-    }, [getAdventures.data?.data])
-
+    const { data, isLoading, isError, error } = useFetchAdminTeam(selectedAdventure?.id ?? 0, teamId);
+    const updateMutation = usePatchTeam();
 
     if (isLoading) {
         return (
@@ -51,21 +43,20 @@ export function ModifyTeamForm({ teamId }: TeamFormProps) {
 
     function handleSave(item: ModifyTeam) {
         updateMutation.mutateAsync(
-            { teamId: teamId, data: item }
+            { adventureId: selectedAdventure?.id ?? 0, teamId: teamId, data: item }
         ).then(() => {
             queryClient.invalidateQueries({
-                queryKey: getListAdminTeamsTeamsAdminGetQueryKey(),
+                queryKey: getListAdminTeamsQueryKey(selectedAdventure?.id ?? 0),
             })
 
             queryClient.invalidateQueries({
-                queryKey: getFetchAdminTeamTeamsAdminTeamIdGetQueryKey(teamId),
+                queryKey: getFetchAdminTeamQueryKey(selectedAdventure?.id ?? 0, teamId),
             })
         })
     }
 
 
     const fields: FieldDef<ModifyTeam>[] = [
-        { key: "adventure_id", name: t("adventure-id"), type: "option", options: adventureOptions },
         { key: "name", name: t("name"), type: "text" },
     ]
 

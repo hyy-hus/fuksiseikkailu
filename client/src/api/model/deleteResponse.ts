@@ -5,7 +5,7 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface CreateTeam {
-  /** Name of the team */
-  name: string;
+export interface DeleteResponse {
+  /** True if delete operation succeeded */
+  ok: boolean;
 }

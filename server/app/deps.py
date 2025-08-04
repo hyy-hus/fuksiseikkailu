@@ -33,7 +33,7 @@ def require_admin(current_user: DBUser = Depends(get_current_user)):
 
 
 def require_user(current_user: DBUser = Depends(get_current_user)):
-    if current_user.role != "user" or current_user.role != "admin":
+    if current_user.role not in ("user", "admin"):
         raise HTTPException(status_code=403, detail="Allowed only for users and admins")
 
     return current_user

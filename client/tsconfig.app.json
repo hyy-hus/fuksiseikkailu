@@ -31,7 +31,11 @@
         "@auth/*": ["auth/*"],
         "@auth": ["auth"],
         "@api/*": ["api/*"],
-        "@api": ["api"]
+        "@api": ["api"],
+        "@contexts/*": ["contexts/*"],
+        "@contexts": ["contexts"],
+        "@hooks/*": ["hooks/*"],
+        "@hooks": ["hooks"]
     }
   },
   "include": ["src"]

@@ -1,8 +1,8 @@
-import { getListAdventuresAdventuresGetQueryKey, useDeleteTeamTeamsTeamIdDelete } from "@api/endpoints";
+import { getListAdminTeamsQueryKey, useDeleteTeam } from "@api/endpoints";
 import { AdminTeam } from "@api/model";
-import { CreateTeamForm } from "@components/Forms/";
-import { ModifyTeamForm } from "@components/Forms/ModifyTeam";
+import { CreateTeamForm, ModifyTeamForm } from "@components";
 import { TeamList } from "@components/Lists";
+import { useAdventure } from "@contexts/AdventureContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useTranslation } from "react-i18next"
@@ -13,7 +13,9 @@ export function TeamsPage() {
     const [selected, setSelected] = useState<AdminTeam[]>([]);
 
     const queryClient = useQueryClient();
-    const deleteTeamMutation = useDeleteTeamTeamsTeamIdDelete();
+    const deleteTeamMutation = useDeleteTeam();
+
+    const { selectedAdventure } = useAdventure();
 
     function handleRemove(items: AdminTeam[]) {
         const confirmed = confirm(`${t("confirm-delete-adventures")}: ${items.map(item => item.name).join(", ")}?`)
@@ -24,7 +26,7 @@ export function TeamsPage() {
 
         Promise.all(
             items.map((item) =>
-                deleteTeamMutation.mutateAsync({ teamId: item.id }, {
+                deleteTeamMutation.mutateAsync({ adventureId: selectedAdventure?.id ?? 0, teamId: item.id }, {
                     onSuccess: () => {
                         console.log(`Team #${item.id} deleted`);
                     },
@@ -36,7 +38,7 @@ export function TeamsPage() {
         )
             .then(() => {
                 queryClient.invalidateQueries({
-                    queryKey: getListAdventuresAdventuresGetQueryKey(),
+                    queryKey: getListAdminTeamsQueryKey(selectedAdventure?.id ?? 0),
                 });
             })
     }
