@@ -113,6 +113,10 @@ export function Map({
     //     }
     // }, [points])
 
-    return <div ref={mapContainerRef} style={{ height: "800px", width: "100%" }} />;
+    return (
+        <div ref={mapContainerRef}
+            className="w-full h-full min-w-100 min-h-100"
+        />
+    );
 };
 
