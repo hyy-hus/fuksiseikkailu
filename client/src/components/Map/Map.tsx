@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useMemo, useLayoutEffect } from 'react'
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -6,11 +6,13 @@ import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
+type LatLngTuple = [number, number];
+
 interface CheckpointData {
     number: number,
     name: string,
     description: string,
-    location: [number, number],
+    location: LatLngTuple,
     address: string,
     area: string,
     accessible: boolean,
@@ -19,6 +21,19 @@ interface CheckpointData {
     favourite: boolean,
     completed: boolean,
 }
+const blueIcon = useMemo(() => L.divIcon({
+    className: "custom-circle",
+    html: "<div style='width:20px;height:20px;border-radius:50%;background:blue;'></div>",
+    iconSize: [20, 20],
+    iconAnchor: [10, 0],
+}), []);
+
+const redIcon = useMemo(() => L.divIcon({
+    className: "custom-circle",
+    html: "<div style='width:20px;height:20px;border-radius:50%;background:red;'></div>",
+    iconSize: [20, 20],
+    iconAnchor: [10, 0],
+}), []);
 
 interface MapProps {
     clickCallback: (checkpoint: CheckpointData) => void;
@@ -33,8 +48,9 @@ export function Map({
 
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const mapRef = useRef<L.Map | null>(null);
+    const markerClusterRef = useRef<L.MarkerClusterGroup | null>(null);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const default_coordinates: [number, number] = selected ? selected.location : [60.16936416230424, 24.94024164353307];
 
         if (!mapRef.current && mapContainerRef.current) {
@@ -47,26 +63,12 @@ export function Map({
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(mapRef.current);
 
-            // //Add a marker
-            // L.marker([60.16936416230424, 24.94024164353307])
-            //     .addTo(mapRef.current)
-            //     .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-            //     .openPopup();
+            markerClusterRef.current = L.markerClusterGroup({ disableClusteringAtZoom: 19 });
+            mapRef.current.addLayer(markerClusterRef.current);
+        }
 
-            const blueIcon = L.divIcon({
-                className: "custom-circle",
-                html: "<div style='width:20px;height:20px;border-radius:50%;background:blue;'></div>",
-                iconSize: [20, 20],
-                iconAnchor: [10, 0],
-            })
-
-            const redIcon = L.divIcon({
-                className: "custom-circle",
-                html: "<div style='width:20px;height:20px;border-radius:50%;background:red;'></div>",
-                iconSize: [20, 20],
-                iconAnchor: [10, 0],
-            })
-
+        if (markerClusterRef.current) {
+            markerClusterRef.current.clearLayers();
 
             const markers = checkpoints.map((checkpoint: CheckpointData) => {
                 return L.marker([checkpoint.location[0], checkpoint.location[1]], {
@@ -91,15 +93,8 @@ export function Map({
                     })
             });
 
-            const markerCluster = L.markerClusterGroup({
-                disableClusteringAtZoom: 19,
-            });
-            markers.forEach((marker) => {
-                markerCluster.addLayer(marker);
-            })
-            mapRef.current.addLayer(markerCluster);
+            markers.forEach(m => markerClusterRef.current!.addLayer(m));
 
-            // mapRef.current.on("click", (e) => clickCallback(e, mapRef.current));
         }
 
         return () => {
