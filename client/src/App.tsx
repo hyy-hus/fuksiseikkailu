@@ -15,6 +15,8 @@ const AdventuresPage = lazy(() => import("./pages/AdventuresPage").then((m) => (
 const CheckpointsPage = lazy(() => import("./pages/CheckpointsPage").then((m) => ({ default: m.CheckpointsPage })));
 const TeamsPage = lazy(() => import("./pages/TeamsPage").then((m) => ({ default: m.TeamsPage })));
 
+const AdminMapPage = lazy(() => import("./pages/AdminMapPage").then((m) => ({ default: m.AdminMapPage })));
+
 const NotFound = lazy(() => import("./pages/NotFound").then((m) => ({ default: m.NotFound })));
 const LoadingPage = lazy(() => import("./pages/LoadingPage").then((m) => ({ default: m.LoadingPage })));
 
@@ -29,6 +31,7 @@ export function App() {
                     <Route path="playground" element={<PlaygroundPage />} />
                     <Route path="adventures" element={<AdventuresPage />} />
                     <Route path="checkpoints" element={<CheckpointsPage />} />
+                    <Route path="map" element={<AdminMapPage />} />
                     <Route path="teams" element={<TeamsPage />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
