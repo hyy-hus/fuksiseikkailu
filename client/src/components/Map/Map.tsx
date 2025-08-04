@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo, useLayoutEffect } from 'react'
+import { useRef, useLayoutEffect } from 'react'
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
