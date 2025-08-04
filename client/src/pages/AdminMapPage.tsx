@@ -1,7 +1,7 @@
 import { useListCheckpoints } from "@api/endpoints";
 import { Map } from "@components";
 import { Button } from "@components/Button";
-import { Input, Select } from "@components/Input";
+import { Input } from "@components/Input";
 import { useAdventure } from "@contexts/AdventureContext";
 import { t } from "i18next";
 import { useState } from "react";
@@ -20,6 +20,8 @@ function SearchBar({
     onSubmit,
 }: SearchBarProps) {
     const [searchQuery, setSearchQuery] = useState<string>("");
+    const [focusedIndex, setFocusedIndex] = useState<number>(-1);
+
     const searchResults = options.filter(option => searchQuery.trim() !== "" && option.value.toLowerCase().includes(searchQuery.toLowerCase()))
 
     function handleSelect(key: string | number) {
@@ -34,18 +36,37 @@ function SearchBar({
                 handleSelect(searchResults[0].key)
             }
         }}>
-            <Input type="search" label={t("search")} placeholder={`${t("example-abbr.")} Kasvatustieteen Karkurit`}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-            />
+            <div onKeyDown={(e) => {
+                if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    setFocusedIndex((prev) => Math.min(prev + 1, searchResults.length - 1));
+                } else if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    setFocusedIndex((prev) => Math.max(prev - 1, 0));
+                } else if (e.key === "Enter" && focusedIndex >= 0) {
+                    e.preventDefault();
+                    handleSelect(searchResults[focusedIndex].key);
+                }
+            }}>
+                <Input type="search" label={t("search")} placeholder={`${t("example-abbr.")} Kasvatustieteen Karkurit`}
+                    value={searchQuery}
+                    onChange={(e) => {
+                        setSearchQuery(e.target.value)
+                        setFocusedIndex(-1);
+                    }}
+                />
+            </div>
             <Button type="submit" className="h-9/10" variant="green">{t("search")}</Button>
             {searchResults.length > 0 && (
                 <ul className="absolute top-full left-0 z-1 mt-1 max-h-60 overflow-y-auto shadow-lg w-full dark:bg-slate-800 border rounded dark:border-slate-700">
                     {
-                        searchResults.map(result => (
-                            <li className="py-2 px-4 dark:hover:bg-slate-700 cursor-pointer"
+                        searchResults.map((result, index) => (
+                            <li className={`py-2 px-4 dark:hover:bg-slate-700 cursor-pointer ${index === focusedIndex
+                                ? "bg-zinc-200 dark:bg-slate-700"
+                                : "hover:bg-zinc-100 dark:hover:bg-slate-700"
+                                }`}
                                 key={result.key}
-                                onClick={() => handleSelect(result.key)}
+                                onMouseDown={() => handleSelect(result.key)}
                             >
                                 {result.value}
                             </li>
