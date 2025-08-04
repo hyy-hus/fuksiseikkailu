@@ -58,7 +58,7 @@ function SearchBar({
             </div>
             <Button type="submit" className="h-9/10" variant="green">{t("search")}</Button>
             {searchResults.length > 0 && (
-                <ul className="absolute top-full left-0 z-1 mt-1 max-h-60 overflow-y-auto shadow-lg w-full dark:bg-slate-800 border rounded dark:border-slate-700">
+                <ul className="absolute top-full left-0 z-1 mt-1 max-h-60 overflow-y-auto shadow-lg w-full bg-zinc-300 dark:bg-slate-800 border rounded dark:border-slate-700">
                     {
                         searchResults.map((result, index) => (
                             <li className={`py-2 px-4 dark:hover:bg-slate-700 cursor-pointer ${index === focusedIndex
@@ -79,16 +79,17 @@ function SearchBar({
 }
 
 export function AdminMapPage() {
-    const [selectedCheckpointId, setSelectedCheckpointId] = useState<number>(0);
-
     const { selectedAdventure } = useAdventure();
     const checkpoint_query = useListCheckpoints(selectedAdventure?.id ?? 0);
     const checkpoints = checkpoint_query?.data?.data ?? [];
 
+    const [selectedCheckpointId, setSelectedCheckpointId] = useState<number>(0);
+    const selectedCheckpoint = checkpoints.find(cp => cp.id === selectedCheckpointId);
+
     return (
         <div className="h-full grid gap-4 grid-rows-[auto_1fr]">
             <div>
-                <SearchBar options={checkpoints.map(cp => ({ key: cp.id, value: cp.org_name }))} onSubmit={(key) => console.log(key)} />
+                <SearchBar options={checkpoints.map(cp => ({ key: cp.id, value: cp.org_name }))} onSubmit={(key) => setSelectedCheckpointId(Number(key))} />
             </div>
             <div className="w-full h-full border border-zinc-300 dark:border-slate-700">
                 <Map
@@ -96,6 +97,7 @@ export function AdminMapPage() {
                     checkpoints={checkpoints}
                     selected_id={selectedCheckpointId ?? 0}
                 />
+                {selectedCheckpoint?.org_name}
             </div>
         </div>
     )
