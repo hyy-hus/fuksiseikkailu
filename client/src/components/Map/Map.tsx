@@ -5,22 +5,8 @@ import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import { PublicCheckpoint } from '@api/model';
 
-type LatLngTuple = [number, number];
-
-interface CheckpointData {
-    number: number,
-    name: string,
-    description: string,
-    location: LatLngTuple,
-    address: string,
-    area: string,
-    accessible: boolean,
-    host_description: string,
-    rating: number,
-    favourite: boolean,
-    completed: boolean,
-}
 const blueIcon = L.divIcon({
     className: "custom-circle",
     html: "<div style='width:20px;height:20px;border-radius:50%;background:blue;'></div>",
@@ -36,13 +22,13 @@ const redIcon = L.divIcon({
 });
 
 interface MapProps {
-    clickCallback: (checkpoint: CheckpointData) => void;
-    checkpoints: CheckpointData[];
-    selected: CheckpointData | undefined;
+    clickCallback: (checkpoint_id: number) => void;
+    checkpoints: PublicCheckpoint[];
+    selected_id: number | undefined;
 }
 
 export function Map({
-    clickCallback, checkpoints, selected
+    clickCallback, checkpoints, selected_id
 }: MapProps) {
     // const [points, setPoints] = useState([]);
 
@@ -50,8 +36,10 @@ export function Map({
     const mapRef = useRef<L.Map | null>(null);
     const markerClusterRef = useRef<L.MarkerClusterGroup | null>(null);
 
+    const selectedCheckpoint = checkpoints.find(cp => cp.id == selected_id);
+
     useLayoutEffect(() => {
-        const default_coordinates: [number, number] = selected ? selected.location : [60.16936416230424, 24.94024164353307];
+        const default_coordinates: [number, number] = selectedCheckpoint ? [parseFloat(selectedCheckpoint.latitude) || 0, parseFloat(selectedCheckpoint.longitude) || 0] : [60.16936416230424, 24.94024164353307];
 
         if (!mapRef.current && mapContainerRef.current) {
             // Initialize map only if it's not done before
@@ -70,12 +58,16 @@ export function Map({
         if (markerClusterRef.current) {
             markerClusterRef.current.clearLayers();
 
-            const markers = checkpoints.map((checkpoint: CheckpointData) => {
-                return L.marker([checkpoint.location[0], checkpoint.location[1]], {
+
+            const markers = checkpoints.map((checkpoint: PublicCheckpoint) => {
+                const lat = parseFloat(checkpoint.latitude) || 0;
+                const long = parseFloat(checkpoint.longitude) || 0;
+                console.log(lat, long);
+                return L.marker([lat, long], {
                     icon: blueIcon,
                     draggable: false,
                 })
-                    .bindTooltip(checkpoint.name, {
+                    .bindTooltip(checkpoint.org_name, {
                         direction: "top",
                         permanent: true,
                         offset: L.point(0, 0),
@@ -89,7 +81,7 @@ export function Map({
                     .on("click", (e) => {
                         e.target.setIcon(redIcon);
                         e.target.dragging.enable();
-                        clickCallback(checkpoint);
+                        clickCallback(checkpoint.id);
                     })
             });
 
@@ -104,7 +96,7 @@ export function Map({
                 mapRef.current = null;
             }
         }
-    }, [checkpoints, clickCallback, selected]);
+    }, [checkpoints, clickCallback, selected_id]);
 
     // useEffect(() => {
     //     console.log(points);
@@ -115,7 +107,7 @@ export function Map({
 
     return (
         <div ref={mapContainerRef}
-            className="w-full h-full min-w-100 min-h-100"
+            className="w-full h-full min-w-100 min-h-100 z-0"
         />
     );
 };
