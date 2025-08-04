@@ -165,7 +165,7 @@ admin_router = APIRouter(
 
 
 @admin_router.get(
-    "/admin/",
+    "/",
     response_model=list[AdminCheckpoint],
     operation_id="listAdminCheckpoints",
     summary="List all checkpoints in an adventure",
@@ -184,7 +184,7 @@ def list_admin_checkpoints(
 
 
 @admin_router.get(
-    "/admin/{checkpoint_id}",
+    "/{checkpoint_id}",
     response_model=AdminCheckpoint,
     operation_id="fetchAdminCheckpoint",
     summary="Fetch a single checkpoint in an adventure",
