@@ -61,7 +61,9 @@ def list_checkpoints(
     adventure_id: AdventureId,
     session: SessionDep,
 ):
-    query = select(DBCheckpoint).where(DBCheckpoint.active)
+    query = select(DBCheckpoint).where(
+        DBCheckpoint.adventure_id == adventure_id, DBCheckpoint.active
+    )
     return session.exec(query).all()
 
 

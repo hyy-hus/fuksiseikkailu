@@ -4,23 +4,40 @@
  * FastAPI
  * OpenAPI spec version: 0.1.0
  */
+import type { ModifyCheckpointOrgName } from './modifyCheckpointOrgName';
+import type { ModifyCheckpointOrgAbbreviation } from './modifyCheckpointOrgAbbreviation';
+import type { ModifyCheckpointCategory } from './modifyCheckpointCategory';
+import type { ModifyCheckpointLatitude } from './modifyCheckpointLatitude';
+import type { ModifyCheckpointLongitude } from './modifyCheckpointLongitude';
+import type { ModifyCheckpointAddress } from './modifyCheckpointAddress';
+import type { ModifyCheckpointCheckpointDescription } from './modifyCheckpointCheckpointDescription';
+import type { ModifyCheckpointOrgDescription } from './modifyCheckpointOrgDescription';
+import type { ModifyCheckpointOrgLink } from './modifyCheckpointOrgLink';
+import type { ModifyCheckpointAccessible } from './modifyCheckpointAccessible';
+import type { ModifyCheckpointAdventureId } from './modifyCheckpointAdventureId';
+import type { ModifyCheckpointContactPerson } from './modifyCheckpointContactPerson';
+import type { ModifyCheckpointContactEmail } from './modifyCheckpointContactEmail';
+import type { ModifyCheckpointContactPhone } from './modifyCheckpointContactPhone';
+import type { ModifyCheckpointRequirements } from './modifyCheckpointRequirements';
+import type { ModifyCheckpointLanes } from './modifyCheckpointLanes';
+import type { ModifyCheckpointPhotoPermission } from './modifyCheckpointPhotoPermission';
 
 export interface ModifyCheckpoint {
-  org_name: string;
-  org_abbreviation: string;
-  category: string;
-  latitude: string;
-  longitude: string;
-  address: string;
-  checkpoint_description: string;
-  org_description: string;
-  org_link: string;
-  accessible: boolean;
-  adventure_id: number;
-  contact_person: string;
-  contact_email: string;
-  contact_phone: string;
-  requirements: string;
-  lanes: number;
-  photo_permission: boolean;
+  org_name?: ModifyCheckpointOrgName;
+  org_abbreviation?: ModifyCheckpointOrgAbbreviation;
+  category?: ModifyCheckpointCategory;
+  latitude?: ModifyCheckpointLatitude;
+  longitude?: ModifyCheckpointLongitude;
+  address?: ModifyCheckpointAddress;
+  checkpoint_description?: ModifyCheckpointCheckpointDescription;
+  org_description?: ModifyCheckpointOrgDescription;
+  org_link?: ModifyCheckpointOrgLink;
+  accessible?: ModifyCheckpointAccessible;
+  adventure_id?: ModifyCheckpointAdventureId;
+  contact_person?: ModifyCheckpointContactPerson;
+  contact_email?: ModifyCheckpointContactEmail;
+  contact_phone?: ModifyCheckpointContactPhone;
+  requirements?: ModifyCheckpointRequirements;
+  lanes?: ModifyCheckpointLanes;
+  photo_permission?: ModifyCheckpointPhotoPermission;
 }

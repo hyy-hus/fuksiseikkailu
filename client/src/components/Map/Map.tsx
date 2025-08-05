@@ -1,115 +1,105 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useLayoutEffect } from 'react'
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import { PublicCheckpoint } from '@api/model';
 
-interface CheckpointData {
-    number: number,
-    name: string,
-    description: string,
-    location: [number, number],
-    address: string,
-    area: string,
-    accessible: boolean,
-    host_description: string,
-    rating: number,
-    favourite: boolean,
-    completed: boolean,
-}
+const blueIcon = L.divIcon({
+    className: "custom-circle",
+    html: "<div style='width:20px;height:20px;border-radius:50%;background:blue;'></div>",
+    iconSize: [20, 20],
+    iconAnchor: [10, 0],
+});
+
+const redIcon = L.divIcon({
+    className: "custom-circle",
+    html: "<div style='width:20px;height:20px;border-radius:50%;background:red;'></div>",
+    iconSize: [20, 20],
+    iconAnchor: [10, 0],
+});
 
 interface MapProps {
-    clickCallback: (checkpoint: CheckpointData) => void;
-    checkpoints: CheckpointData[];
-    selected: CheckpointData | undefined;
+    clickCallback: (checkpoint_id: number) => void;
+    checkpoints: PublicCheckpoint[];
+    selected_id: number | undefined;
+    onMarkerDrag: (checkpointId: number, newLat: number, newLng: number) => void;
 }
 
 export function Map({
-    clickCallback, checkpoints, selected
+    clickCallback, checkpoints, selected_id, onMarkerDrag
 }: MapProps) {
     // const [points, setPoints] = useState([]);
 
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const mapRef = useRef<L.Map | null>(null);
+    const markerClusterRef = useRef<L.MarkerClusterGroup | null>(null);
 
-    useEffect(() => {
-        const default_coordinates: [number, number] = selected ? selected.location : [60.16936416230424, 24.94024164353307];
+    const selectedCheckpoint = checkpoints.find(cp => cp.id == selected_id);
 
+    useLayoutEffect(() => {
         if (!mapRef.current && mapContainerRef.current) {
-            // Initialize map only if it's not done before
+            const default_coordinates: [number, number] = [60.16936416230424, 24.94024164353307];
+
             mapRef.current = L.map(mapContainerRef.current).setView(default_coordinates, 14);
 
-            // Add tile layer
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(mapRef.current);
 
-            // //Add a marker
-            // L.marker([60.16936416230424, 24.94024164353307])
-            //     .addTo(mapRef.current)
-            //     .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-            //     .openPopup();
-
-            const blueIcon = L.divIcon({
-                className: "custom-circle",
-                html: "<div style='width:20px;height:20px;border-radius:50%;background:blue;'></div>",
-                iconSize: [20, 20],
-                iconAnchor: [10, 0],
-            })
-
-            const redIcon = L.divIcon({
-                className: "custom-circle",
-                html: "<div style='width:20px;height:20px;border-radius:50%;background:red;'></div>",
-                iconSize: [20, 20],
-                iconAnchor: [10, 0],
-            })
-
-
-            const markers = checkpoints.map((checkpoint: CheckpointData) => {
-                return L.marker([checkpoint.location[0], checkpoint.location[1]], {
-                    icon: blueIcon,
-                    draggable: false,
-                })
-                    .bindTooltip(checkpoint.name, {
-                        direction: "top",
-                        permanent: true,
-                        offset: L.point(0, 0),
-                    })
-                    .on("dragend", (e) => {
-                        const newPos = e.target.getLatLng();
-                        console.log("New position:", newPos);
-                        e.target.setIcon(blueIcon);
-                        e.target.dragging.disable();
-                    })
-                    .on("click", (e) => {
-                        e.target.setIcon(redIcon);
-                        e.target.dragging.enable();
-                        clickCallback(checkpoint);
-                    })
-            });
-
-            const markerCluster = L.markerClusterGroup({
-                disableClusteringAtZoom: 19,
-            });
-            markers.forEach((marker) => {
-                markerCluster.addLayer(marker);
-            })
-            mapRef.current.addLayer(markerCluster);
-
-            // mapRef.current.on("click", (e) => clickCallback(e, mapRef.current));
+            markerClusterRef.current = L.markerClusterGroup({ disableClusteringAtZoom: 19 });
+            mapRef.current.addLayer(markerClusterRef.current);
         }
 
         return () => {
             if (mapRef.current) {
-                mapRef.current.off("click", () => { });
                 mapRef.current.remove();
                 mapRef.current = null;
             }
         }
-    }, [checkpoints, clickCallback, selected]);
+    }, []);
+
+    useLayoutEffect(() => {
+        if (!markerClusterRef.current) {
+            return;
+        }
+
+        markerClusterRef.current.clearLayers();
+
+        const markers = checkpoints.map((checkpoint: PublicCheckpoint) => {
+            const lat = parseFloat(checkpoint.latitude) || 0;
+            const long = parseFloat(checkpoint.longitude) || 0;
+            console.log(lat, long);
+            return L.marker([lat, long], {
+                icon: blueIcon,
+                draggable: false,
+            })
+                .bindTooltip(checkpoint.org_name, {
+                    direction: "top",
+                    permanent: true,
+                    offset: L.point(0, 0),
+                })
+                .on("dragend", (e) => {
+                    const newPos = e.target.getLatLng();
+                    console.log("New position:", newPos);
+                    e.target.setIcon(blueIcon);
+                    e.target.dragging.disable();
+                    onMarkerDrag(checkpoint.id, newPos.lat, newPos.lng);
+                })
+                .on("click", (e) => {
+                    e.target.setIcon(redIcon);
+                    e.target.dragging.enable();
+                    clickCallback(checkpoint.id);
+                })
+        });
+
+        markers.forEach(m => markerClusterRef.current!.addLayer(m));
+
+
+    }, [checkpoints, selected_id]);
 
     // useEffect(() => {
     //     console.log(points);
@@ -118,6 +108,10 @@ export function Map({
     //     }
     // }, [points])
 
-    return <div ref={mapContainerRef} style={{ height: "800px", width: "100%" }} />;
+    return (
+        <div ref={mapContainerRef}
+            className="w-full h-full min-w-100 min-h-100 z-0"
+        />
+    );
 };
 
