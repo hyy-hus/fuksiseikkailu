@@ -58,6 +58,16 @@ export function Layout({
         }));
     }, [data])
 
+    useEffect(() => {
+        if (data?.data && data.data.length > 0 && !selectedAdventure) {
+            const firstAdventure = data.data[0];
+            setSelectedAdventure({
+                id: firstAdventure.id,
+                name: firstAdventure.name
+            });
+        }
+    }, [data, selectedAdventure, setSelectedAdventure])
+
     const navbar = cva(
         "col-span-2 border-b grid grid-cols-[auto_1fr_auto] items-center p-2",
         {
@@ -124,7 +134,7 @@ export function Layout({
                     {
                         variant === "admin" ? (
                             !token ?
-                                <Button variant="transparent" onClick={() => navigate("/login")}>{t("login")}</Button>
+                                <Button variant="transparent" onClick={() => navigate("/admin/login")}>{t("login")}</Button>
                                 : <Button variant="red" onClick={() => logout()} >{t("logout")}</Button>
                         ) : (
                             !token ?
