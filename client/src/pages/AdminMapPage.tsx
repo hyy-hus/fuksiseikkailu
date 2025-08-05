@@ -1,8 +1,10 @@
-import { useListCheckpoints } from "@api/endpoints";
+import { getListCheckpointsQueryKey, useListCheckpoints, usePatchCheckpoint } from "@api/endpoints";
+import { PublicCheckpoint } from "@api/model";
 import { Map } from "@components";
 import { Button } from "@components/Button";
 import { Input } from "@components/Input";
 import { useAdventure } from "@contexts/AdventureContext";
+import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
 import { t } from "i18next";
 import { useCallback, useMemo, useState } from "react";
 
@@ -91,6 +93,74 @@ export function AdminMapPage() {
         setSelectedCheckpointId(Number(id));
     }, []);
 
+    type CheckpointResponse = {
+        data: PublicCheckpoint[];
+    }
+
+    const queryClient = useQueryClient();
+    const queryKey = getListCheckpointsQueryKey(selectedAdventure?.id ?? 0);
+    const updateCheckpoint = usePatchCheckpoint({
+        mutation: {
+            onMutate: async (variables) => {
+                await queryClient.cancelQueries({ queryKey });
+                const previousCheckpoints = queryClient.getQueryData<CheckpointResponse>(queryKey);
+
+                queryClient.setQueryData<CheckpointResponse>(queryKey, (old) => {
+                    console.log("old:", old);
+
+                    if (!old?.data) {
+                        return old;
+                    }
+
+                    return {
+                        ...old,
+                        data: old.data.map(cp =>
+                            cp.id === variables.checkpointId
+                                ? { ...cp, latitude: variables.data.latitude, longitude: variables.data.longitude }
+                                : cp
+                        )
+                    }
+                });
+
+                return { previousCheckpoints };
+            },
+
+            onError: (error, _, context) => {
+                if (context?.previousCheckpoints) {
+                    queryClient.setQueryData(queryKey, context.previousCheckpoints);
+                }
+
+                console.error("Failed to update position:", error)
+            },
+
+            onSuccess: () => {
+                console.log("Updated position!");
+            },
+
+            onSettled: () => {
+                queryClient.invalidateQueries({ queryKey });
+            }
+        }
+    });
+
+    const handleMarkerDrag = useCallback((checkpointId: number, newLat: number, newLng: number) => {
+        const currentCheckpoint = checkpoints.find(cp => cp.id == checkpointId);
+
+        if (!currentCheckpoint) {
+            return;
+        }
+
+        updateCheckpoint.mutate({
+            adventureId: selectedAdventure?.id ?? 0,
+            checkpointId: checkpointId,
+            data: {
+                ...currentCheckpoint,
+                latitude: newLat.toString(),
+                longitude: newLng.toString()
+            }
+        })
+    }, [updateCheckpoint, selectedAdventure?.id]);
+
     const searchOptions = useMemo(() =>
         checkpoints.map(cp => ({ key: cp.id, value: cp.org_name })),
         [checkpoints]
@@ -106,6 +176,7 @@ export function AdminMapPage() {
                     clickCallback={(id: number) => setSelectedCheckpointId(id)}
                     checkpoints={checkpoints}
                     selected_id={selectedCheckpointId ?? 0}
+                    onMarkerDrag={handleMarkerDrag}
                 />
                 {selectedCheckpoint?.org_name}
             </div>
