@@ -1,10 +1,10 @@
-import { getListCheckpointsQueryKey, useListCheckpoints, usePatchCheckpoint } from "@api/endpoints";
+import { getListCheckpointsQueryKey, listCheckpoints, useListCheckpoints, usePatchCheckpoint } from "@api/endpoints";
 import { PublicCheckpoint } from "@api/model";
 import { Map } from "@components";
 import { Button } from "@components/Button";
 import { Input } from "@components/Input";
 import { useAdventure } from "@contexts/AdventureContext";
-import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { t } from "i18next";
 import { useCallback, useMemo, useState } from "react";
 
@@ -93,9 +93,7 @@ export function AdminMapPage() {
         setSelectedCheckpointId(Number(id));
     }, []);
 
-    type CheckpointResponse = {
-        data: PublicCheckpoint[];
-    }
+    type ListCheckpointsResponse = Awaited<ReturnType<typeof listCheckpoints>>;
 
     const queryClient = useQueryClient();
     const queryKey = getListCheckpointsQueryKey(selectedAdventure?.id ?? 0);
@@ -103,9 +101,9 @@ export function AdminMapPage() {
         mutation: {
             onMutate: async (variables) => {
                 await queryClient.cancelQueries({ queryKey });
-                const previousCheckpoints = queryClient.getQueryData<CheckpointResponse>(queryKey);
+                const previousCheckpoints = queryClient.getQueryData<ListCheckpointsResponse>(queryKey);
 
-                queryClient.setQueryData<CheckpointResponse>(queryKey, (old) => {
+                queryClient.setQueryData<ListCheckpointsResponse>(queryKey, (old) => {
                     console.log("old:", old);
 
                     if (!old?.data) {
@@ -114,9 +112,13 @@ export function AdminMapPage() {
 
                     return {
                         ...old,
-                        data: old.data.map(cp =>
+                        data: old.data.map((cp: PublicCheckpoint) =>
                             cp.id === variables.checkpointId
-                                ? { ...cp, latitude: variables.data.latitude, longitude: variables.data.longitude }
+                                ? {
+                                    ...cp,
+                                    latitude: variables.data.latitude || cp.latitude,
+                                    longitude: variables.data.longitude || cp.longitude
+                                }
                                 : cp
                         )
                     }
@@ -154,7 +156,6 @@ export function AdminMapPage() {
             adventureId: selectedAdventure?.id ?? 0,
             checkpointId: checkpointId,
             data: {
-                ...currentCheckpoint,
                 latitude: newLat.toString(),
                 longitude: newLng.toString()
             }
