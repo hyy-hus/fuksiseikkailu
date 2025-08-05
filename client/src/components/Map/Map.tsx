@@ -39,13 +39,11 @@ export function Map({
     const selectedCheckpoint = checkpoints.find(cp => cp.id == selected_id);
 
     useLayoutEffect(() => {
-        const default_coordinates: [number, number] = selectedCheckpoint ? [parseFloat(selectedCheckpoint.latitude) || 0, parseFloat(selectedCheckpoint.longitude) || 0] : [60.16936416230424, 24.94024164353307];
-
         if (!mapRef.current && mapContainerRef.current) {
-            // Initialize map only if it's not done before
+            const default_coordinates: [number, number] = [60.16936416230424, 24.94024164353307];
+
             mapRef.current = L.map(mapContainerRef.current).setView(default_coordinates, 14);
 
-            // Add tile layer
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; OpenStreetMap contributors'
@@ -55,48 +53,51 @@ export function Map({
             mapRef.current.addLayer(markerClusterRef.current);
         }
 
-        if (markerClusterRef.current) {
-            markerClusterRef.current.clearLayers();
-
-
-            const markers = checkpoints.map((checkpoint: PublicCheckpoint) => {
-                const lat = parseFloat(checkpoint.latitude) || 0;
-                const long = parseFloat(checkpoint.longitude) || 0;
-                console.log(lat, long);
-                return L.marker([lat, long], {
-                    icon: blueIcon,
-                    draggable: false,
-                })
-                    .bindTooltip(checkpoint.org_name, {
-                        direction: "top",
-                        permanent: true,
-                        offset: L.point(0, 0),
-                    })
-                    .on("dragend", (e) => {
-                        const newPos = e.target.getLatLng();
-                        console.log("New position:", newPos);
-                        e.target.setIcon(blueIcon);
-                        e.target.dragging.disable();
-                    })
-                    .on("click", (e) => {
-                        e.target.setIcon(redIcon);
-                        e.target.dragging.enable();
-                        clickCallback(checkpoint.id);
-                    })
-            });
-
-            markers.forEach(m => markerClusterRef.current!.addLayer(m));
-
-        }
-
         return () => {
             if (mapRef.current) {
-                mapRef.current.off("click", () => { });
                 mapRef.current.remove();
                 mapRef.current = null;
             }
         }
-    }, [checkpoints, clickCallback, selected_id]);
+    }, []);
+
+    useLayoutEffect(() => {
+        if (!markerClusterRef.current) {
+            return;
+        }
+
+        markerClusterRef.current.clearLayers();
+
+        const markers = checkpoints.map((checkpoint: PublicCheckpoint) => {
+            const lat = parseFloat(checkpoint.latitude) || 0;
+            const long = parseFloat(checkpoint.longitude) || 0;
+            console.log(lat, long);
+            return L.marker([lat, long], {
+                icon: blueIcon,
+                draggable: false,
+            })
+                .bindTooltip(checkpoint.org_name, {
+                    direction: "top",
+                    permanent: true,
+                    offset: L.point(0, 0),
+                })
+                .on("dragend", (e) => {
+                    const newPos = e.target.getLatLng();
+                    console.log("New position:", newPos);
+                    e.target.setIcon(blueIcon);
+                    e.target.dragging.disable();
+                })
+                .on("click", (e) => {
+                    e.target.setIcon(redIcon);
+                    e.target.dragging.enable();
+                    clickCallback(checkpoint.id);
+                })
+        });
+
+        markers.forEach(m => markerClusterRef.current!.addLayer(m));
+
+
+    }, [checkpoints, selected_id]);
 
     // useEffect(() => {
     //     console.log(points);
