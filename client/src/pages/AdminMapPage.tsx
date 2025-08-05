@@ -1,4 +1,4 @@
-import { getListCheckpointsQueryKey, listCheckpoints, useListCheckpoints, usePatchCheckpoint } from "@api/endpoints";
+import { getListCheckpointsQueryKey, listCheckpoints, useFetchAdminCheckpoint, useListCheckpoints, usePatchCheckpoint } from "@api/endpoints";
 import { PublicCheckpoint } from "@api/model";
 import { Map } from "@components";
 import { Button } from "@components/Button";
@@ -82,6 +82,42 @@ function SearchBar({
     )
 }
 
+interface CheckpointCardProps {
+    adventureId: number;
+    checkpointId: number;
+    open: boolean;
+    onClick: () => void;
+}
+
+function CheckpointCard({ adventureId, checkpointId, open, onClick }: CheckpointCardProps) {
+    const { data, isLoading, isError, error } = useFetchAdminCheckpoint(adventureId, checkpointId);
+
+    const cp = data?.data ?? undefined;
+
+    return (
+        <ul className="p-3 md:p-6 grid grid-cols-[1fr_auto_1fr] gap-1 md:gap-2 w-full justify-items-center text-sm md:text-base h-full">
+            <li className="col-span-full" onClick={() => onClick()}>
+                <hr className="bg-slate-500 text-slate-500 hover:bg-slate-400 hover:bg-slate-400 w-20 rounded-full h-1 mb-4" />
+            </li>
+            <li className="contents">
+                <span className="justify-self-start text-sm">101</span>
+                <span className="font-bold justify-self-center text-center">{cp?.org_name} ({cp?.org_abbreviation})</span>
+                <span className="justify-self-end px-2 py-1 border border-slate-500 bg-slate-400/20 rounded text-xs">{cp?.category}</span>
+            </li>
+            <li className="col-span-full">
+                <span className="italic text-sm">{cp?.address}</span>
+            </li>
+            {
+                open && (
+                    <li className="col-span-full p-2 min-h-10 justify-self-start overflow-y-auto">
+                        <span>{cp?.requirements}</span>
+                    </li>
+                )
+            }
+        </ul>
+    )
+}
+
 export function AdminMapPage() {
     const { selectedAdventure } = useAdventure();
     const checkpoint_query = useListCheckpoints(selectedAdventure?.id ?? 0);
@@ -89,6 +125,8 @@ export function AdminMapPage() {
 
     const [selectedCheckpointId, setSelectedCheckpointId] = useState<number>(0);
     const selectedCheckpoint = checkpoints.find(cp => cp.id === selectedCheckpointId);
+
+    const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
     const handleCheckpointClick = useCallback((id: string | number) => {
         setSelectedCheckpointId(Number(id));
@@ -173,7 +211,7 @@ export function AdminMapPage() {
     );
 
     return (
-        <div className="h-full grid gap-4 grid-rows-[auto_1fr]">
+        <div className="relative h-full grid gap-4 grid-rows-[auto_1fr]">
             <div>
                 <SearchBar options={searchOptions} onSubmit={handleCheckpointClick} />
             </div>
@@ -193,8 +231,16 @@ export function AdminMapPage() {
                     selected_id={selectedCheckpointId ?? 0}
                     onMarkerDrag={handleMarkerDrag}
                 />
-                {selectedCheckpoint?.org_name}
             </div>
+            {
+                selectedCheckpoint && (
+                    <div className={`absolute w-full flex justify-center bottom-0 ${drawerOpen ? "max-h-100" : "max-h-30"}`}>
+                        <div className="bg-slate-900/80 rounded-t w-[90%] md:w-[80%] max-w-200 overflow-y-hidden">
+                            <CheckpointCard adventureId={selectedAdventure?.id ?? 0} checkpointId={selectedCheckpointId} open={drawerOpen} onClick={() => setDrawerOpen(prev => !prev)} />
+                        </div>
+                    </div>
+                )
+            }
         </div>
     )
 }
