@@ -7,6 +7,7 @@ import { useAdventure } from "@contexts/AdventureContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { t } from "i18next";
 import { useCallback, useMemo, useState } from "react";
+import { IoRefresh } from "react-icons/io5";
 
 interface Option {
     key: string | number;
@@ -162,6 +163,10 @@ export function AdminMapPage() {
         })
     }, [updateCheckpoint, selectedAdventure?.id]);
 
+    const handleRefresh = useCallback(() => {
+        queryClient.invalidateQueries({ queryKey });
+    }, [queryClient, queryKey]);
+
     const searchOptions = useMemo(() =>
         checkpoints.map(cp => ({ key: cp.id, value: cp.org_name })),
         [checkpoints]
@@ -172,7 +177,16 @@ export function AdminMapPage() {
             <div>
                 <SearchBar options={searchOptions} onSubmit={handleCheckpointClick} />
             </div>
-            <div className="w-full h-full border border-zinc-300 dark:border-slate-700">
+            <div className="relative w-full h-full border border-zinc-300 dark:border-slate-700">
+                <Button variant="gray"
+                    onClick={handleRefresh}
+                    aria-label={t("refresh")}
+                    className="absolute top-4 right-4 z-20 opacity-50"
+                >
+                    <span>
+                        <IoRefresh />
+                    </span>
+                </Button>
                 <Map
                     clickCallback={(id: number) => setSelectedCheckpointId(id)}
                     checkpoints={checkpoints}
