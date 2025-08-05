@@ -25,10 +25,11 @@ interface MapProps {
     clickCallback: (checkpoint_id: number) => void;
     checkpoints: PublicCheckpoint[];
     selected_id: number | undefined;
+    onMarkerDrag: (checkpointId: number, newLat: number, newLng: number) => void;
 }
 
 export function Map({
-    clickCallback, checkpoints, selected_id
+    clickCallback, checkpoints, selected_id, onMarkerDrag
 }: MapProps) {
     // const [points, setPoints] = useState([]);
 
@@ -86,6 +87,7 @@ export function Map({
                     console.log("New position:", newPos);
                     e.target.setIcon(blueIcon);
                     e.target.dragging.disable();
+                    onMarkerDrag(checkpoint.id, newPos.lat, newPos.lng);
                 })
                 .on("click", (e) => {
                     e.target.setIcon(redIcon);
