@@ -4,7 +4,7 @@ import { Button } from "@components/Button";
 import { Input } from "@components/Input";
 import { useAdventure } from "@contexts/AdventureContext";
 import { t } from "i18next";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 interface Option {
     key: string | number;
@@ -32,8 +32,9 @@ function SearchBar({
     return (
         <form className="relative grid w-full grid-cols-[1fr_auto] items-end gap-4" onSubmit={(e) => {
             e.preventDefault();
-            if (searchResults) {
-                handleSelect(searchResults[0].key)
+            if (searchResults.length > 0) {
+                const targetIndex = focusedIndex >= 0 ? focusedIndex : 0;
+                handleSelect(searchResults[targetIndex].key);
             }
         }}>
             <div onKeyDown={(e) => {
@@ -86,10 +87,19 @@ export function AdminMapPage() {
     const [selectedCheckpointId, setSelectedCheckpointId] = useState<number>(0);
     const selectedCheckpoint = checkpoints.find(cp => cp.id === selectedCheckpointId);
 
+    const handleCheckpointClick = useCallback((id: string | number) => {
+        setSelectedCheckpointId(Number(id));
+    }, []);
+
+    const searchOptions = useMemo(() =>
+        checkpoints.map(cp => ({ key: cp.id, value: cp.org_name })),
+        [checkpoints]
+    );
+
     return (
         <div className="h-full grid gap-4 grid-rows-[auto_1fr]">
             <div>
-                <SearchBar options={checkpoints.map(cp => ({ key: cp.id, value: cp.org_name }))} onSubmit={(key) => setSelectedCheckpointId(Number(key))} />
+                <SearchBar options={searchOptions} onSubmit={handleCheckpointClick} />
             </div>
             <div className="w-full h-full border border-zinc-300 dark:border-slate-700">
                 <Map
