@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlmodel import SQLModel, Field, Relationship
 
 from app.models.adventures import PublicAdventure, DBAdventure
@@ -104,24 +105,24 @@ class CreateCheckpoint(BaseCheckpoint):
 
 
 class ModifyCheckpoint(BaseCheckpoint):
-    adventure_id: int
-    org_name: str
-    org_abbreviation: str
-    contact_person: str
-    contact_email: str
-    contact_phone: str
-    category: str
-    latitude: str
-    longitude: str
-    address: str
-    requirements: str
-    lanes: int
-    checkpoint_description: str
-    org_description: str
-    org_link: str
+    adventure_id: Optional[int] = None
+    org_name: Optional[str] = None
+    org_abbreviation: Optional[str] = None
+    contact_person: Optional[str] = None
+    contact_email: Optional[str] = None
+    contact_phone: Optional[str] = None
+    category: Optional[str] = None
+    latitude: Optional[str] = None
+    longitude: Optional[str] = None
+    address: Optional[str] = None
+    requirements: Optional[str] = None
+    lanes: Optional[int] = None
+    checkpoint_description: Optional[str] = None
+    org_description: Optional[str] = None
+    org_link: Optional[str] = None
 
-    photo_permission: bool
-    accessible: bool
+    photo_permission: Optional[bool] = None
+    accessible: Optional[bool] = None
 
 
 # AdminCheckpoint.model_rebuild()
