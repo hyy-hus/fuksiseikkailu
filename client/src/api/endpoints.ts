@@ -29,6 +29,7 @@ import type {
   BodyLoginAuthLoginPost,
   CreateAdventure,
   CreateCheckpoint,
+  CreatePushSubscription,
   CreateTeam,
   CreateUser,
   DeleteResponse,
@@ -39,12 +40,14 @@ import type {
   ModifyAdventure,
   ModifyCheckpoint,
   ModifyTeam,
+  NotificationStatus,
   PublicAdventure,
   PublicCheckpoint,
   PublicTeam,
   PublicUser,
   Token,
-  UpdateUser
+  UpdateUser,
+  VapidKeyResponse
 } from './model';
 
 import { customInstance } from './axios';
@@ -2013,3 +2016,222 @@ export function useFetchAdminTeam<TData = Awaited<ReturnType<typeof fetchAdminTe
 
 
 
+/**
+ * Return the VAPID public key for notifications
+ * @summary Get VAPID public key
+ */
+export const getVapidPublicKey = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<VapidKeyResponse>(
+      {url: `/push/public-key`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetVapidPublicKeyQueryKey = () => {
+    return [`/push/public-key`] as const;
+    }
+
+    
+export const getGetVapidPublicKeyQueryOptions = <TData = Awaited<ReturnType<typeof getVapidPublicKey>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVapidPublicKey>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetVapidPublicKeyQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getVapidPublicKey>>> = ({ signal }) => getVapidPublicKey(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getVapidPublicKey>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetVapidPublicKeyQueryResult = NonNullable<Awaited<ReturnType<typeof getVapidPublicKey>>>
+export type GetVapidPublicKeyQueryError = unknown
+
+
+export function useGetVapidPublicKey<TData = Awaited<ReturnType<typeof getVapidPublicKey>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVapidPublicKey>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getVapidPublicKey>>,
+          TError,
+          Awaited<ReturnType<typeof getVapidPublicKey>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetVapidPublicKey<TData = Awaited<ReturnType<typeof getVapidPublicKey>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVapidPublicKey>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getVapidPublicKey>>,
+          TError,
+          Awaited<ReturnType<typeof getVapidPublicKey>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetVapidPublicKey<TData = Awaited<ReturnType<typeof getVapidPublicKey>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVapidPublicKey>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get VAPID public key
+ */
+
+export function useGetVapidPublicKey<TData = Awaited<ReturnType<typeof getVapidPublicKey>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getVapidPublicKey>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetVapidPublicKeyQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * Subscribe to receive notifications
+ * @summary Subscribe to notifications
+ */
+export const subscribeNotifications = (
+    createPushSubscription: CreatePushSubscription,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<NotificationStatus>(
+      {url: `/push/subscribe`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createPushSubscription, signal
+    },
+      );
+    }
+  
+
+
+export const getSubscribeNotificationsMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof subscribeNotifications>>, TError,{data: CreatePushSubscription}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof subscribeNotifications>>, TError,{data: CreatePushSubscription}, TContext> => {
+
+const mutationKey = ['subscribeNotifications'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof subscribeNotifications>>, {data: CreatePushSubscription}> = (props) => {
+          const {data} = props ?? {};
+
+          return  subscribeNotifications(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SubscribeNotificationsMutationResult = NonNullable<Awaited<ReturnType<typeof subscribeNotifications>>>
+    export type SubscribeNotificationsMutationBody = CreatePushSubscription
+    export type SubscribeNotificationsMutationError = HTTPValidationError
+
+    /**
+ * @summary Subscribe to notifications
+ */
+export const useSubscribeNotifications = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof subscribeNotifications>>, TError,{data: CreatePushSubscription}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof subscribeNotifications>>,
+        TError,
+        {data: CreatePushSubscription},
+        TContext
+      > => {
+
+      const mutationOptions = getSubscribeNotificationsMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * Send a notification to all clients
+ * @summary Send a notification
+ */
+export const sendNotification = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<NotificationStatus>(
+      {url: `/push/send`, method: 'POST', signal
+    },
+      );
+    }
+  
+
+
+export const getSendNotificationMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof sendNotification>>, TError,void, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof sendNotification>>, TError,void, TContext> => {
+
+const mutationKey = ['sendNotification'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof sendNotification>>, void> = () => {
+          
+
+          return  sendNotification()
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SendNotificationMutationResult = NonNullable<Awaited<ReturnType<typeof sendNotification>>>
+    
+    export type SendNotificationMutationError = unknown
+
+    /**
+ * @summary Send a notification
+ */
+export const useSendNotification = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof sendNotification>>, TError,void, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof sendNotification>>,
+        TError,
+        void,
+        TContext
+      > => {
+
+      const mutationOptions = getSendNotificationMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
