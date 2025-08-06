@@ -1,4 +1,6 @@
 import { defineConfig } from 'vite'
+import { VitePWA } from 'vite-plugin-pwa';
+
 import react from '@vitejs/plugin-react'
 
 import tailwindcss from '@tailwindcss/vite';
@@ -6,7 +8,45 @@ import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 
 export default defineConfig({
-    plugins: [react(), tailwindcss()],
+    plugins: [
+        react(),
+        tailwindcss(),
+        VitePWA({
+            registerType: 'autoUpdate',
+            manifest: {
+                name: "Fuksiseikkailu 2025",
+                short_name: "Fuksiseikkailu",
+                description: "Kuvaus",
+                theme_color: "#000000",
+                icons: [
+                    {
+                        "src": "pwa-64x64.png",
+                        "sizes": "64x64",
+                        "type": "image/png"
+                    },
+                    {
+                        "src": "pwa-192x192.png",
+                        "sizes": "192x192",
+                        "type": "image/png"
+                    },
+                    {
+                        "src": "pwa-512x512.png",
+                        "sizes": "512x512",
+                        "type": "image/png"
+                    },
+                    {
+                        "src": "maskable-icon-512x512.png",
+                        "sizes": "512x512",
+                        "type": "image/png",
+                        "purpose": "maskable"
+                    }
+                ]
+            },
+            strategies: 'injectManifest',
+            srcDir: 'src',
+            filename: 'sw.ts',
+        })
+    ],
     server: {
         host: '0.0.0.0',
         port: 5173,
@@ -28,5 +68,5 @@ export default defineConfig({
             "@hooks": path.resolve(__dirname, "src/hooks"),
             "@contexts": path.resolve(__dirname, "src/contexts"),
         }
-    }
+    },
 })
