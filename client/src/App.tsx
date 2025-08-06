@@ -7,6 +7,7 @@ import "./App.css";
 
 const GuestHomePage = lazy(() => import("./pages/GuestHomePage").then((m) => ({ default: m.GuestHomePage })));
 const AdminHomePage = lazy(() => import("./pages/AdminHomePage").then((m) => ({ default: m.AdminHomePage })));
+const AdminNewsPage = lazy(() => import("./pages/AdminNewsPage").then((m) => ({ default: m.AdminNewsPage })));
 const UsersPage = lazy(() => import("./pages/UsersPage").then((m) => ({ default: m.UsersPage })));
 const LoginPage = lazy(() => import("./pages/LoginPage").then((m) => ({ default: m.LoginPage })));
 const PlaygroundPage = lazy(() => import("./pages/PlaygroundPage").then((m) => ({ default: m.PlaygroundPage })));
@@ -33,6 +34,7 @@ export function App() {
                     <Route path="checkpoints" element={<CheckpointsPage />} />
                     <Route path="map" element={<AdminMapPage />} />
                     <Route path="teams" element={<TeamsPage />} />
+                    <Route path="news" element={<AdminNewsPage />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
                 <Route path="/" element={<Layout variant="guest" />}>

@@ -174,6 +174,7 @@ export function Layout({
                                 <li><Link to="/admin/teams" className="hover:underline">{t("teams")}</Link></li>
                                 <li><Link to="/admin/players" className="hover:underline">{t("players")}</Link></li>
                                 <li><Link to="/admin/checkpoints" className="hover:underline">{t("checkpoints")}</Link></li>
+                                <li><Link to="/admin/map" className="hover:underline">{t("map")}</Link></li>
                                 <li><Link to="/admin/news" className="hover:underline">{t("news")}</Link></li>
                                 <li><Link to="/admin/scores" className="hover:underline">{t("scores")}</Link></li>
                                 <li><Link to="/admin/costumes" className="hover:underline">{t("costume-contest")}</Link></li>

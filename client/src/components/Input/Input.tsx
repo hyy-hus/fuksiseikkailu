@@ -1,6 +1,6 @@
 import { ChangeEventHandler, ReactNode } from "react";
 
-export type FieldType = "text" | "password" | "email" | "tel" | "url" | "number" | "datetime-local" | "date" | "time" | "search" | "toggle" | "option";
+export type FieldType = "text" | "textarea" | "password" | "email" | "tel" | "url" | "number" | "datetime-local" | "date" | "time" | "search" | "toggle" | "option";
 
 interface InputProps {
     type?: FieldType,
@@ -13,7 +13,7 @@ interface InputProps {
     placeholder?: string;
     invalid?: boolean;
     errorMessage?: string;
-    onChange?: ChangeEventHandler<HTMLInputElement>;
+    onChange?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
 }
 
 export function Input({
@@ -40,20 +40,35 @@ export function Input({
                     <span className="relative z-20 dark:text-slate-400 dark:group-has-[:disabled]:text-slate-600">{label}</span>
                     <div className={`absolute left-0 bottom-[1px] inline h-2 w-10 ${!invalid ? "bg-zinc-200 dark:bg-slate-900 group-focus-within:bg-zinc-300 dark:group-focus-within:bg-slate-800" : "bg-pink-transparent border-pink-700"} z-10 w-full group-has-[:invalid]:bg-transparent`}></div>
                 </span>
-                {
 
+                {
+                    type === "textarea" ? (
+                        <textarea
+                            name={name ?? ""}
+                            className="w-full text-base outline-none px-3 py-3 bg-transparent disabled:text-slate-500"
+                            disabled={disabled}
+                            onChange={onChange}
+                            placeholder={placeholder}
+                            value={value}
+                            rows={5}
+                        >
+                        </textarea>
+                    ) : (
+                        <input
+                            name={name ?? ""}
+                            className="w-full text-base outline-none px-3 py-3 bg-transparent disabled:text-slate-500"
+                            type={type}
+                            disabled={disabled}
+                            onChange={onChange}
+                            placeholder={placeholder}
+                            value={value}
+                        >
+                            {children}
+                        </input>
+                    )
                 }
-                <input
-                    name={name ?? ""}
-                    className="w-full text-base outline-none px-3 py-3 bg-transparent disabled:text-slate-500"
-                    type={type}
-                    disabled={disabled}
-                    onChange={onChange}
-                    placeholder={placeholder}
-                    value={value}
-                >
-                    {children}
-                </input>
+
+
             </label>
             {invalid && errorMessage && (
                 <div className="mt-1 text-sm text-red-600 dark:text-rose-400/50">
