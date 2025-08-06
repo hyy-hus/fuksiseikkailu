@@ -28,7 +28,7 @@ jobs:
 
             echo "Building docker containers..."
             docker compose down
-            docker compose up --profile prod -d --build
+            docker compose --profile prod up --build
 
             echo "Deployment complete"
 
