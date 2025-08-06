@@ -27,7 +27,7 @@ jobs:
             git pull
 
             echo "Building docker containers..."
-            docker compose down
+            docker compose --profile prod down
             docker compose --profile prod up --build
 
             echo "Deployment complete"
