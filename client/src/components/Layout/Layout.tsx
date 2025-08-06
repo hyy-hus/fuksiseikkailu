@@ -13,7 +13,7 @@ import { Select } from "@components/Input";
 import { PublicAdventure } from "@api/model";
 import { useListAdventuresAdventuresGet } from "@api/endpoints";
 import { useNotifications } from "@contexts/NotificationContext";
-import { GoBell, GoBellSlash } from "react-icons/go";
+import { GoBell } from "react-icons/go";
 
 
 type LayoutVariant = "guest" | "admin";
@@ -120,10 +120,6 @@ export function Layout({
 
     const { permission, requestPermission } = useNotifications();
     const [notificationBar, setNotificationBar] = useState<boolean>(() => permission === "default" ? true : false);
-
-    useEffect(() => {
-        console.log(permission);
-    }, [permission]);
 
     return (
         <div className={`relative h-screen grid grid-rows-[auto_1fr] ${sidebarOpen ? "grid-cols-[1fr_0] md:grid-cols-[auto_1fr]" : "grid-cols-[1fr]"} font-display text-zinc-900 dark:text-zinc-50`}>
