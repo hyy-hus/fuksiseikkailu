@@ -37,7 +37,7 @@ export function Map({
     const mapRef = useRef<L.Map | null>(null);
     const markerClusterRef = useRef<L.MarkerClusterGroup | null>(null);
 
-    const selectedCheckpoint = checkpoints.find(cp => cp.id == selected_id);
+    // const selectedCheckpoint = checkpoints.find(cp => cp.id == selected_id);
 
     useLayoutEffect(() => {
         if (!mapRef.current && mapContainerRef.current) {

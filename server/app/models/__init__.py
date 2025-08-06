@@ -1,4 +1,5 @@
 from .users import DBUser
+from .push import DBPushSubscription
 
 from app.models.adventures import (
     DBAdventure,
@@ -42,4 +43,4 @@ for model in [
 ]:
     model.model_rebuild()
 
-__all__ = ["DBUser", "DBAdventure", "DBCheckpoint", "DBTeam"]
+__all__ = ["DBUser", "DBAdventure", "DBCheckpoint", "DBTeam", "DBPushSubscription"]

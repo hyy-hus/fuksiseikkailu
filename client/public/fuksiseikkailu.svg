@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1000.0001"
+   height="1000.0001"
+   viewBox="0 0 264.58333 264.58333"
+   version="1.1"
+   id="svg35"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="fuksiseikkailu.svg"
+   inkscape:export-filename="../Projects/fuksiseikkailu/client/public/fuksiseikkailu.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview37"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#242424"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="1.104894"
+     inkscape:cx="315.8674"
+     inkscape:cy="434.4308"
+     inkscape:window-width="3780"
+     inkscape:window-height="2071"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs32" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <circle
+       style="fill:#5115a3;fill-opacity:1;stroke:#cf3f7b;stroke-width:5;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+       id="path162"
+       cx="132.29167"
+       cy="132.29167"
+       r="120" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:35.2778px;line-height:1.5;font-family:'Comic Sans MS';-inkscape-font-specification:'Comic Sans MS, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#ccb271;fill-opacity:1;stroke:#cf3f7b;stroke-width:5.792;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+       x="144.09743"
+       y="104.19839"
+       id="text720"><tspan
+         sodipodi:role="line"
+         id="tspan718"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:35.2778px;font-family:'Comic Sans MS';-inkscape-font-specification:'Comic Sans MS, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ccb271;fill-opacity:1;stroke:none;stroke-width:5.79202"
+         x="144.09743"
+         y="104.19839">Fuksi Seikkailu</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70.5556px;line-height:1.5;font-family:MathJax_Fraktur;-inkscape-font-specification:'MathJax_Fraktur, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#ccb271;fill-opacity:1;stroke:none;stroke-width:4.99999;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+       x="78.0215"
+       y="187.89604"
+       id="text724"><tspan
+         sodipodi:role="line"
+         id="tspan722"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:35.2778px;font-family:'Comic Sans MS';-inkscape-font-specification:'Comic Sans MS, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:5"
+         x="78.0215"
+         y="187.89604">2025</tspan></text>
+  </g>
+</svg>

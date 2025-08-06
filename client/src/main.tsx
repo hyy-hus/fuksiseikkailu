@@ -10,6 +10,7 @@ import { BrowserRouter } from "react-router-dom";
 
 import { AuthProvider } from "@auth";
 import { AdventureProvider } from "@contexts";
+import { NotificationProvider } from "@contexts";
 
 import "./i18n";
 
@@ -18,15 +19,17 @@ const queryClient = new QueryClient()
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <QueryClientProvider client={queryClient}>
-            <AuthProvider>
-                <AdventureProvider>
-                    <BrowserRouter>
-                        <NavigatorRegistrar />
-                        <App />
-                        <ReactQueryDevtools initialIsOpen={false} />
-                    </BrowserRouter>
-                </AdventureProvider>
-            </AuthProvider>
+            <NotificationProvider>
+                <AuthProvider>
+                    <AdventureProvider>
+                        <BrowserRouter>
+                            <NavigatorRegistrar />
+                            <App />
+                            <ReactQueryDevtools initialIsOpen={false} />
+                        </BrowserRouter>
+                    </AdventureProvider>
+                </AuthProvider>
+            </NotificationProvider>
         </QueryClientProvider>
     </StrictMode>,
 )
