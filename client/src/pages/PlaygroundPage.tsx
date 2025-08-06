@@ -56,7 +56,7 @@ export function PlaygroundPage() {
                     <Input type="text" label="invalid" invalid={true} errorMessage="This value is not good!" disabled={true} />
 
                     <Toggle />
-                    <Toggle disabled={true} />
+                    <Toggle />
                 </div>
             </div>
             <div className="flex flex-col gap-4">

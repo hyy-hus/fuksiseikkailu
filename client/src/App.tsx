@@ -4,7 +4,6 @@ import { lazy, Suspense, useEffect } from "react";
 import { setNavigator } from "./router/navigate";
 
 import "./App.css";
-import { useRegisterSW } from "virtual:pwa-register/react";
 
 const GuestHomePage = lazy(() => import("./pages/GuestHomePage").then((m) => ({ default: m.GuestHomePage })));
 const AdminHomePage = lazy(() => import("./pages/AdminHomePage").then((m) => ({ default: m.AdminHomePage })));

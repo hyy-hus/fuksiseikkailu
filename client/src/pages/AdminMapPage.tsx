@@ -90,7 +90,7 @@ interface CheckpointCardProps {
 }
 
 function CheckpointCard({ adventureId, checkpointId, open, onClick }: CheckpointCardProps) {
-    const { data, isLoading, isError, error } = useFetchAdminCheckpoint(adventureId, checkpointId);
+    const { data } = useFetchAdminCheckpoint(adventureId, checkpointId);
 
     const cp = data?.data ?? undefined;
 
