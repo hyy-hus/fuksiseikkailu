@@ -6,10 +6,17 @@ class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
+    POSTGRES_HOST: str
 
     VAPID_PUBLIC_KEY: str
     VAPID_PRIVATE_KEY: str
     VAPID_SUBJECT: str
+
+    ADMIN_USERNAME: str
+    ADMIN_EMAIL: str
+    ADMIN_PASSWORD: str
+
+    SECRET: str
 
     class Config:
         env_file = ".env"
