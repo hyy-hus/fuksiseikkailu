@@ -18,8 +18,8 @@ const queryClient = new QueryClient()
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
-        <NotificationProvider>
-            <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={queryClient}>
+            <NotificationProvider>
                 <AuthProvider>
                     <AdventureProvider>
                         <BrowserRouter>
@@ -29,7 +29,7 @@ createRoot(document.getElementById('root')!).render(
                         </BrowserRouter>
                     </AdventureProvider>
                 </AuthProvider>
-            </QueryClientProvider>
-        </NotificationProvider>
+            </NotificationProvider>
+        </QueryClientProvider>
     </StrictMode>,
 )

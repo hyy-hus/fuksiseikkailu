@@ -1,3 +1,4 @@
+import { useSubscribeNotifications } from "@api/endpoints";
 import { createContext, useContext, useState, ReactNode, useCallback, useMemo } from "react";
 
 type NotificationType = "info" | "success" | "error";
@@ -11,87 +12,6 @@ interface NotificationOptions {
     onClick?: () => void;
 }
 
-export class NotificationManager {
-    isPageVisible: boolean;
-
-    constructor() {
-        this.isPageVisible = true;
-
-        document.addEventListener('visibilitychange', () => {
-            this.isPageVisible = !document.hidden;
-        });
-    }
-
-    async requestPermission() {
-        if ("Notification" in window) {
-            const permission = await Notification.requestPermission();
-            return permission === 'granted';
-        }
-
-        return false;
-    }
-
-    notify(title: string, options: NotificationOptions, hasPermission: boolean) {
-        const { type, priority, forceSystem } = options;
-        if (priority === "low" || type === "success" || type == "error") {
-            return this.showInAppNotification(title, options);
-        }
-
-        if ((priority === "high" || forceSystem) && !this.isPageVisible && hasPermission) {
-            return this.showSystemNotification(title, options);
-        }
-
-        return this.showInAppNotification(title, options);
-    }
-
-    showInAppNotification(title: string, options: NotificationOptions) {
-        console.log(title, options);
-
-        // const { description, type = 'info', action } = options;
-        //
-        // switch (type) {
-        //     case 'success':
-        //         return toast.success(title, { description, action });
-        //     case 'error':
-        //         return toast.error(title, { description, action });
-        //     case 'warning':
-        //         return toast.warning(title, { description, action });
-        //     default:
-        //         return toast.info(title, { description, action });
-        // }
-    }
-
-    showSystemNotification(title: string, options: NotificationOptions) {
-        const { description, onClick } = options;
-
-        const notification = new Notification(title, {
-            body: description,
-            icon: '/favicon.ico',
-            tag: 'app-notification',
-        });
-
-        if (onClick) {
-            notification.onclick = () => {
-                window.focus();
-                onClick();
-                notification.close();
-            };
-        }
-
-        setTimeout(() => notification.close(), 5000);
-
-        return notification;
-    }
-}
-
-const getInitialPermission = () => {
-    if (typeof window !== 'undefined' && "Notification" in window) {
-        return Notification.permission;
-    }
-
-    return "default";
-}
-
 interface NotificationContextType {
     permission: NotificationPermission;
     requestPermission: () => void;
@@ -101,17 +21,82 @@ interface NotificationContextType {
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
 export function NotificationProvider({ children }: { children: ReactNode }) {
-    const [manager] = useState(() => new NotificationManager());
-    const [permission, setPermission] = useState<NotificationPermission>(getInitialPermission());
+    const [permission, setPermission] = useState<NotificationPermission>(() => {
+        if (typeof window !== "undefined" && "Notification" in window) {
+            return Notification.permission;
+        }
+        return "default";
+    });
+
+    const subscribeMutation = useSubscribeNotifications();
 
     const requestPermission = useCallback(async () => {
-        const granted = await manager.requestPermission();
-        setPermission(granted ? 'granted' : Notification.permission);
-    }, [manager]);
+        if (!("Notification" in window)) {
+            console.warn("Notifications not supported.");
+            return;
+        }
 
-    const notify = useCallback((title: string, options: NotificationOptions) => {
-        manager.notify(title, options, permission === 'granted');
-    }, [manager, permission])
+        const result = await Notification.requestPermission();
+        setPermission(result);
+
+        if (result !== "granted") {
+            console.warn("Notification permission not granted.");
+            return;
+        }
+
+        try {
+            const swRegistration = await navigator.serviceWorker.ready;
+            const subscription = await swRegistration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: "BGoZu2hNbSnvFV7sRq0qTOI9ZxlbTVRXmrA2zQmHxmhWTicypId8HpgcQwpL92-p2jaoOsAzRsmVGraFS5YzJTk",
+            });
+
+            subscribeMutation.mutate({
+                data: {
+                    endpoint: subscription.endpoint,
+                    keys: subscription.toJSON().keys ?? {},
+                }
+            });
+        } catch (err) {
+            console.error("Push subscription failed", err);
+        }
+    }, [subscribeMutation]);
+
+    const notify = useCallback(
+        (title: string, options: NotificationOptions) => {
+            const isPageVisible = !document.hidden;
+
+            const { priority, forceSystem } = options;
+
+            const shouldShowSystem =
+                (priority === "high" || forceSystem) &&
+                !isPageVisible &&
+                permission === "granted";
+
+            if (shouldShowSystem) {
+                const notification = new Notification(title, {
+                    body: options.description,
+                    icon: "/favicon.ico",
+                    tag: "app-notification",
+                });
+
+                if (options.onClick) {
+                    notification.onclick = () => {
+                        window.focus();
+                        options.onClick?.();
+                        notification.close();
+                    };
+                }
+
+                setTimeout(() => notification.close(), 5000);
+                return;
+            }
+
+            // fallback or default in-app notification
+            console.log("[In-App Notification]", title, options);
+        },
+        [permission]
+    );
 
     const value = useMemo(() => ({
         permission,
