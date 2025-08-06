@@ -1,34 +1,69 @@
-version: "3.9"
-
 services:
-  web:
+  web-dev:
     build:
       context: ./server
-    container_name: web
+    container_name: web-dev
     ports:
       - "8000:8000"
     env_file:
-      - ./server/.env.dev
-    depends_on:
-      - db
+      - .env
     volumes:
       - ./server:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      - db
+    profiles:
+      - dev
 
-  frontend:
+  frontend-dev:
     build:
       context: ./client
-    container_name: client
+      target: dev
+    container_name: client-dev
+    ports:
+      - "3007:3000"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    depends_on:
+      - web-dev
+    profiles:
+      - dev
+    stdin_open: true
+    tty: true
+
+  web-prod:
+    build:
+      context: ./server
+    container_name: web-prod
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    entrypoint: /entrypoint.sh
+    profiles:
+      - prod
+
+  frontend-prod:
+    build:
+      context: ./client
+      target: prod
+    container_name: client-prod
     ports:
       - "3007:80"
     depends_on:
-      - web
+      - web-prod
+    profiles:
+      - prod
 
   db:
     image: postgres:17
     container_name: db
     restart: always
     env_file:
-      - ./server/.env.dev
+      - .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
