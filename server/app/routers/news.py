@@ -7,6 +7,8 @@ from datetime import datetime
 from app.schemas.base import DeleteResponse
 from app.deps import SessionDep, UserDep
 
+from app.utils.notifications import send_push_notification_to_all
+
 from app.models.news import (
     DBNews,
     PublicNews,
@@ -148,6 +150,8 @@ def update_news(
     session: SessionDep,
 ) -> PublicNews:
     news_data = news.model_dump(exclude_unset=True)
+    was_inactive = not db_news.active
+
     db_news.sqlmodel_update(news_data)
 
     if db_news.active:
@@ -158,6 +162,15 @@ def update_news(
     session.add(db_news)
     session.commit()
     session.refresh(db_news)
+
+    if was_inactive and db_news.active:
+        try:
+            send_push_notification_to_all(
+                session, title=db_news.title_fi, body=db_news.contents_fi
+            )
+        except Exception as e:
+            # Log the error or raise HTTPException if you want it to block
+            print(f"Notification error: {e}")
 
     return db_news
 
