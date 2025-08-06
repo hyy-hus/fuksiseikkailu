@@ -25,10 +25,12 @@ import type {
 
 import type {
   AdminCheckpoint,
+  AdminNews,
   AdminTeam,
   BodyLoginAuthLoginPost,
   CreateAdventure,
   CreateCheckpoint,
+  CreateNews,
   CreatePushSubscription,
   CreateTeam,
   CreateUser,
@@ -39,10 +41,12 @@ import type {
   ListUsersUsersGetParams,
   ModifyAdventure,
   ModifyCheckpoint,
+  ModifyNews,
   ModifyTeam,
   NotificationStatus,
   PublicAdventure,
   PublicCheckpoint,
+  PublicNews,
   PublicTeam,
   PublicUser,
   Token,
@@ -2235,3 +2239,571 @@ export const useSendNotification = <TError = unknown,
       return useMutation(mutationOptions , queryClient);
     }
     
+/**
+ * Returns all active news for the specified adventure.
+ * @summary List all news in an adventure
+ */
+export const listNews = (
+    adventureId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicNews[]>(
+      {url: `/adventures/${adventureId}/news/`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getListNewsQueryKey = (adventureId: number,) => {
+    return [`/adventures/${adventureId}/news/`] as const;
+    }
+
+    
+export const getListNewsQueryOptions = <TData = Awaited<ReturnType<typeof listNews>>, TError = HTTPValidationError>(adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listNews>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListNewsQueryKey(adventureId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listNews>>> = ({ signal }) => listNews(adventureId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(adventureId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listNews>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListNewsQueryResult = NonNullable<Awaited<ReturnType<typeof listNews>>>
+export type ListNewsQueryError = HTTPValidationError
+
+
+export function useListNews<TData = Awaited<ReturnType<typeof listNews>>, TError = HTTPValidationError>(
+ adventureId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listNews>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listNews>>,
+          TError,
+          Awaited<ReturnType<typeof listNews>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListNews<TData = Awaited<ReturnType<typeof listNews>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listNews>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listNews>>,
+          TError,
+          Awaited<ReturnType<typeof listNews>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListNews<TData = Awaited<ReturnType<typeof listNews>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listNews>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List all news in an adventure
+ */
+
+export function useListNews<TData = Awaited<ReturnType<typeof listNews>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listNews>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListNewsQueryOptions(adventureId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * Creates a new news specified by *request body*
+ * @summary Create a news
+ */
+export const createNews = (
+    adventureId: number,
+    createNews: CreateNews,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicNews>(
+      {url: `/adventures/${adventureId}/news/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createNews, signal
+    },
+      );
+    }
+  
+
+
+export const getCreateNewsMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createNews>>, TError,{adventureId: number;data: CreateNews}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof createNews>>, TError,{adventureId: number;data: CreateNews}, TContext> => {
+
+const mutationKey = ['createNews'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createNews>>, {adventureId: number;data: CreateNews}> = (props) => {
+          const {adventureId,data} = props ?? {};
+
+          return  createNews(adventureId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateNewsMutationResult = NonNullable<Awaited<ReturnType<typeof createNews>>>
+    export type CreateNewsMutationBody = CreateNews
+    export type CreateNewsMutationError = HTTPValidationError
+
+    /**
+ * @summary Create a news
+ */
+export const useCreateNews = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createNews>>, TError,{adventureId: number;data: CreateNews}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createNews>>,
+        TError,
+        {adventureId: number;data: CreateNews},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateNewsMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * Returns publicly available information about the news specified by *news_id*
+ * @summary Fetch a news in an adventure
+ */
+export const fetchNews = (
+    adventureId: number,
+    newsId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicNews>(
+      {url: `/adventures/${adventureId}/news/${newsId}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getFetchNewsQueryKey = (adventureId: number,
+    newsId: number,) => {
+    return [`/adventures/${adventureId}/news/${newsId}`] as const;
+    }
+
+    
+export const getFetchNewsQueryOptions = <TData = Awaited<ReturnType<typeof fetchNews>>, TError = void | HTTPValidationError>(adventureId: number,
+    newsId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchNews>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getFetchNewsQueryKey(adventureId,newsId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof fetchNews>>> = ({ signal }) => fetchNews(adventureId,newsId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(adventureId && newsId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof fetchNews>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type FetchNewsQueryResult = NonNullable<Awaited<ReturnType<typeof fetchNews>>>
+export type FetchNewsQueryError = void | HTTPValidationError
+
+
+export function useFetchNews<TData = Awaited<ReturnType<typeof fetchNews>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    newsId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchNews>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchNews>>,
+          TError,
+          Awaited<ReturnType<typeof fetchNews>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchNews<TData = Awaited<ReturnType<typeof fetchNews>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    newsId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchNews>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchNews>>,
+          TError,
+          Awaited<ReturnType<typeof fetchNews>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchNews<TData = Awaited<ReturnType<typeof fetchNews>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    newsId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchNews>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Fetch a news in an adventure
+ */
+
+export function useFetchNews<TData = Awaited<ReturnType<typeof fetchNews>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    newsId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchNews>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getFetchNewsQueryOptions(adventureId,newsId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * Update news specified by *team_id* and *adventure_id*
+ * @summary Update a news
+ */
+export const patchNews = (
+    adventureId: number,
+    newsId: number,
+    modifyNews: ModifyNews,
+ ) => {
+      
+      
+      return customInstance<PublicNews>(
+      {url: `/adventures/${adventureId}/news/${newsId}`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: modifyNews
+    },
+      );
+    }
+  
+
+
+export const getPatchNewsMutationOptions = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchNews>>, TError,{adventureId: number;newsId: number;data: ModifyNews}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof patchNews>>, TError,{adventureId: number;newsId: number;data: ModifyNews}, TContext> => {
+
+const mutationKey = ['patchNews'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof patchNews>>, {adventureId: number;newsId: number;data: ModifyNews}> = (props) => {
+          const {adventureId,newsId,data} = props ?? {};
+
+          return  patchNews(adventureId,newsId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PatchNewsMutationResult = NonNullable<Awaited<ReturnType<typeof patchNews>>>
+    export type PatchNewsMutationBody = ModifyNews
+    export type PatchNewsMutationError = void | HTTPValidationError
+
+    /**
+ * @summary Update a news
+ */
+export const usePatchNews = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchNews>>, TError,{adventureId: number;newsId: number;data: ModifyNews}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof patchNews>>,
+        TError,
+        {adventureId: number;newsId: number;data: ModifyNews},
+        TContext
+      > => {
+
+      const mutationOptions = getPatchNewsMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * Delete news specified by *news_id* and *adventure_id*
+ * @summary Delete a news
+ */
+export const deleteNews = (
+    adventureId: number,
+    newsId: number,
+ ) => {
+      
+      
+      return customInstance<DeleteResponse>(
+      {url: `/adventures/${adventureId}/news/${newsId}`, method: 'DELETE'
+    },
+      );
+    }
+  
+
+
+export const getDeleteNewsMutationOptions = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteNews>>, TError,{adventureId: number;newsId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteNews>>, TError,{adventureId: number;newsId: number}, TContext> => {
+
+const mutationKey = ['deleteNews'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteNews>>, {adventureId: number;newsId: number}> = (props) => {
+          const {adventureId,newsId} = props ?? {};
+
+          return  deleteNews(adventureId,newsId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteNewsMutationResult = NonNullable<Awaited<ReturnType<typeof deleteNews>>>
+    
+    export type DeleteNewsMutationError = void | HTTPValidationError
+
+    /**
+ * @summary Delete a news
+ */
+export const useDeleteNews = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteNews>>, TError,{adventureId: number;newsId: number}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteNews>>,
+        TError,
+        {adventureId: number;newsId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteNewsMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * Returns admin level info of all active teams for the specified adventure.
+ * @summary List all news in an adventure
+ */
+export const listAdminNews = (
+    adventureId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<AdminNews[]>(
+      {url: `/adventures/${adventureId}/news/admin/`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getListAdminNewsQueryKey = (adventureId: number,) => {
+    return [`/adventures/${adventureId}/news/admin/`] as const;
+    }
+
+    
+export const getListAdminNewsQueryOptions = <TData = Awaited<ReturnType<typeof listAdminNews>>, TError = HTTPValidationError>(adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminNews>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListAdminNewsQueryKey(adventureId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listAdminNews>>> = ({ signal }) => listAdminNews(adventureId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(adventureId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listAdminNews>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListAdminNewsQueryResult = NonNullable<Awaited<ReturnType<typeof listAdminNews>>>
+export type ListAdminNewsQueryError = HTTPValidationError
+
+
+export function useListAdminNews<TData = Awaited<ReturnType<typeof listAdminNews>>, TError = HTTPValidationError>(
+ adventureId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminNews>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAdminNews>>,
+          TError,
+          Awaited<ReturnType<typeof listAdminNews>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListAdminNews<TData = Awaited<ReturnType<typeof listAdminNews>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminNews>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAdminNews>>,
+          TError,
+          Awaited<ReturnType<typeof listAdminNews>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListAdminNews<TData = Awaited<ReturnType<typeof listAdminNews>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminNews>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List all news in an adventure
+ */
+
+export function useListAdminNews<TData = Awaited<ReturnType<typeof listAdminNews>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminNews>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListAdminNewsQueryOptions(adventureId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * Fetches a news in an adventure specified by it's id
+ * @summary Fetch a single news in an adventure
+ */
+export const fetchAdminNews = (
+    adventureId: number,
+    newsId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<AdminNews>(
+      {url: `/adventures/${adventureId}/news/admin/${newsId}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getFetchAdminNewsQueryKey = (adventureId: number,
+    newsId: number,) => {
+    return [`/adventures/${adventureId}/news/admin/${newsId}`] as const;
+    }
+
+    
+export const getFetchAdminNewsQueryOptions = <TData = Awaited<ReturnType<typeof fetchAdminNews>>, TError = void | HTTPValidationError>(adventureId: number,
+    newsId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminNews>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getFetchAdminNewsQueryKey(adventureId,newsId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof fetchAdminNews>>> = ({ signal }) => fetchAdminNews(adventureId,newsId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(adventureId && newsId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof fetchAdminNews>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type FetchAdminNewsQueryResult = NonNullable<Awaited<ReturnType<typeof fetchAdminNews>>>
+export type FetchAdminNewsQueryError = void | HTTPValidationError
+
+
+export function useFetchAdminNews<TData = Awaited<ReturnType<typeof fetchAdminNews>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    newsId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminNews>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchAdminNews>>,
+          TError,
+          Awaited<ReturnType<typeof fetchAdminNews>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchAdminNews<TData = Awaited<ReturnType<typeof fetchAdminNews>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    newsId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminNews>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchAdminNews>>,
+          TError,
+          Awaited<ReturnType<typeof fetchAdminNews>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchAdminNews<TData = Awaited<ReturnType<typeof fetchAdminNews>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    newsId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminNews>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Fetch a single news in an adventure
+ */
+
+export function useFetchAdminNews<TData = Awaited<ReturnType<typeof fetchAdminNews>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    newsId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminNews>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getFetchAdminNewsQueryOptions(adventureId,newsId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
