@@ -7,7 +7,7 @@ from app.models.users import DBUser
 
 from typing import Annotated
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 OAuthDep = Annotated[str, Depends(oauth2_scheme)]
 
 SessionDep = Annotated[Session, Depends(get_session)]
