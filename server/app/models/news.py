@@ -28,6 +28,7 @@ class DBNews(BaseNews, table=True):
     contents_sv: str = Field()
 
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    published_at: datetime | None = Field(default=None, nullable=True)
 
     adventure_id: int | None = Field(default=None, foreign_key="dbadventure.id")
     adventure: DBAdventure | None = Relationship(back_populates="news")
@@ -37,14 +38,19 @@ class DBNews(BaseNews, table=True):
 
 class AdminNews(BaseNews):
     id: int
+    active: bool
+    created_at: datetime
+    published_at: datetime | None
 
 
 class PublicNews(BaseNews):
     id: int
+    created_at: datetime
+    published_at: datetime | None
 
 
 class CreateNews(BaseNews):
-    pass
+    active: bool
 
 
 class ModifyNews(BaseNews):
@@ -54,3 +60,4 @@ class ModifyNews(BaseNews):
     contents_fi: Optional[str] = None
     title_sv: Optional[str] = None
     contents_sv: Optional[str] = None
+    active: Optional[bool] = None

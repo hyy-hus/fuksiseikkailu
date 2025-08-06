@@ -2,6 +2,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlmodel import select
 
+from datetime import datetime
+
 from app.schemas.base import DeleteResponse
 from app.deps import SessionDep, UserDep
 
@@ -27,6 +29,27 @@ def get_news(
     query = select(DBNews).where(
         DBNews.adventure_id == adventure_id,
         DBNews.id == news_id,
+    )
+
+    db_news = session.exec(query).one_or_none()
+
+    if not db_news:
+        raise HTTPException(
+            status_code=404,
+            detail=f"News with id '{news_id}' not found in adventure '{adventure_id}'",
+        )
+
+    return db_news
+
+
+def get_active_news(
+    adventure_id: AdventureId,
+    news_id: NewsId,
+    session: SessionDep,
+) -> DBNews:
+    query = select(DBNews).where(
+        DBNews.adventure_id == adventure_id,
+        DBNews.id == news_id,
         DBNews.active,
     )
 
@@ -42,6 +65,7 @@ def get_news(
 
 
 NewsDep = Annotated[DBNews, Depends(get_news)]
+ActiveNewsDep = Annotated[DBNews, Depends(get_active_news)]
 
 
 router = APIRouter(prefix="/adventures/{adventure_id}/news", tags=["news"])
@@ -74,7 +98,7 @@ def list_news(
         404: {"description": "News could not be found"},
     },
 )
-def fetch_news(db_news: NewsDep) -> PublicNews:
+def fetch_news(db_news: ActiveNewsDep) -> PublicNews:
     return db_news
 
 
@@ -125,6 +149,11 @@ def update_news(
 ) -> PublicNews:
     news_data = news.model_dump(exclude_unset=True)
     db_news.sqlmodel_update(news_data)
+
+    if db_news.active:
+        db_news.published_at = datetime.utcnow()
+    else:
+        db_news.published_at = None
 
     session.add(db_news)
     session.commit()
