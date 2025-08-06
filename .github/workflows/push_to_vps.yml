@@ -24,6 +24,7 @@ jobs:
             echo "Pulling latest code..."
             cd /home/fuksi-client/fuksiseikkailu
             git fetch origin
+            git pull
 
             echo "Building docker containers..."
             docker compose down
