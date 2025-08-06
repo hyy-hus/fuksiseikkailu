@@ -84,7 +84,6 @@ class PublicCheckpoint(BaseCheckpoint):
 
 
 class CreateCheckpoint(BaseCheckpoint):
-    adventure_id: int
     org_name: str
     org_abbreviation: str
     contact_person: str

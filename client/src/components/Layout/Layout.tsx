@@ -1,7 +1,7 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@auth";
 import { Button } from "@components/Button";
-import { IoMenu } from "react-icons/io5";
+import { IoCloseCircleSharp, IoMenu } from "react-icons/io5";
 import { FaSun, FaMoon } from "react-icons/fa";
 import { useEffect, useMemo, useState } from "react";
 import { navigate } from "../../router/navigate";
@@ -13,6 +13,7 @@ import { Select } from "@components/Input";
 import { PublicAdventure } from "@api/model";
 import { useListAdventuresAdventuresGet } from "@api/endpoints";
 import { useNotifications } from "@contexts/NotificationContext";
+import { GoBell } from "react-icons/go";
 
 
 type LayoutVariant = "guest" | "admin";
@@ -117,11 +118,8 @@ export function Layout({
         }
     }
 
-    const { notify, permission, requestPermission } = useNotifications();
-
-    useEffect(() => {
-        console.log(permission);
-    }, [permission]);
+    const { permission, requestPermission } = useNotifications();
+    const [notificationBar, setNotificationBar] = useState<boolean>(() => permission === "default" ? true : false);
 
     return (
         <div className={`relative h-screen grid grid-rows-[auto_1fr] ${sidebarOpen ? "grid-cols-[1fr_0] md:grid-cols-[auto_1fr]" : "grid-cols-[1fr]"} font-display text-zinc-900 dark:text-zinc-50`}>
@@ -176,6 +174,7 @@ export function Layout({
                                 <li><Link to="/admin/teams" className="hover:underline">{t("teams")}</Link></li>
                                 <li><Link to="/admin/players" className="hover:underline">{t("players")}</Link></li>
                                 <li><Link to="/admin/checkpoints" className="hover:underline">{t("checkpoints")}</Link></li>
+                                <li><Link to="/admin/map" className="hover:underline">{t("map")}</Link></li>
                                 <li><Link to="/admin/news" className="hover:underline">{t("news")}</Link></li>
                                 <li><Link to="/admin/scores" className="hover:underline">{t("scores")}</Link></li>
                                 <li><Link to="/admin/costumes" className="hover:underline">{t("costume-contest")}</Link></li>
@@ -221,29 +220,25 @@ export function Layout({
                 <Outlet />
             </main>
 
-            <div className="absolute bottom-0 w-full h-30 bg-red-200 dark:bg-slate-800 border-t dark:border-slate-600 rounded-t p-4 flex justify-center">
-                <div className="flex gap-4">
-                    <Button variant="green" onClick={requestPermission}>
-                        {t("allow-notification")}
-                    </Button>
-                    <Button variant="red" onClick={() => console.log("denied")}>
-                        {t("deny-notification")}
-                    </Button>
-                    <Button variant="gray"
-                        onClick={() => {
-                            window.setTimeout(() => {
-                                notify("Testi", {
-                                    description: "This is a test",
-                                    priority: "high",
-                                    type: "error"
-                                })
-                            }, 5000)
-                        }}
-                    >
-                        test
-                    </Button>
-                </div>
-            </div>
-        </div >
+            {
+                notificationBar && (
+                    <div className="absolute top-2 left-2 right-2 bg-zinc-100 dark:bg-slate-800 border border-zinc-300 dark:border-slate-600 rounded p-4 grid grid-cols-[1fr_auto] gap-4 z-50 items-center">
+                        <span
+                            className="flex gap-2 hover:underline cursor-pointer"
+                            onClick={() => {
+                                requestPermission();
+                                setNotificationBar(false);
+                            }}
+                        >
+                            <GoBell className="self-center" />
+                            {t("prompt-notifications")}
+                        </span>
+                        <Button variant="transparent" onClick={() => setNotificationBar(false)}>
+                            <IoCloseCircleSharp />
+                        </Button>
+                    </div>
+                )
+            }
+        </div>
     )
 }

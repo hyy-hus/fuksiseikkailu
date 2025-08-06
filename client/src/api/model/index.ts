@@ -6,6 +6,8 @@
  */
 
 export * from './adminCheckpoint';
+export * from './adminNews';
+export * from './adminNewsPublishedAt';
 export * from './adminTeam';
 export * from './bodyLoginAuthLoginPost';
 export * from './bodyLoginAuthLoginPostClientId';
@@ -13,6 +15,7 @@ export * from './bodyLoginAuthLoginPostClientSecret';
 export * from './bodyLoginAuthLoginPostGrantType';
 export * from './createAdventure';
 export * from './createCheckpoint';
+export * from './createNews';
 export * from './createPushSubscription';
 export * from './createPushSubscriptionKeys';
 export * from './createTeam';
@@ -47,10 +50,20 @@ export * from './modifyCheckpointOrgLink';
 export * from './modifyCheckpointOrgName';
 export * from './modifyCheckpointPhotoPermission';
 export * from './modifyCheckpointRequirements';
+export * from './modifyNews';
+export * from './modifyNewsActive';
+export * from './modifyNewsContentsEn';
+export * from './modifyNewsContentsFi';
+export * from './modifyNewsContentsSv';
+export * from './modifyNewsTitleEn';
+export * from './modifyNewsTitleFi';
+export * from './modifyNewsTitleSv';
 export * from './modifyTeam';
 export * from './notificationStatus';
 export * from './publicAdventure';
 export * from './publicCheckpoint';
+export * from './publicNews';
+export * from './publicNewsPublishedAt';
 export * from './publicTeam';
 export * from './publicUser';
 export * from './role';

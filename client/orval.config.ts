@@ -1,6 +1,6 @@
 export default {
     api: {
-        input: "http://localhost:5173/api/openapi.json",
+        input: "http://localhost:3007/api/openapi.json",
         output: {
             mode: "split",
             target: "src/api/endpoints.ts",

@@ -16,7 +16,6 @@ export interface CreateCheckpoint {
   org_description: string;
   org_link: string;
   accessible: boolean;
-  adventure_id: number;
   contact_person: string;
   contact_email: string;
   contact_phone: string;

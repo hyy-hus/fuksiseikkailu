@@ -24,6 +24,8 @@ from app.models.teams import (
     CreateTeam,
 )
 
+from app.models.news import DBNews, AdminNews, PublicNews, ModifyNews, CreateNews
+
 for model in [
     LinkedAdventure,
     PublicAdventure,
@@ -40,7 +42,19 @@ for model in [
     PublicTeam,
     ModifyTeam,
     CreateTeam,
+    DBNews,
+    AdminNews,
+    PublicNews,
+    ModifyNews,
+    CreateNews,
 ]:
     model.model_rebuild()
 
-__all__ = ["DBUser", "DBAdventure", "DBCheckpoint", "DBTeam", "DBPushSubscription"]
+__all__ = [
+    "DBUser",
+    "DBAdventure",
+    "DBCheckpoint",
+    "DBTeam",
+    "DBPushSubscription",
+    "DBNews",
+]

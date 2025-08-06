@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from app.models.checkpoints import DBCheckpoint, PublicCheckpoint
     from app.models.teams import DBTeam, PublicTeam
+    from app.models.news import DBNews, PublicNews
 
 
 class BaseAdventure(SQLModel):
@@ -23,6 +24,7 @@ class DBAdventure(BaseAdventure, table=True):
 
     checkpoints: list["DBCheckpoint"] = Relationship(back_populates="adventure")
     teams: list["DBTeam"] = Relationship(back_populates="adventure")
+    news: list["DBNews"] = Relationship(back_populates="adventure")
 
 
 class PublicAdventure(BaseAdventure):
@@ -33,6 +35,7 @@ class LinkedAdventure(BaseAdventure):
     id: int
     checkpoints: list["PublicCheckpoint"]
     teams: list["PublicTeam"]
+    news: list["PublicNews"]
 
 
 class CreateAdventure(BaseAdventure):
