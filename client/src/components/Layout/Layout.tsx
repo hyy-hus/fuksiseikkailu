@@ -12,6 +12,7 @@ import { useAdventure } from "@contexts/AdventureContext";
 import { Select } from "@components/Input";
 import { PublicAdventure } from "@api/model";
 import { useListAdventuresAdventuresGet } from "@api/endpoints";
+import { useNotifications } from "@contexts/NotificationContext";
 
 
 type LayoutVariant = "guest" | "admin";
@@ -116,8 +117,14 @@ export function Layout({
         }
     }
 
+    const { notify, permission, requestPermission } = useNotifications();
+
+    useEffect(() => {
+        console.log(permission);
+    }, [permission]);
+
     return (
-        <div className={`h-screen grid grid-rows-[auto_1fr] ${sidebarOpen ? "grid-cols-[1fr_0] md:grid-cols-[auto_1fr]" : "grid-cols-[1fr]"} font-display text-zinc-900 dark:text-zinc-50`}>
+        <div className={`relative h-screen grid grid-rows-[auto_1fr] ${sidebarOpen ? "grid-cols-[1fr_0] md:grid-cols-[auto_1fr]" : "grid-cols-[1fr]"} font-display text-zinc-900 dark:text-zinc-50`}>
 
             <nav className={navbar({ variant })}>
                 <Button variant="transparent" onClick={() => toggleSidebar()}><IoMenu /></Button>
@@ -213,6 +220,30 @@ export function Layout({
             <main className={`bg-zinc-200 dark:bg-slate-900 dark:text-zinc-100 p-4 overflow-y-auto ${sidebarOpen ? "hidden md:block md:w-full" : ""}`}>
                 <Outlet />
             </main>
+
+            <div className="absolute bottom-0 w-full h-30 bg-red-200 dark:bg-slate-800 border-t dark:border-slate-600 rounded-t p-4 flex justify-center">
+                <div className="flex gap-4">
+                    <Button variant="green" onClick={requestPermission}>
+                        {t("allow-notification")}
+                    </Button>
+                    <Button variant="red" onClick={() => console.log("denied")}>
+                        {t("deny-notification")}
+                    </Button>
+                    <Button variant="gray"
+                        onClick={() => {
+                            window.setTimeout(() => {
+                                notify("Testi", {
+                                    description: "This is a test",
+                                    priority: "high",
+                                    type: "error"
+                                })
+                            }, 5000)
+                        }}
+                    >
+                        test
+                    </Button>
+                </div>
+            </div>
         </div >
     )
 }
