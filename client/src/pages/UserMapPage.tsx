@@ -1,5 +1,5 @@
-import { getListCheckpointsQueryKey, listCheckpoints, useFetchAdminCheckpoint, useListCheckpoints, usePatchCheckpoint } from "@api/endpoints";
-import { PublicCheckpoint } from "@api/model";
+import { getListCheckpointsQueryKey, useFetchCheckpoint, useListCheckpoints } from "@api/endpoints";
+// import { PublicCheckpoint } from "@api/model";
 import { Map } from "@components";
 import { Button } from "@components/Button";
 import { Input } from "@components/Input";
@@ -7,7 +7,9 @@ import { useAdventure } from "@contexts/AdventureContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { t } from "i18next";
 import { useCallback, useMemo, useState } from "react";
+import { FaExternalLinkAlt } from "react-icons/fa";
 import { IoRefresh } from "react-icons/io5";
+import { Link } from "react-router-dom";
 
 interface Option {
     key: string | number;
@@ -90,7 +92,7 @@ interface CheckpointCardProps {
 }
 
 function CheckpointCard({ adventureId, checkpointId, open, onClick }: CheckpointCardProps) {
-    const { data } = useFetchAdminCheckpoint(adventureId, checkpointId);
+    const { data } = useFetchCheckpoint(adventureId, checkpointId);
 
     const cp = data?.data ?? undefined;
 
@@ -109,16 +111,23 @@ function CheckpointCard({ adventureId, checkpointId, open, onClick }: Checkpoint
             </li>
             {
                 open && (
-                    <li className="col-span-full p-2 min-h-10 justify-self-start overflow-y-auto">
-                        <span>{cp?.requirements}</span>
-                    </li>
+                    <div className="col-span-full p-2 min-h-10 justify-self-start overflow-y-auto flex flex-col gap-4">
+                        <p>{cp?.checkpoint_description}</p>
+                        <p>{cp?.org_description}</p>
+                        <p className="flex w-full justify-center"><Link to={cp?.org_link ?? ""}>
+                            <span className="flex gap-2 align-center">
+                                <FaExternalLinkAlt />
+                                <span>{t("org-link")}</span>
+                            </span>
+                        </Link></p>
+                    </div>
                 )
             }
         </ul>
     )
 }
 
-export function AdminMapPage() {
+export function UserMapPage() {
     const { selectedAdventure } = useAdventure();
     const checkpoint_query = useListCheckpoints(selectedAdventure?.id ?? 0);
     const checkpoints = checkpoint_query?.data?.data ?? [];
@@ -132,74 +141,10 @@ export function AdminMapPage() {
         setSelectedCheckpointId(Number(id));
     }, []);
 
-    type ListCheckpointsResponse = Awaited<ReturnType<typeof listCheckpoints>>;
+    // type ListCheckpointsResponse = Awaited<ReturnType<typeof listCheckpoints>>;
 
     const queryClient = useQueryClient();
     const queryKey = getListCheckpointsQueryKey(selectedAdventure?.id ?? 0);
-    const updateCheckpoint = usePatchCheckpoint({
-        mutation: {
-            onMutate: async (variables) => {
-                await queryClient.cancelQueries({ queryKey });
-                const previousCheckpoints = queryClient.getQueryData<ListCheckpointsResponse>(queryKey);
-
-                queryClient.setQueryData<ListCheckpointsResponse>(queryKey, (old) => {
-                    console.log("old:", old);
-
-                    if (!old?.data) {
-                        return old;
-                    }
-
-                    return {
-                        ...old,
-                        data: old.data.map((cp: PublicCheckpoint) =>
-                            cp.id === variables.checkpointId
-                                ? {
-                                    ...cp,
-                                    latitude: variables.data.latitude || cp.latitude,
-                                    longitude: variables.data.longitude || cp.longitude
-                                }
-                                : cp
-                        )
-                    }
-                });
-
-                return { previousCheckpoints };
-            },
-
-            onError: (error, _, context) => {
-                if (context?.previousCheckpoints) {
-                    queryClient.setQueryData(queryKey, context.previousCheckpoints);
-                }
-
-                console.error("Failed to update position:", error)
-            },
-
-            onSuccess: () => {
-                console.log("Updated position!");
-            },
-
-            onSettled: () => {
-                queryClient.invalidateQueries({ queryKey });
-            }
-        }
-    });
-
-    const handleMarkerDrag = useCallback((checkpointId: number, newLat: number, newLng: number) => {
-        const currentCheckpoint = checkpoints.find(cp => cp.id == checkpointId);
-
-        if (!currentCheckpoint) {
-            return;
-        }
-
-        updateCheckpoint.mutate({
-            adventureId: selectedAdventure?.id ?? 0,
-            checkpointId: checkpointId,
-            data: {
-                latitude: newLat.toString(),
-                longitude: newLng.toString()
-            }
-        })
-    }, [updateCheckpoint, selectedAdventure?.id]);
 
     const handleRefresh = useCallback(() => {
         queryClient.invalidateQueries({ queryKey });
@@ -229,8 +174,7 @@ export function AdminMapPage() {
                     clickCallback={(id: number) => setSelectedCheckpointId(id)}
                     checkpoints={checkpoints}
                     selected_id={selectedCheckpointId ?? 0}
-                    onMarkerDrag={handleMarkerDrag}
-                    dragEnabled={true}
+                    onMarkerDrag={() => console.log("Drag is disabled")}
                 />
             </div>
             {
