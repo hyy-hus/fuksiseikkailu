@@ -175,6 +175,7 @@ export function UserMapPage() {
                     checkpoints={checkpoints}
                     selected_id={selectedCheckpointId ?? 0}
                     onMarkerDrag={() => console.log("Drag is disabled")}
+                    dragEnabled={false}
                 />
             </div>
             {
