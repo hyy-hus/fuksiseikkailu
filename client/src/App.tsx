@@ -18,6 +18,8 @@ const TeamsPage = lazy(() => import("./pages/TeamsPage").then((m) => ({ default:
 
 const AdminMapPage = lazy(() => import("./pages/AdminMapPage").then((m) => ({ default: m.AdminMapPage })));
 
+const NewsPage = lazy(() => import("./pages/NewsPage").then((m) => ({ default: m.NewsPage })));
+
 const NotFound = lazy(() => import("./pages/NotFound").then((m) => ({ default: m.NotFound })));
 const LoadingPage = lazy(() => import("./pages/LoadingPage").then((m) => ({ default: m.LoadingPage })));
 
@@ -39,6 +41,7 @@ export function App() {
                 </Route>
                 <Route path="/" element={<Layout variant="guest" />}>
                     <Route index element={<GuestHomePage />} />
+                    <Route path="news" element={<NewsPage />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
                 <Route path="loading" element={<LoadingPage />} />
