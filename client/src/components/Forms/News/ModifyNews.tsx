@@ -55,13 +55,13 @@ export function ModifyNewsForm({ newsId }: NewsFormProps) {
 
 
     const fields: FieldDef<ModifyNews>[] = [
-        { key: "title_en", name: t("title"), type: "text" },
-        { key: "contents_en", name: t("description"), type: "textarea" },
-        { key: "title_fi", name: t("title"), type: "text" },
-        { key: "contents_fi", name: t("description"), type: "textarea" },
-        { key: "title_sv", name: t("title"), type: "text" },
-        { key: "contents_sv", name: t("description"), type: "textarea" },
-        { key: "active", name: t("active"), type: "toggle" },
+        { key: "title_en", name: t("title-en"), type: "text" },
+        { key: "contents_en", name: t("contents-en"), type: "textarea" },
+        { key: "title_fi", name: t("title-fi"), type: "text" },
+        { key: "contents_fi", name: t("contents-fi"), type: "textarea" },
+        { key: "title_sv", name: t("title-sv"), type: "text" },
+        { key: "contents_sv", name: t("contents-sv"), type: "textarea" },
+        { key: "active", name: t("published"), type: "toggle" },
     ]
 
     return (
