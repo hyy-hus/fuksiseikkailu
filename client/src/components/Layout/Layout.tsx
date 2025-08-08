@@ -191,6 +191,7 @@ export function Layout({
                         ) : (
                             <>
                                 <li><Link to="/" className="hover:underline">{t("frontpage")}</Link></li>
+                                <li><Link to="/news" className="hover:underline">{t("news")}</Link></li>
                                 <li><Link to="/checkpoints" className="hover:underline">{t("checkpoints")}</Link></li>
                                 <li><Link to="/map" className="hover:underline">{t("map")}</Link></li>
                                 <li><Link to="/costumes" className="hover:underline">{t("costume-contest")}</Link></li>
