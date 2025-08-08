@@ -5,7 +5,7 @@ import { CheckpointList } from "@components/Lists";
 import { useAdventure } from "@contexts/AdventureContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { t } from "i18next";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next"
 
 import { clsx } from "clsx";
@@ -36,7 +36,7 @@ const adminCheckpointOptions = [
     { key: "adventure_id", value: t("adventure_id") },
     { key: "adventure", value: t("adventure") },
     { key: "active", value: t("active") },
-]
+];
 
 interface ColumnValue {
     inputColumn: string;
@@ -45,17 +45,14 @@ interface ColumnValue {
 }
 
 interface ColumnMappingRowProps {
-    key: string;
     header: string;
     value?: ColumnValue;
-    onChange: (val: string) => void;
-    columnValues: ColumnValue[];
-    setColumnValues: React.Dispatch<React.SetStateAction<ColumnValue[]>>;
+    onChange: (val: Partial<ColumnValue>) => void;
 }
 
-function ColumnMappingRow({ key, header, value, columnValues, setColumnValues }: ColumnMappingRowProps) {
+function ColumnMappingRow({ header, value, onChange }: ColumnMappingRowProps) {
     return (
-        <li key={key}
+        <li key={header}
             className="contents"
         >
             <div className="flex items-center"><span>{header}</span></div>
@@ -64,33 +61,16 @@ function ColumnMappingRow({ key, header, value, columnValues, setColumnValues }:
                 <Select options={adminCheckpointOptions}
                     value={value?.outputColumn ?? "skip"}
                     onChange={(e) => {
-                        setColumnValues((prev) => {
-                            return prev.map(val => {
-                                if (val.inputColumn === header) {
-                                    return { ...val, outputColumn: e.target.value };
-                                }
-
-                                return val;
-                            })
-                        })
-                    }} />
+                        onChange({ outputColumn: e.target.value })
+                    }
+                    }
+                />
             </div>
             <div className="flex items-center justify-center w-full">
                 <Toggle
-                    value={(() => {
-                        const newVal = columnValues.find(val => val.inputColumn === header)?.identifier
-                        return newVal
-                    })()}
+                    value={value?.identifier ?? false}
                     onChange={(newValue) => {
-                        setColumnValues((prev) => {
-                            return prev.map(val => {
-                                if (val.inputColumn === header) {
-                                    return { ...val, identifier: newValue };
-                                }
-
-                                return val;
-                            })
-                        })
+                        onChange({ identifier: newValue })
                     }}
                 />
             </div>
@@ -105,17 +85,16 @@ interface ColumnMappingProps {
 }
 
 function ColumnMapping({ headers, columnValues, setColumnValues }: ColumnMappingProps) {
-
-    function updateColumnValue(
+    const updateColumnValue = useCallback((
         header: string,
         newPartial: Partial<ColumnValue>
-    ) {
+    ) => {
         setColumnValues(prev =>
             prev.map(val =>
                 val.inputColumn === header ? { ...val, ...newPartial } : val
             )
         );
-    }
+    }, [setColumnValues]);
 
     return (
         <ul className="w-full grid grid-cols-[minmax(auto,30rem)_auto_auto_auto] gap-4 items-center">
@@ -131,9 +110,7 @@ function ColumnMapping({ headers, columnValues, setColumnValues }: ColumnMapping
                         key={header}
                         header={header}
                         value={columnValues.find(val => val.inputColumn === header)}
-                        onChange={(newOutputKey) => updateColumnValue(header, { outputColumn: newOutputKey })}
-                        columnValues={columnValues}
-                        setColumnValues={setColumnValues}
+                        onChange={(partial) => updateColumnValue(header, partial)}
                     />
                 ))
             }
@@ -165,16 +142,19 @@ function UploadTable({ data, setData }: UploadTableProps) {
                                         }
 
                                         const newValue = e.currentTarget.textContent ?? "";
+                                        const rowIndex = i;
+                                        const colIndex = j;
+
                                         setData(prev => {
-                                            const newData = [...prev];
-                                            if (!newData[i]) {
+                                            const updated = [...prev];
+                                            if (!updated[rowIndex]) {
                                                 return prev;
                                             }
 
-                                            newData[i] = [...newData[i]];
-                                            newData[i][j] = newValue;
+                                            updated[rowIndex] = [...updated[rowIndex]];
+                                            updated[rowIndex][colIndex] = newValue;
 
-                                            return newData;
+                                            return updated;
                                         });
                                     }}
                                     className={clsx(
@@ -196,19 +176,21 @@ function UploadTable({ data, setData }: UploadTableProps) {
 }
 
 interface PasteAreaProps {
-    value: string;
-    onChange: (event: ChangeEvent<HTMLTextAreaElement>) => void;
+    onPaste: (rows: string[][]) => void;
 }
 
-function PasteArea({ value, onChange }: PasteAreaProps) {
+function PasteArea({ onPaste }: PasteAreaProps) {
     return (
         <div>
             <label className="w-full">
                 You can insert data copied from excel or google sheets here. You should probably sanitize the input by doing find and replaces for <pre>'\n' -&gt; ''</pre> and <pre>'\t' -&gt; ''</pre> first.
                 <textarea rows={5}
                     className="w-full rounded border border-zinc-400 bg-zinc-300 dark:border-slate-700 dark:bg-slate-800 p-4"
-                    onChange={onChange}
-                    value={value}
+                    onChange={(e) => {
+                        const raw = e.target.value.trim();
+                        const rows = raw.split("\n").map(row => row.split("\t"));
+                        onPaste(rows);
+                    }}
                 >
                 </textarea>
             </label>
@@ -219,42 +201,29 @@ function PasteArea({ value, onChange }: PasteAreaProps) {
 
 
 function BulkImport() {
-    const [data, setData] = useState<string>("");
     const [uploadData, setUploadData] = useState<string[][]>([]);
-    const [headers, setHeaders] = useState<string[]>([]);
-    const [columnValues, setColumnValues] = useState<ColumnValue[]>(() =>
-        adminCheckpointOptions.map(opt => ({ inputColumn: opt.key, outputColumn: "skip", identifier: false })
-        )
-    )
+    const headers = uploadData[0] ?? [];
 
-    useEffect(() => {
-        const rows = data.split("\n");
-        const cells = rows.map(row => row.split("\t"));
-
-        setUploadData(cells);
-        setHeaders(cells[0] ?? [])
-    }, [data])
+    const [columnValues, setColumnValues] = useState<ColumnValue[]>([]);
 
     useEffect(() => {
         if (headers.length === 0) {
             return;
         }
 
-        setColumnValues(
-            headers.map(header => ({
-                inputColumn: header,
-                outputColumn: "skip",
-                identifier: false,
-            }))
-        );
+        setColumnValues(headers.map(header => ({
+            inputColumn: header,
+            outputColumn: "skip",
+            identifier: false,
+        })));
     }, [headers])
+
 
     const uploadItems = useCallback(async () => {
         const rows = uploadData
-            .slice()
+            .slice(1)
             .map((row) => {
                 const obj: Record<string, string> = {};
-
                 columnValues.forEach((val, index) => {
                     if (val.outputColumn !== "skip") {
                         obj[val.outputColumn] = row[index] ?? "";
@@ -262,10 +231,11 @@ function BulkImport() {
                 });
 
                 return obj;
-            })
+            });
 
         console.log(rows);
-    }, [columnValues, uploadData])
+
+    }, [columnValues, uploadData]);
 
 
 
@@ -273,7 +243,7 @@ function BulkImport() {
     return (
         <form className="flex flex-col gap-4">
             <h3>{t("bulk-import")}</h3>
-            <PasteArea value={data} onChange={(e) => setData(e.target.value)} />
+            <PasteArea onPaste={setUploadData} />
             <UploadTable data={uploadData} setData={setUploadData} />
             <ColumnMapping
                 headers={headers}
