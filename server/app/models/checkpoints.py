@@ -3,6 +3,8 @@ from sqlmodel import SQLModel, Field, Relationship
 
 from app.models.adventures import PublicAdventure, DBAdventure
 
+from pydantic import BaseModel, Field as PydanticField
+
 
 class BaseCheckpoint(SQLModel):
     org_name: str
@@ -83,15 +85,15 @@ class PublicCheckpoint(BaseCheckpoint):
     accessible: bool
 
 
-class CreateCheckpoint(BaseCheckpoint):
+class CreateCheckpoint(BaseModel):
     org_name: str
     org_abbreviation: str
     contact_person: str
     contact_email: str
     contact_phone: str
     category: str
-    latitude: str
-    longitude: str
+    latitude: Optional[str] = PydanticField(default="60.1699")
+    longitude: Optional[str] = PydanticField(default="24.9384")
     address: str
     requirements: str
     lanes: int
