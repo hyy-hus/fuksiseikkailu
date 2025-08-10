@@ -1,11 +1,11 @@
-import { getListAdminCheckpointsQueryKey, useDeleteCheckpoint } from "@api/endpoints";
-import { PublicCheckpoint } from "@api/model";
+import { getListAdminCheckpointsQueryKey, useDeleteCheckpoint, useImportAdminCheckpoint } from "@api/endpoints";
+import { ImportPayload, PublicCheckpoint } from "@api/model";
 import { CreateCheckpointForm, ModifyCheckpointForm } from "@components";
 import { CheckpointList } from "@components/Lists";
 import { useAdventure } from "@contexts/AdventureContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { t } from "i18next";
-import { useCallback, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next"
 
 import { clsx } from "clsx";
@@ -179,11 +179,26 @@ interface PasteAreaProps {
     onPaste: (rows: string[][]) => void;
 }
 
+function InlineCodeBlock({ className, children }: { className?: string, children: ReactNode }) {
+    return (
+        <span className={clsx(
+            "inline whitespace-pre mx-2 px-1 py-[1px] border rounded border-slate-700 bg-slate-800 text-[0.85em] font-mono align-middle text-slate-300",
+            className ?? ""
+        )}>
+            {children}
+        </span>
+    )
+}
+
 function PasteArea({ onPaste }: PasteAreaProps) {
     return (
         <div>
-            <label className="w-full">
-                You can insert data copied from excel or google sheets here. You should probably sanitize the input by doing find and replaces for <pre>'\n' -&gt; ''</pre> and <pre>'\t' -&gt; ''</pre> first.
+            <label className="w-full flex flex-col gap-2">
+                <p>You can insert data copied from excel or google sheets here. You should probably sanitize the input by doing find and replaces for
+                    <InlineCodeBlock>'\n' &rarr; ''</InlineCodeBlock>
+                    and
+                    <InlineCodeBlock>'\t' &rarr; ''</InlineCodeBlock>
+                    first.</p>
                 <textarea rows={5}
                     className="w-full rounded border border-zinc-400 bg-zinc-300 dark:border-slate-700 dark:bg-slate-800 p-4"
                     onChange={(e) => {
@@ -204,6 +219,8 @@ function BulkImport() {
     const [uploadData, setUploadData] = useState<string[][]>([]);
     const headers = uploadData[0] ?? [];
 
+    const { selectedAdventure } = useAdventure();
+
     const [columnValues, setColumnValues] = useState<ColumnValue[]>([]);
 
     useEffect(() => {
@@ -218,6 +235,7 @@ function BulkImport() {
         })));
     }, [headers])
 
+    const mutateImport = useImportAdminCheckpoint();
 
     const uploadItems = useCallback(async () => {
         const rows = uploadData
@@ -233,7 +251,14 @@ function BulkImport() {
                 return obj;
             });
 
-        console.log(rows);
+        const payload: ImportPayload = {
+            identifiers: columnValues
+                .filter(val => val.identifier)
+                .map(val => val.outputColumn),
+            data: rows
+        };
+
+        mutateImport.mutate({ adventureId: selectedAdventure?.id ?? 0, data: payload });
 
     }, [columnValues, uploadData]);
 
@@ -244,16 +269,21 @@ function BulkImport() {
         <form className="flex flex-col gap-4">
             <h3>{t("bulk-import")}</h3>
             <PasteArea onPaste={setUploadData} />
-            <UploadTable data={uploadData} setData={setUploadData} />
-            <ColumnMapping
-                headers={headers}
-                columnValues={columnValues}
-                setColumnValues={setColumnValues}
-            />
-            <Button variant="green" onClick={uploadItems}
-            >
-                Upload
-            </Button>
+            {(headers.length > 0 && !(headers.length === 1 && headers[0] === "")) && (
+                <>
+                    <UploadTable data={uploadData} setData={setUploadData} />
+                    <ColumnMapping
+                        headers={headers}
+                        columnValues={columnValues}
+                        setColumnValues={setColumnValues}
+                    />
+                    <Button variant="green" onClick={uploadItems}
+                    >
+                        Upload
+                    </Button>
+                </>
+            )
+            }
         </form>
     )
 }
