@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field as PydanticField
 
 
 class BaseCheckpoint(SQLModel):
+    number: int
     org_name: str
     org_abbreviation: str
     category: str
@@ -22,6 +23,7 @@ class BaseCheckpoint(SQLModel):
 class DBCheckpoint(BaseCheckpoint, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
+    number: int = Field(default=0, index=True)
     org_name: str = Field()
     org_abbreviation: str | None = Field()
     contact_person: str = Field()
@@ -48,6 +50,7 @@ class DBCheckpoint(BaseCheckpoint, table=True):
 
 class AdminCheckpoint(BaseCheckpoint):
     id: int
+    number: int
     org_name: str
     org_abbreviation: str
     contact_person: str
@@ -73,6 +76,7 @@ class AdminCheckpoint(BaseCheckpoint):
 
 class PublicCheckpoint(BaseCheckpoint):
     id: int
+    number: int
     org_name: str
     org_abbreviation: str
     category: str
@@ -86,6 +90,7 @@ class PublicCheckpoint(BaseCheckpoint):
 
 
 class CreateCheckpoint(BaseModel):
+    number: int
     org_name: str
     org_abbreviation: str
     contact_person: str
@@ -106,6 +111,7 @@ class CreateCheckpoint(BaseModel):
 
 
 class ModifyCheckpoint(BaseCheckpoint):
+    number: int
     adventure_id: Optional[int] = None
     org_name: Optional[str] = None
     org_abbreviation: Optional[str] = None
