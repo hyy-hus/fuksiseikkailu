@@ -100,9 +100,12 @@ function CheckpointCard({ adventureId, checkpointId, open, onClick }: Checkpoint
                 <hr className="bg-slate-500 text-slate-500 hover:bg-slate-400 hover:bg-slate-400 w-20 rounded-full h-1 mb-4" />
             </li>
             <li className="contents">
-                <span className="justify-self-start text-sm">101</span>
+                <span className="justify-self-start text-sm">{cp?.number}</span>
                 <span className="font-bold justify-self-center text-center">{cp?.org_name} ({cp?.org_abbreviation})</span>
                 <span className="justify-self-end px-2 py-1 border border-slate-500 bg-slate-400/20 rounded text-xs">{cp?.category}</span>
+            </li>
+            <li className="col-span-full">
+                <span className="text-sm">{cp?.area}</span>
             </li>
             <li className="col-span-full">
                 <span className="italic text-sm">{cp?.address}</span>
