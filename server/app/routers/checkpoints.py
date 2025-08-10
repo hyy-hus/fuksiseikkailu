@@ -376,7 +376,10 @@ def allocate_numbers(
     session: SessionDep,
 ):
     checkpoints = session.exec(
-        select(DBCheckpoint).order_by(
+        select(DBCheckpoint)
+        .where(DBCheckpoint.adventure_id == adventure_id)
+        .order_by(
+            DBCheckpoint.area.desc(),
             cast(DBCheckpoint.latitude, Float).desc(),
             cast(DBCheckpoint.longitude, Float).asc(),
         )
