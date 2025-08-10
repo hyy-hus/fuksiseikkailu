@@ -37,6 +37,8 @@ import type {
   DeleteResponse,
   FetchUserUsersUserIdGetParams,
   HTTPValidationError,
+  ImportPayload,
+  ImportResult,
   LinkedAdventure,
   ListUsersUsersGetParams,
   ModifyAdventure,
@@ -1452,6 +1454,73 @@ export function useFetchAdminCheckpoint<TData = Awaited<ReturnType<typeof fetchA
 
 
 
+/**
+ * Adds or updates checkpoints by bulk
+ * @summary Update / Add many checkpoints at once
+ */
+export const importAdminCheckpoint = (
+    adventureId: number,
+    importPayload: ImportPayload,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<ImportResult | void>(
+      {url: `/adventures/${adventureId}/checkpoints/admin/import`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: importPayload, signal
+    },
+      );
+    }
+  
+
+
+export const getImportAdminCheckpointMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importAdminCheckpoint>>, TError,{adventureId: number;data: ImportPayload}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof importAdminCheckpoint>>, TError,{adventureId: number;data: ImportPayload}, TContext> => {
+
+const mutationKey = ['importAdminCheckpoint'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof importAdminCheckpoint>>, {adventureId: number;data: ImportPayload}> = (props) => {
+          const {adventureId,data} = props ?? {};
+
+          return  importAdminCheckpoint(adventureId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ImportAdminCheckpointMutationResult = NonNullable<Awaited<ReturnType<typeof importAdminCheckpoint>>>
+    export type ImportAdminCheckpointMutationBody = ImportPayload
+    export type ImportAdminCheckpointMutationError = HTTPValidationError
+
+    /**
+ * @summary Update / Add many checkpoints at once
+ */
+export const useImportAdminCheckpoint = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importAdminCheckpoint>>, TError,{adventureId: number;data: ImportPayload}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof importAdminCheckpoint>>,
+        TError,
+        {adventureId: number;data: ImportPayload},
+        TContext
+      > => {
+
+      const mutationOptions = getImportAdminCheckpointMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
 /**
  * Returns all active teams for the specified adventure.
  * @summary List all teams in an adventure
