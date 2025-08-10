@@ -17,6 +17,12 @@ from app.models.checkpoints import (
     CreateCheckpoint,
 )
 
+from math import radians
+import numpy as np
+from sklearn.cluster import DBSCAN
+
+EARTH_RADIUS_M = 6_371_000
+
 AdventureId = Annotated[
     int, Path(..., description="ID of the adventure")
 ]  # to-do: Move this to a common place
@@ -268,9 +274,92 @@ def normalize_row(raw_row: dict) -> dict:
     }
 
 
+class AllocateAreasResult(BaseModel):
+    updated: int = Field(..., description="Amount of updated checkpoints")
+    clusters: int = Field(..., description="How many clusters we ended up with")
+    noise: int = Field(..., description="Amount of individual checkpoints")
+    total_areas: int = Field(..., description="Amount of areas in total")
+
+
 class AllocateResult(BaseModel):
     status: str = Field(..., example="Allocation succesfull")
     updated: int = Field(..., description="Amount of updated checkpoints")
+
+
+@admin_router.post(
+    "/allocate_areas",
+    response_model=AllocateAreasResult,
+    operation_id="allocateCheckpointAreas",
+    summary="Allocate areas for checkpoints",
+    description="Allocates areas for all the checkpoints in the adventure",
+    responses={200: {"description": "Succesfully allocated areas"}},
+)
+def allocate_areas(
+    adventure_id: int,
+    user: UserDep,
+    session: SessionDep,
+    eps_meters: int = 200,
+    min_samples: int = 3,
+) -> AllocateAreasResult:
+    cps = session.exec(
+        select(DBCheckpoint).where(DBCheckpoint.adventure_id == adventure_id)
+    ).all()
+
+    if not cps:
+        return AllocateAreasResult(updated=0, clusters=0, noise=0, total_areas=0)
+
+    # Collect coords (skip rows with missing/invalid coords)
+    lats, lons, valid_idx = [], [], []
+    for idx, cp in enumerate(cps):
+        try:
+            lat = float(cp.latitude)
+            lon = float(cp.longitude)
+        except (TypeError, ValueError):
+            # no valid coords -> give singleton area later if you prefer, or skip
+            continue
+        lats.append(lat)
+        lons.append(lon)
+        valid_idx.append(idx)
+
+    if not valid_idx:
+        # No valid coordinates
+        return AllocateAreasResult(updated=0, clusters=0, noise=len(cps), total_areas=0)
+
+    coords_rad = np.radians(np.c_[lats, lons])
+    eps_rad = eps_meters / EARTH_RADIUS_M
+
+    db = DBSCAN(eps=eps_rad, min_samples=min_samples, metric="haversine")
+    labels = db.fit_predict(coords_rad)  # -1 = noise
+
+    # Map cluster labels to compact 1..K
+    unique_clusters = sorted({lbl for lbl in labels if lbl != -1})
+    cluster_map = {lbl: i + 1 for i, lbl in enumerate(unique_clusters)}
+    k = len(unique_clusters)
+
+    # Stable order for noise (NW -> SE)
+    noise_idxs = [i for i, lbl in enumerate(labels) if lbl == -1]
+    noise_sorted = sorted(noise_idxs, key=lambda idx: (-lats[idx], lons[idx]))
+    noise_rank = {idx: r for r, idx in enumerate(noise_sorted)}
+
+    updated = 0
+    # Assign areas back to original cps order using valid_idx mapping
+    for arr_pos, lbl in enumerate(labels):
+        cp = cps[valid_idx[arr_pos]]
+        if lbl == -1:
+            cp.area = k + 1 + noise_rank[arr_pos]  # singleton area for each noise point
+        else:
+            cp.area = cluster_map[lbl]
+        session.add(cp)
+        updated += 1
+
+    session.commit()
+
+    return AllocateAreasResult(
+        updated=updated,
+        clusters=k,
+        noise=len(noise_idxs),
+        total_areas=k + len(noise_idxs),
+    )
 
 
 @admin_router.post(
