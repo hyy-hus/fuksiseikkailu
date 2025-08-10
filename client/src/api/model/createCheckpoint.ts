@@ -8,6 +8,8 @@ import type { CreateCheckpointLatitude } from './createCheckpointLatitude';
 import type { CreateCheckpointLongitude } from './createCheckpointLongitude';
 
 export interface CreateCheckpoint {
+  number: number;
+  area: number;
   org_name: string;
   org_abbreviation: string;
   contact_person: string;

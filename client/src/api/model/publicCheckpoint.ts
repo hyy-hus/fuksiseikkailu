@@ -6,6 +6,8 @@
  */
 
 export interface PublicCheckpoint {
+  number: number;
+  area: number;
   org_name: string;
   org_abbreviation: string;
   category: string;
