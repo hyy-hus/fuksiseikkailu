@@ -2,6 +2,8 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, Path, status
 from sqlmodel import select
 
+from sqlalchemy import cast, Float
+
 from pydantic import BaseModel, Field, ValidationError
 
 from app.schemas.base import DeleteResponse
@@ -266,6 +268,40 @@ def normalize_row(raw_row: dict) -> dict:
     }
 
 
+class AllocateResult(BaseModel):
+    status: str = Field(..., example="Allocation succesfull")
+    updated: int = Field(..., description="Amount of updated checkpoints")
+
+
+@admin_router.post(
+    "/allocate_numbers",
+    response_model=AllocateResult,
+    operation_id="allocateCheckpointNumbers",
+    summary="Allocate numbers for checkpoints",
+    description="Allocates numbers for all the checkpoints in the adventure",
+    responses={200: {"description": "Succesfully allocated numbers"}},
+)
+def allocate_numbers(
+    adventure_id: AdventureId,
+    user: UserDep,
+    session: SessionDep,
+):
+    checkpoints = session.exec(
+        select(DBCheckpoint).order_by(
+            cast(DBCheckpoint.latitude, Float).desc(),
+            cast(DBCheckpoint.longitude, Float).asc(),
+        )
+    ).all()
+
+    for idx, checkpoint in enumerate(checkpoints, start=1):
+        checkpoint.number = idx
+        session.add(checkpoint)
+
+    session.commit()
+
+    return AllocateResult(status="Allocation succesfull", updated=len(checkpoints))
+
+
 @admin_router.post(
     "/import",
     response_model=ImportResult,
@@ -292,6 +328,7 @@ def import_checkpoints(
 
     for row in rows:
         # To-do: this sanitization could be nicer?
+        row["number"] = parse_int(row.get("number", "0"))
         row["photo_permission"] = parse_bool(row.get("photo_permission", "true"))
         row["accessible"] = parse_bool(row.get("accessible", "false"))
         row["lanes"] = parse_int(row.get("lanes", "0"))
