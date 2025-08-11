@@ -26,6 +26,14 @@ from app.models.teams import (
 
 from app.models.news import DBNews, AdminNews, PublicNews, ModifyNews, CreateNews
 
+from app.models.scores import (
+    DBScore,
+    AdminScore,
+    PublicScore,
+    ModifyScore,
+    CreateScore,
+)
+
 for model in [
     LinkedAdventure,
     PublicAdventure,
@@ -47,6 +55,11 @@ for model in [
     PublicNews,
     ModifyNews,
     CreateNews,
+    DBScore,
+    AdminScore,
+    PublicScore,
+    ModifyScore,
+    CreateScore,
 ]:
     model.model_rebuild()
 
@@ -57,4 +70,5 @@ __all__ = [
     "DBTeam",
     "DBPushSubscription",
     "DBNews",
+    "DBScore",
 ]
