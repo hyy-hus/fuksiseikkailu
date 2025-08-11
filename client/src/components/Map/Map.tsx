@@ -8,14 +8,13 @@ import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { PublicCheckpoint } from '@api/model';
 
 import ReactDOMServer from 'react-dom/server';
-import { HiLocationMarker } from "react-icons/hi";
 import clsx from 'clsx';
 
-const colors = ["amber", "emerald", "cyan", "indigo", "fuchsia", "rose"];
+const colors = ["amber", "emerald", "violet", "indigo", "fuchsia", "rose"];
 const COLOR_CLASSES: Record<string, string> = {
     amber: "bg-amber-500 border-amber-300",
     emerald: "bg-emerald-500 border-emerald-300",
-    cyan: "bg-cyan-500 border-cyan-300",
+    violet: "bg-violet-500 border-violet-300",
     indigo: "bg-indigo-500 border-indigo-300",
     fuchsia: "bg-fuchsia-500 border-fuchsia-300",
     rose: "bg-rose-500 border-rose-300",
@@ -28,7 +27,7 @@ function Marker(id: number, area?: number, selected?: boolean) {
 
     const style = clsx(
         "w-10 h-10 rounded-full border-[3px] flex items-center justify-center font-bold shadow",
-        selected ? "bg-sky-400 border-sky-300" : colorClass
+        selected ? "bg-sky-400 border-sky-200" : colorClass
     );
 
     return L.divIcon({
@@ -109,7 +108,7 @@ export function Map({
             const lat = parseFloat(checkpoint.latitude) || 0;
             const long = parseFloat(checkpoint.longitude) || 0;
             return L.marker([lat, long], {
-                icon: Marker(checkpoint.number, false),
+                icon: Marker(checkpoint.number, checkpoint.area, false),
                 draggable: false,
             })
                 .bindTooltip(`#${checkpoint.number}: ${checkpoint.org_name}`, {
@@ -120,13 +119,13 @@ export function Map({
                 .on("dragend", (e) => {
                     const newPos = e.target.getLatLng();
                     console.log("New position:", newPos);
-                    e.target.setIcon(Marker(checkpoint.number, false));
+                    e.target.setIcon(Marker(checkpoint.number, checkpoint.area, false));
                     e.target.dragging.disable();
                     onMarkerDrag(checkpoint.id, newPos.lat, newPos.lng);
                 })
                 .on("click", (e) => {
                     if (dragEnabled) {
-                        e.target.setIcon(Marker(checkpoint.number, true));
+                        e.target.setIcon(Marker(checkpoint.number, checkpoint.area, true));
                         e.target.dragging.enable();
                     }
                     clickCallback(checkpoint.id);
