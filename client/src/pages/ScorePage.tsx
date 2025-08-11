@@ -172,7 +172,7 @@ export function ScorePage() {
 
     const scores_query = useListScores(selectedAdventure?.id ?? 0);
     const scores = scores_query?.data?.data ?? [];
-    const checkpoint_scores = scores.filter(score => score.team.id === selectedTeam?.id)
+    const checkpoint_scores = scores.filter(score => score.checkpoint.id === checkpoint?.id)
 
     const submitScore = useCreateScore({
         mutation: {
