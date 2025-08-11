@@ -17,11 +17,14 @@ from app.models.checkpoints import (
     CreateCheckpoint,
 )
 
-from math import radians
+from math import cos, sin, sqrt, radians, pi
+from collections import defaultdict
+
 import numpy as np
 from sklearn.cluster import DBSCAN
 
 EARTH_RADIUS_M = 6_371_000
+EARTH_RADIUS_LAT_M = 111_320.0
 
 AdventureId = Annotated[
     int, Path(..., description="ID of the adventure")
@@ -284,6 +287,92 @@ class AllocateAreasResult(BaseModel):
 class AllocateResult(BaseModel):
     status: str = Field(..., example="Allocation succesfull")
     updated: int = Field(..., description="Amount of updated checkpoints")
+
+
+def meters_to_deg(lat_deg: float, dx_m: float, dy_m: float) -> tuple[float, float]:
+    """Convert local meters (dx east, dy_north) to degrees at a given latitude"""
+    lat_rad = radians(lat_deg)
+    dlat = dy_m / EARTH_RADIUS_LAT_M
+    meters_per_deg_lon = EARTH_RADIUS_LAT_M * max(0.000001, cos(lat_rad))
+    dlon = dx_m / meters_per_deg_lon
+
+    return dlat, dlon
+
+
+def jitter_offsets(n: int, step_m: float = 3.0):
+    """Generate n (dx, dy) meter offsets using a golden angle spiral"""
+
+    phi = pi * (3 - sqrt(5))
+    for k in range(n):
+        r = step_m * sqrt(k + 1)
+        theta = k * phi
+
+        yield (r * cos(theta), r * sin(theta))
+
+
+@admin_router.post(
+    "/deoverlap_checkpoints",
+    response_model=AllocateResult,
+    operation_id="deoverlapCheckpoints",
+    summary="Nudge overlapping checkpoints apart",
+    description="Finds checkpoints with identical coordinates and jitters them slightly apart",
+    responses={200: {"description": "Succesfully deoverlapped checkpoints"}},
+)
+def deoverlap_checkpoints(
+    adventure_id: AdventureId,
+    user: UserDep,
+    session: SessionDep,
+    *,
+    step_meters: float = 3.0,
+    renumber_after: bool = True,
+):
+    cps = session.exec(
+        select(DBCheckpoint).where(DBCheckpoint.adventure_id == adventure_id)
+    ).all()
+    if not cps:
+        return AllocateResult(status="No checkpoints", updated=0)
+
+    # Group by exact (lat, lon) parsed as floats
+    groups: dict[tuple[float, float], list[DBCheckpoint]] = defaultdict(list)
+    skipped = 0
+    for cp in cps:
+        try:
+            lat = float(cp.latitude)
+            lon = float(cp.longitude)
+        except (TypeError, ValueError):
+            skipped += 1
+            continue
+        groups[(lat, lon)].append(cp)
+
+    moved = 0
+    groups_touched = 0
+
+    # For each group with >1, spread on a spiral around the original coordinate
+    for (lat0, lon0), items in groups.items():
+        if len(items) <= 1:
+            continue
+        groups_touched += 1
+
+        # Stable order: sort by id to keep the same jitter across runs
+        items.sort(key=lambda cp: cp.id or 0)
+
+        for cp, (dx_m, dy_m) in zip(items, jitter_offsets(len(items), step_meters)):
+            dlat, dlon = meters_to_deg(lat0, dx_m, dy_m)
+            new_lat = lat0 + dlat
+            new_lon = lon0 + dlon
+
+            # Store back as strings (match your schema); 6 decimals ≈ 0.11 m
+            cp.latitude = f"{new_lat:.6f}"
+            cp.longitude = f"{new_lon:.6f}"
+            session.add(cp)
+            moved += 1
+
+    session.commit()
+
+    return AllocateResult(
+        status="De-overlap complete",
+        updated=moved,
+    )
 
 
 @admin_router.post(
