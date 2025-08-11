@@ -5,8 +5,10 @@ import { useAdventure } from "@contexts/AdventureContext";
 import { useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { t } from "i18next";
-import { FormEventHandler, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
+
+import toast from 'react-hot-toast';
 
 interface Option {
     key: string | number;
@@ -187,10 +189,9 @@ export function ScorePage() {
         selectedAdventure?.id ?? 0,
     );
 
-    const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log("mutate")
-        submitScore.mutate({
+        const data = {
             adventureId: selectedAdventure?.id ?? 0,
             data: {
                 score: score,
@@ -198,9 +199,16 @@ export function ScorePage() {
                 checkpoint_id: checkpoint?.id ?? 0,
                 team_id: selectedTeam?.id ?? 0
             }
-        });
+        }
 
-        console.log("Done")
+        await toast.promise(
+            submitScore.mutateAsync(data),
+            {
+                loading: "Saving score...",
+                success: "Added new score!",
+                error: (err: any) => err?.message ?? 'Failed to add score',
+            }
+        )
     }, [selectedAdventure, score, players, checkpoint, selectedTeam]);
 
     return (
