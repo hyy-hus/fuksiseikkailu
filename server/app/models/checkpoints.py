@@ -3,8 +3,12 @@ from sqlmodel import SQLModel, Field, Relationship
 
 from app.models.adventures import PublicAdventure, DBAdventure
 
+from pydantic import BaseModel, Field as PydanticField
+
 
 class BaseCheckpoint(SQLModel):
+    number: int
+    area: int
     org_name: str
     org_abbreviation: str
     category: str
@@ -19,6 +23,9 @@ class BaseCheckpoint(SQLModel):
 
 class DBCheckpoint(BaseCheckpoint, table=True):
     id: int | None = Field(default=None, primary_key=True)
+
+    number: int = Field(default=0, index=True)
+    area: int = Field(default=0, index=True)
 
     org_name: str = Field()
     org_abbreviation: str | None = Field()
@@ -46,6 +53,8 @@ class DBCheckpoint(BaseCheckpoint, table=True):
 
 class AdminCheckpoint(BaseCheckpoint):
     id: int
+    number: int
+    area: int
     org_name: str
     org_abbreviation: str
     contact_person: str
@@ -71,6 +80,8 @@ class AdminCheckpoint(BaseCheckpoint):
 
 class PublicCheckpoint(BaseCheckpoint):
     id: int
+    number: int
+    area: int
     org_name: str
     org_abbreviation: str
     category: str
@@ -83,15 +94,17 @@ class PublicCheckpoint(BaseCheckpoint):
     accessible: bool
 
 
-class CreateCheckpoint(BaseCheckpoint):
+class CreateCheckpoint(BaseModel):
+    number: int
+    area: int
     org_name: str
     org_abbreviation: str
     contact_person: str
     contact_email: str
     contact_phone: str
     category: str
-    latitude: str
-    longitude: str
+    latitude: Optional[str] = PydanticField(default="60.1699")
+    longitude: Optional[str] = PydanticField(default="24.9384")
     address: str
     requirements: str
     lanes: int
@@ -104,6 +117,8 @@ class CreateCheckpoint(BaseCheckpoint):
 
 
 class ModifyCheckpoint(BaseCheckpoint):
+    number: Optional[int] = None
+    area: Optional[int] = None
     adventure_id: Optional[int] = None
     org_name: Optional[str] = None
     org_abbreviation: Optional[str] = None

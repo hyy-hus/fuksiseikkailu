@@ -4,22 +4,26 @@
  * FastAPI
  * OpenAPI spec version: 0.1.0
  */
+import type { CreateCheckpointLatitude } from './createCheckpointLatitude';
+import type { CreateCheckpointLongitude } from './createCheckpointLongitude';
 
 export interface CreateCheckpoint {
+  number: number;
+  area: number;
   org_name: string;
   org_abbreviation: string;
-  category: string;
-  latitude: string;
-  longitude: string;
-  address: string;
-  checkpoint_description: string;
-  org_description: string;
-  org_link: string;
-  accessible: boolean;
   contact_person: string;
   contact_email: string;
   contact_phone: string;
+  category: string;
+  latitude?: CreateCheckpointLatitude;
+  longitude?: CreateCheckpointLongitude;
+  address: string;
   requirements: string;
   lanes: number;
+  checkpoint_description: string;
+  org_description: string;
+  org_link: string;
   photo_permission: boolean;
+  accessible: boolean;
 }

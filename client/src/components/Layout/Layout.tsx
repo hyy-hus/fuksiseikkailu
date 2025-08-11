@@ -122,7 +122,7 @@ export function Layout({
     const [notificationBar, setNotificationBar] = useState<boolean>(() => permission === "default" ? true : false);
 
     return (
-        <div className={`relative h-screen grid grid-rows-[auto_1fr] ${sidebarOpen ? "grid-cols-[1fr_0] md:grid-cols-[auto_1fr]" : "grid-cols-[1fr]"} font-display text-zinc-900 dark:text-zinc-50`}>
+        <div className={`relative h-screen grid grid-rows-[auto_1fr] ${sidebarOpen ? "grid-cols-[1fr_0] md:grid-cols-[auto_1fr]" : "grid-cols-[1fr]"} font-display text-zinc-900 dark:text-zinc-50 text-base/7`}>
 
             <nav className={navbar({ variant })}>
                 <Button variant="transparent" onClick={() => toggleSidebar()}><IoMenu /></Button>
@@ -191,6 +191,7 @@ export function Layout({
                         ) : (
                             <>
                                 <li><Link to="/" className="hover:underline">{t("frontpage")}</Link></li>
+                                <li><Link to="/news" className="hover:underline">{t("news")}</Link></li>
                                 <li><Link to="/checkpoints" className="hover:underline">{t("checkpoints")}</Link></li>
                                 <li><Link to="/map" className="hover:underline">{t("map")}</Link></li>
                                 <li><Link to="/costumes" className="hover:underline">{t("costume-contest")}</Link></li>

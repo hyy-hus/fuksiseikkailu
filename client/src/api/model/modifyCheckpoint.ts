@@ -4,6 +4,8 @@
  * FastAPI
  * OpenAPI spec version: 0.1.0
  */
+import type { ModifyCheckpointNumber } from './modifyCheckpointNumber';
+import type { ModifyCheckpointArea } from './modifyCheckpointArea';
 import type { ModifyCheckpointOrgName } from './modifyCheckpointOrgName';
 import type { ModifyCheckpointOrgAbbreviation } from './modifyCheckpointOrgAbbreviation';
 import type { ModifyCheckpointCategory } from './modifyCheckpointCategory';
@@ -23,6 +25,8 @@ import type { ModifyCheckpointLanes } from './modifyCheckpointLanes';
 import type { ModifyCheckpointPhotoPermission } from './modifyCheckpointPhotoPermission';
 
 export interface ModifyCheckpoint {
+  number?: ModifyCheckpointNumber;
+  area?: ModifyCheckpointArea;
   org_name?: ModifyCheckpointOrgName;
   org_abbreviation?: ModifyCheckpointOrgAbbreviation;
   category?: ModifyCheckpointCategory;

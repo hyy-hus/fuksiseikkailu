@@ -27,6 +27,9 @@ import type {
   AdminCheckpoint,
   AdminNews,
   AdminTeam,
+  AllocateAreasResult,
+  AllocateCheckpointAreasParams,
+  AllocateResult,
   BodyLoginAuthLoginPost,
   CreateAdventure,
   CreateCheckpoint,
@@ -37,6 +40,8 @@ import type {
   DeleteResponse,
   FetchUserUsersUserIdGetParams,
   HTTPValidationError,
+  ImportPayload,
+  ImportResult,
   LinkedAdventure,
   ListUsersUsersGetParams,
   ModifyAdventure,
@@ -1452,6 +1457,203 @@ export function useFetchAdminCheckpoint<TData = Awaited<ReturnType<typeof fetchA
 
 
 
+/**
+ * Allocates areas for all the checkpoints in the adventure
+ * @summary Allocate areas for checkpoints
+ */
+export const allocateCheckpointAreas = (
+    adventureId: number,
+    params?: AllocateCheckpointAreasParams,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<AllocateAreasResult>(
+      {url: `/adventures/${adventureId}/checkpoints/admin/allocate_areas`, method: 'POST',
+        params, signal
+    },
+      );
+    }
+  
+
+
+export const getAllocateCheckpointAreasMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof allocateCheckpointAreas>>, TError,{adventureId: number;params?: AllocateCheckpointAreasParams}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof allocateCheckpointAreas>>, TError,{adventureId: number;params?: AllocateCheckpointAreasParams}, TContext> => {
+
+const mutationKey = ['allocateCheckpointAreas'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof allocateCheckpointAreas>>, {adventureId: number;params?: AllocateCheckpointAreasParams}> = (props) => {
+          const {adventureId,params} = props ?? {};
+
+          return  allocateCheckpointAreas(adventureId,params,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AllocateCheckpointAreasMutationResult = NonNullable<Awaited<ReturnType<typeof allocateCheckpointAreas>>>
+    
+    export type AllocateCheckpointAreasMutationError = HTTPValidationError
+
+    /**
+ * @summary Allocate areas for checkpoints
+ */
+export const useAllocateCheckpointAreas = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof allocateCheckpointAreas>>, TError,{adventureId: number;params?: AllocateCheckpointAreasParams}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof allocateCheckpointAreas>>,
+        TError,
+        {adventureId: number;params?: AllocateCheckpointAreasParams},
+        TContext
+      > => {
+
+      const mutationOptions = getAllocateCheckpointAreasMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * Allocates numbers for all the checkpoints in the adventure
+ * @summary Allocate numbers for checkpoints
+ */
+export const allocateCheckpointNumbers = (
+    adventureId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<AllocateResult>(
+      {url: `/adventures/${adventureId}/checkpoints/admin/allocate_numbers`, method: 'POST', signal
+    },
+      );
+    }
+  
+
+
+export const getAllocateCheckpointNumbersMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof allocateCheckpointNumbers>>, TError,{adventureId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof allocateCheckpointNumbers>>, TError,{adventureId: number}, TContext> => {
+
+const mutationKey = ['allocateCheckpointNumbers'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof allocateCheckpointNumbers>>, {adventureId: number}> = (props) => {
+          const {adventureId} = props ?? {};
+
+          return  allocateCheckpointNumbers(adventureId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AllocateCheckpointNumbersMutationResult = NonNullable<Awaited<ReturnType<typeof allocateCheckpointNumbers>>>
+    
+    export type AllocateCheckpointNumbersMutationError = HTTPValidationError
+
+    /**
+ * @summary Allocate numbers for checkpoints
+ */
+export const useAllocateCheckpointNumbers = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof allocateCheckpointNumbers>>, TError,{adventureId: number}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof allocateCheckpointNumbers>>,
+        TError,
+        {adventureId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getAllocateCheckpointNumbersMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * Adds or updates checkpoints by bulk
+ * @summary Update / Add many checkpoints at once
+ */
+export const importAdminCheckpoint = (
+    adventureId: number,
+    importPayload: ImportPayload,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<ImportResult | void>(
+      {url: `/adventures/${adventureId}/checkpoints/admin/import`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: importPayload, signal
+    },
+      );
+    }
+  
+
+
+export const getImportAdminCheckpointMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importAdminCheckpoint>>, TError,{adventureId: number;data: ImportPayload}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof importAdminCheckpoint>>, TError,{adventureId: number;data: ImportPayload}, TContext> => {
+
+const mutationKey = ['importAdminCheckpoint'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof importAdminCheckpoint>>, {adventureId: number;data: ImportPayload}> = (props) => {
+          const {adventureId,data} = props ?? {};
+
+          return  importAdminCheckpoint(adventureId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ImportAdminCheckpointMutationResult = NonNullable<Awaited<ReturnType<typeof importAdminCheckpoint>>>
+    export type ImportAdminCheckpointMutationBody = ImportPayload
+    export type ImportAdminCheckpointMutationError = HTTPValidationError
+
+    /**
+ * @summary Update / Add many checkpoints at once
+ */
+export const useImportAdminCheckpoint = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importAdminCheckpoint>>, TError,{adventureId: number;data: ImportPayload}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof importAdminCheckpoint>>,
+        TError,
+        {adventureId: number;data: ImportPayload},
+        TContext
+      > => {
+
+      const mutationOptions = getImportAdminCheckpointMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
 /**
  * Returns all active teams for the specified adventure.
  * @summary List all teams in an adventure
