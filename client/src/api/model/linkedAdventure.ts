@@ -7,6 +7,7 @@
 import type { PublicCheckpoint } from './publicCheckpoint';
 import type { PublicTeam } from './publicTeam';
 import type { PublicNews } from './publicNews';
+import type { PublicScore } from './publicScore';
 
 export interface LinkedAdventure {
   name: string;
@@ -17,4 +18,5 @@ export interface LinkedAdventure {
   checkpoints: PublicCheckpoint[];
   teams: PublicTeam[];
   news: PublicNews[];
+  scores: PublicScore[];
 }

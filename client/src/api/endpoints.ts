@@ -26,6 +26,7 @@ import type {
 import type {
   AdminCheckpoint,
   AdminNews,
+  AdminScore,
   AdminTeam,
   AllocateAreasResult,
   AllocateCheckpointAreasParams,
@@ -35,9 +36,11 @@ import type {
   CreateCheckpoint,
   CreateNews,
   CreatePushSubscription,
+  CreateScore,
   CreateTeam,
   CreateUser,
   DeleteResponse,
+  DeoverlapCheckpointsParams,
   FetchUserUsersUserIdGetParams,
   HTTPValidationError,
   ImportPayload,
@@ -47,11 +50,13 @@ import type {
   ModifyAdventure,
   ModifyCheckpoint,
   ModifyNews,
+  ModifyScore,
   ModifyTeam,
   NotificationStatus,
   PublicAdventure,
   PublicCheckpoint,
   PublicNews,
+  PublicScore,
   PublicTeam,
   PublicUser,
   Token,
@@ -1457,6 +1462,72 @@ export function useFetchAdminCheckpoint<TData = Awaited<ReturnType<typeof fetchA
 
 
 
+/**
+ * Finds checkpoints with identical coordinates and jitters them slightly apart
+ * @summary Nudge overlapping checkpoints apart
+ */
+export const deoverlapCheckpoints = (
+    adventureId: number,
+    params?: DeoverlapCheckpointsParams,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<AllocateResult>(
+      {url: `/adventures/${adventureId}/checkpoints/admin/deoverlap_checkpoints`, method: 'POST',
+        params, signal
+    },
+      );
+    }
+  
+
+
+export const getDeoverlapCheckpointsMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deoverlapCheckpoints>>, TError,{adventureId: number;params?: DeoverlapCheckpointsParams}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deoverlapCheckpoints>>, TError,{adventureId: number;params?: DeoverlapCheckpointsParams}, TContext> => {
+
+const mutationKey = ['deoverlapCheckpoints'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deoverlapCheckpoints>>, {adventureId: number;params?: DeoverlapCheckpointsParams}> = (props) => {
+          const {adventureId,params} = props ?? {};
+
+          return  deoverlapCheckpoints(adventureId,params,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeoverlapCheckpointsMutationResult = NonNullable<Awaited<ReturnType<typeof deoverlapCheckpoints>>>
+    
+    export type DeoverlapCheckpointsMutationError = HTTPValidationError
+
+    /**
+ * @summary Nudge overlapping checkpoints apart
+ */
+export const useDeoverlapCheckpoints = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deoverlapCheckpoints>>, TError,{adventureId: number;params?: DeoverlapCheckpointsParams}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deoverlapCheckpoints>>,
+        TError,
+        {adventureId: number;params?: DeoverlapCheckpointsParams},
+        TContext
+      > => {
+
+      const mutationOptions = getDeoverlapCheckpointsMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
 /**
  * Allocates areas for all the checkpoints in the adventure
  * @summary Allocate areas for checkpoints
@@ -2998,6 +3069,574 @@ export function useFetchAdminNews<TData = Awaited<ReturnType<typeof fetchAdminNe
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getFetchAdminNewsQueryOptions(adventureId,newsId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * Returns all active scores for the specified adventure.
+ * @summary List all scores in an adventure
+ */
+export const listScores = (
+    adventureId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicScore[]>(
+      {url: `/adventures/${adventureId}/scores/`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getListScoresQueryKey = (adventureId: number,) => {
+    return [`/adventures/${adventureId}/scores/`] as const;
+    }
+
+    
+export const getListScoresQueryOptions = <TData = Awaited<ReturnType<typeof listScores>>, TError = HTTPValidationError>(adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listScores>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListScoresQueryKey(adventureId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listScores>>> = ({ signal }) => listScores(adventureId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(adventureId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listScores>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListScoresQueryResult = NonNullable<Awaited<ReturnType<typeof listScores>>>
+export type ListScoresQueryError = HTTPValidationError
+
+
+export function useListScores<TData = Awaited<ReturnType<typeof listScores>>, TError = HTTPValidationError>(
+ adventureId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listScores>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listScores>>,
+          TError,
+          Awaited<ReturnType<typeof listScores>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListScores<TData = Awaited<ReturnType<typeof listScores>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listScores>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listScores>>,
+          TError,
+          Awaited<ReturnType<typeof listScores>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListScores<TData = Awaited<ReturnType<typeof listScores>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listScores>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List all scores in an adventure
+ */
+
+export function useListScores<TData = Awaited<ReturnType<typeof listScores>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listScores>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListScoresQueryOptions(adventureId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * Creates a new score specified by *request body*
+ * @summary Create a score
+ */
+export const createScore = (
+    adventureId: number,
+    createScore: CreateScore,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicScore>(
+      {url: `/adventures/${adventureId}/scores/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createScore, signal
+    },
+      );
+    }
+  
+
+
+export const getCreateScoreMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createScore>>, TError,{adventureId: number;data: CreateScore}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof createScore>>, TError,{adventureId: number;data: CreateScore}, TContext> => {
+
+const mutationKey = ['createScore'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createScore>>, {adventureId: number;data: CreateScore}> = (props) => {
+          const {adventureId,data} = props ?? {};
+
+          return  createScore(adventureId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateScoreMutationResult = NonNullable<Awaited<ReturnType<typeof createScore>>>
+    export type CreateScoreMutationBody = CreateScore
+    export type CreateScoreMutationError = HTTPValidationError
+
+    /**
+ * @summary Create a score
+ */
+export const useCreateScore = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createScore>>, TError,{adventureId: number;data: CreateScore}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createScore>>,
+        TError,
+        {adventureId: number;data: CreateScore},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateScoreMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * Returns publicly available information about the score specified by *score_id*.
+ * @summary Fetch a score in an adventure
+ */
+export const fetchScore = (
+    adventureId: number,
+    scoreId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicScore>(
+      {url: `/adventures/${adventureId}/scores/${scoreId}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getFetchScoreQueryKey = (adventureId: number,
+    scoreId: number,) => {
+    return [`/adventures/${adventureId}/scores/${scoreId}`] as const;
+    }
+
+    
+export const getFetchScoreQueryOptions = <TData = Awaited<ReturnType<typeof fetchScore>>, TError = void | HTTPValidationError>(adventureId: number,
+    scoreId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchScore>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getFetchScoreQueryKey(adventureId,scoreId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof fetchScore>>> = ({ signal }) => fetchScore(adventureId,scoreId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(adventureId && scoreId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof fetchScore>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type FetchScoreQueryResult = NonNullable<Awaited<ReturnType<typeof fetchScore>>>
+export type FetchScoreQueryError = void | HTTPValidationError
+
+
+export function useFetchScore<TData = Awaited<ReturnType<typeof fetchScore>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    scoreId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchScore>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchScore>>,
+          TError,
+          Awaited<ReturnType<typeof fetchScore>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchScore<TData = Awaited<ReturnType<typeof fetchScore>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    scoreId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchScore>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchScore>>,
+          TError,
+          Awaited<ReturnType<typeof fetchScore>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchScore<TData = Awaited<ReturnType<typeof fetchScore>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    scoreId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchScore>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Fetch a score in an adventure
+ */
+
+export function useFetchScore<TData = Awaited<ReturnType<typeof fetchScore>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    scoreId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchScore>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getFetchScoreQueryOptions(adventureId,scoreId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * Update score specified by *score_id* and *adventure_id*
+ * @summary Update a score
+ */
+export const patchScore = (
+    adventureId: number,
+    scoreId: number,
+    modifyScore: ModifyScore,
+ ) => {
+      
+      
+      return customInstance<PublicScore>(
+      {url: `/adventures/${adventureId}/scores/${scoreId}`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: modifyScore
+    },
+      );
+    }
+  
+
+
+export const getPatchScoreMutationOptions = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchScore>>, TError,{adventureId: number;scoreId: number;data: ModifyScore}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof patchScore>>, TError,{adventureId: number;scoreId: number;data: ModifyScore}, TContext> => {
+
+const mutationKey = ['patchScore'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof patchScore>>, {adventureId: number;scoreId: number;data: ModifyScore}> = (props) => {
+          const {adventureId,scoreId,data} = props ?? {};
+
+          return  patchScore(adventureId,scoreId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PatchScoreMutationResult = NonNullable<Awaited<ReturnType<typeof patchScore>>>
+    export type PatchScoreMutationBody = ModifyScore
+    export type PatchScoreMutationError = void | HTTPValidationError
+
+    /**
+ * @summary Update a score
+ */
+export const usePatchScore = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchScore>>, TError,{adventureId: number;scoreId: number;data: ModifyScore}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof patchScore>>,
+        TError,
+        {adventureId: number;scoreId: number;data: ModifyScore},
+        TContext
+      > => {
+
+      const mutationOptions = getPatchScoreMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * Delete score specified by *score_id* and *adventure_id*
+ * @summary Delete a score
+ */
+export const deleteScore = (
+    adventureId: number,
+    scoreId: number,
+ ) => {
+      
+      
+      return customInstance<DeleteResponse>(
+      {url: `/adventures/${adventureId}/scores/${scoreId}`, method: 'DELETE'
+    },
+      );
+    }
+  
+
+
+export const getDeleteScoreMutationOptions = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteScore>>, TError,{adventureId: number;scoreId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteScore>>, TError,{adventureId: number;scoreId: number}, TContext> => {
+
+const mutationKey = ['deleteScore'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteScore>>, {adventureId: number;scoreId: number}> = (props) => {
+          const {adventureId,scoreId} = props ?? {};
+
+          return  deleteScore(adventureId,scoreId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteScoreMutationResult = NonNullable<Awaited<ReturnType<typeof deleteScore>>>
+    
+    export type DeleteScoreMutationError = void | HTTPValidationError
+
+    /**
+ * @summary Delete a score
+ */
+export const useDeleteScore = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteScore>>, TError,{adventureId: number;scoreId: number}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteScore>>,
+        TError,
+        {adventureId: number;scoreId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteScoreMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * Returns admin level list of all active scores for the specified adventure.
+ * @summary List all scores in an adventure
+ */
+export const listAdminScores = (
+    adventureId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<AdminScore[]>(
+      {url: `/adventures/${adventureId}/scores/admin/`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getListAdminScoresQueryKey = (adventureId: number,) => {
+    return [`/adventures/${adventureId}/scores/admin/`] as const;
+    }
+
+    
+export const getListAdminScoresQueryOptions = <TData = Awaited<ReturnType<typeof listAdminScores>>, TError = HTTPValidationError>(adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminScores>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListAdminScoresQueryKey(adventureId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listAdminScores>>> = ({ signal }) => listAdminScores(adventureId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(adventureId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listAdminScores>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListAdminScoresQueryResult = NonNullable<Awaited<ReturnType<typeof listAdminScores>>>
+export type ListAdminScoresQueryError = HTTPValidationError
+
+
+export function useListAdminScores<TData = Awaited<ReturnType<typeof listAdminScores>>, TError = HTTPValidationError>(
+ adventureId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminScores>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAdminScores>>,
+          TError,
+          Awaited<ReturnType<typeof listAdminScores>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListAdminScores<TData = Awaited<ReturnType<typeof listAdminScores>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminScores>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listAdminScores>>,
+          TError,
+          Awaited<ReturnType<typeof listAdminScores>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListAdminScores<TData = Awaited<ReturnType<typeof listAdminScores>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminScores>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List all scores in an adventure
+ */
+
+export function useListAdminScores<TData = Awaited<ReturnType<typeof listAdminScores>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listAdminScores>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListAdminScoresQueryOptions(adventureId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * Fetches a score in an adventure specified by it's id
+ * @summary Fetch a single score in an adventure
+ */
+export const fetchAdminScore = (
+    adventureId: number,
+    scoreId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<AdminScore>(
+      {url: `/adventures/${adventureId}/scores/admin/${scoreId}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getFetchAdminScoreQueryKey = (adventureId: number,
+    scoreId: number,) => {
+    return [`/adventures/${adventureId}/scores/admin/${scoreId}`] as const;
+    }
+
+    
+export const getFetchAdminScoreQueryOptions = <TData = Awaited<ReturnType<typeof fetchAdminScore>>, TError = void | HTTPValidationError>(adventureId: number,
+    scoreId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminScore>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getFetchAdminScoreQueryKey(adventureId,scoreId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof fetchAdminScore>>> = ({ signal }) => fetchAdminScore(adventureId,scoreId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(adventureId && scoreId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof fetchAdminScore>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type FetchAdminScoreQueryResult = NonNullable<Awaited<ReturnType<typeof fetchAdminScore>>>
+export type FetchAdminScoreQueryError = void | HTTPValidationError
+
+
+export function useFetchAdminScore<TData = Awaited<ReturnType<typeof fetchAdminScore>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    scoreId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminScore>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchAdminScore>>,
+          TError,
+          Awaited<ReturnType<typeof fetchAdminScore>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchAdminScore<TData = Awaited<ReturnType<typeof fetchAdminScore>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    scoreId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminScore>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchAdminScore>>,
+          TError,
+          Awaited<ReturnType<typeof fetchAdminScore>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchAdminScore<TData = Awaited<ReturnType<typeof fetchAdminScore>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    scoreId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminScore>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Fetch a single score in an adventure
+ */
+
+export function useFetchAdminScore<TData = Awaited<ReturnType<typeof fetchAdminScore>>, TError = void | HTTPValidationError>(
+ adventureId: number,
+    scoreId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAdminScore>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getFetchAdminScoreQueryOptions(adventureId,scoreId,options)
 
   const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
