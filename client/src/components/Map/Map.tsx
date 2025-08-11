@@ -28,7 +28,7 @@ function Marker(id: number, area?: number, selected?: boolean, cluster?: boolean
     const style = clsx(
         "w-10 h-10 rounded-full border-[3px] flex items-center justify-center font-bold shadow",
         selected ? "bg-sky-400 border-sky-200" : colorClass,
-        cluster ? "blur-xs opacity-75 font-normal" : "",
+        cluster ? "blur-sm opacity-75 font-normal w-15 h-15" : "",
     );
 
     return L.divIcon({
@@ -245,12 +245,12 @@ function LeafletMap({
         const cluster = markerClusterRef.current;
         if (!map || !cluster || !selected_id) return;
 
-        if (dragEnabled) {
+        if (!dragEnabled) {
             const selectedMarker = markersRef.current.get(selected_id);
             if (selectedMarker) {
                 cluster.zoomToShowLayer(selectedMarker, () => {
                     const target = selectedMarker.getLatLng();
-                    map.setView(target, map.getZoom(), { animate: true });
+                    map.setView(target, Math.max(17, map.getZoom()), { animate: true });
                 });
             }
         }
