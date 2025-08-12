@@ -1,7 +1,11 @@
+from typing import TYPE_CHECKING
 from sqlmodel import SQLModel, Field, Relationship
 from pydantic import BaseModel, Field as PydanticField
 
 from app.models.adventures import PublicAdventure, DBAdventure
+
+if TYPE_CHECKING:
+    from app.models.scores import DBScore
 
 
 class BaseTeam(SQLModel):
@@ -13,6 +17,8 @@ class DBTeam(BaseTeam, table=True):
     name: str = Field()
     adventure_id: int | None = Field(default=None, foreign_key="dbadventure.id")
     adventure: DBAdventure | None = Relationship(back_populates="teams")
+
+    scores: list["DBScore"] = Relationship(back_populates="team")
 
     active: bool = Field(default=True)
 

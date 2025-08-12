@@ -15,6 +15,8 @@ import { useListAdventuresAdventuresGet } from "@api/endpoints";
 import { useNotifications } from "@contexts/NotificationContext";
 import { GoBell } from "react-icons/go";
 
+import { Toaster } from 'react-hot-toast';
+
 
 type LayoutVariant = "guest" | "admin";
 
@@ -122,8 +124,8 @@ export function Layout({
     const [notificationBar, setNotificationBar] = useState<boolean>(() => permission === "default" ? true : false);
 
     return (
-        <div className={`relative h-screen grid grid-rows-[auto_1fr] ${sidebarOpen ? "grid-cols-[1fr_0] md:grid-cols-[auto_1fr]" : "grid-cols-[1fr]"} font-display text-zinc-900 dark:text-zinc-50 text-base/7`}>
-
+        <div className={`relative h-screen grid grid-rows-[auto_auto_1fr] ${sidebarOpen ? "grid-cols-[1fr_0] md:grid-cols-[auto_1fr]" : "grid-cols-[1fr]"} font-display text-zinc-900 dark:text-zinc-50 text-base/7`}>
+            <div><Toaster /></div>
             <nav className={navbar({ variant })}>
                 <Button variant="transparent" onClick={() => toggleSidebar()}><IoMenu /></Button>
                 <h1 className="font-bold hover:underline flex content-center justify-center-safe">

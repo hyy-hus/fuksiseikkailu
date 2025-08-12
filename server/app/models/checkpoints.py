@@ -1,9 +1,12 @@
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from sqlmodel import SQLModel, Field, Relationship
 
 from app.models.adventures import PublicAdventure, DBAdventure
 
 from pydantic import BaseModel, Field as PydanticField
+
+if TYPE_CHECKING:
+    from app.models.scores import DBScore
 
 
 class BaseCheckpoint(SQLModel):
@@ -47,6 +50,8 @@ class DBCheckpoint(BaseCheckpoint, table=True):
 
     adventure_id: int | None = Field(default=None, foreign_key="dbadventure.id")
     adventure: DBAdventure | None = Relationship(back_populates="checkpoints")
+
+    scores: list["DBScore"] = Relationship(back_populates="checkpoint")
 
     active: bool = Field(default=True)
 
