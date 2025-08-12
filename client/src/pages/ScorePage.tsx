@@ -204,42 +204,60 @@ export function ScorePage() {
         await toast.promise(
             submitScore.mutateAsync(data),
             {
-                loading: "Saving score...",
-                success: "Added new score!",
-                error: (err: any) => err?.message ?? 'Failed to add score',
+                loading: t("adding-score"),
+                success: t("score-added"),
+                error: (err: any) => err?.message ?? t("adding-score-failed"),
             }
         )
     }, [selectedAdventure, score, players, checkpoint, selectedTeam]);
 
     return (
-        <div>
-            <h2>Score page for #{checkpoint?.number} - {checkpoint?.org_name}</h2>
+        <div className="flex flex-col gap-4 items-center">
+            <h2 className="font-bold text-lg">{t("checkpoint")} #{checkpoint?.number} - {checkpoint?.org_name}</h2>
             <form onSubmit={handleSubmit}
                 className="flex flex-col gap-4"
             >
                 <SearchBar options={searchOptions} onSubmit={(v) => setSelectedTeamId(Number(v))} />
                 <p>
-                    <span className="mr-2">{t("team")}:</span>
-                    {selectedTeam?.name ?? (<span className="italic">{t("no-team-selected")}</span>)}
+                    <span className="mr-2 font-bold">{t("team")}:</span>
+                    #{selectedTeam?.id ?? 0} - {selectedTeam?.name ?? (<span className="italic">{t("no-team-selected")}</span>)}
                 </p>
                 {selectedTeam && (
                     <>
-                        <RadioField label="Score" values={[1, 2, 3, 4, 5, 6]} checked={score} onChange={setScore} />
-                        <RadioField label="Players" values={[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]} checked={players} onChange={setPlayers} />
-                        <Button variant="green" type="submit">
-                            {t("submit-score")}
-                        </Button>
+                        <RadioField label={t("score")} values={[1, 2, 3, 4, 5, 6]} checked={score} onChange={setScore} />
+                        <RadioField label={t("players")} values={[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]} checked={players} onChange={setPlayers} />
+                        <div className="flex w-full justify-center">
+                            <Button variant="green" type="submit"
+                                disabled={score === 0 && players === 0 && scores.some(score => (score.checkpoint?.id === checkpoint?.id && score.team.id === selectedTeam.id))}
+                            >
+                                {t("submit-score")}
+                            </Button>
+                        </div>
                     </>
                 )
                 }
             </form>
-            <ul>
-                {
-                    checkpoint_scores.map(score => (
-                        <li key={score.id}>{score.team.name}: {score.score} ({score.players})</li>
-                    ))
-                }
-            </ul>
+            <div>
+                <h3 className="font-bold text-center mt-4">{t("scores-from-checkpoint")}:</h3>
+                <ul className="grid grid-cols-[auto_1fr_auto_auto] gap-y-2 gap-x-4">
+                    <li className="contents font-bold">
+                        <span>{t("time")}</span>
+                        <span>{t("team")}</span>
+                        <span>{t("score")}</span>
+                        <span>{t("players")}</span>
+                    </li>
+                    {
+                        checkpoint_scores.map(score => (
+                            <li key={score.id} className="contents">
+                                <span>{score.created_at ?? "0-000-0"}</span>
+                                <span>{score.team.name}</span>
+                                <span className="text-center">{score.score}</span>
+                                <span className="text-center">{score.players}</span>
+                            </li>
+                        ))
+                    }
+                </ul>
+            </div>
         </div>
     )
 }
