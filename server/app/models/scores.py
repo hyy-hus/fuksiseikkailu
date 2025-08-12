@@ -1,4 +1,4 @@
-from typing import Optional, TYPE_CHECKING
+from typing import Optional
 from sqlmodel import SQLModel, Field, Relationship
 
 from app.models.adventures import PublicAdventure, DBAdventure
@@ -6,6 +6,8 @@ from app.models.teams import PublicTeam, DBTeam
 from app.models.checkpoints import PublicCheckpoint, DBCheckpoint
 
 from pydantic import BaseModel
+
+from datetime import datetime
 
 
 class BaseScore(SQLModel):
@@ -29,6 +31,8 @@ class DBScore(BaseScore, table=True):
     checkpoint_id: int | None = Field(default=None, foreign_key="dbcheckpoint.id")
     checkpoint: Optional["DBCheckpoint"] = Relationship(back_populates="scores")
 
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
     active: bool = Field(default=True)
 
 
@@ -41,6 +45,8 @@ class AdminScore(BaseScore):
     team: PublicTeam
     checkpoint: PublicCheckpoint
 
+    created_at: datetime
+
 
 class PublicScore(BaseScore):
     id: int
@@ -50,6 +56,8 @@ class PublicScore(BaseScore):
     adventure: PublicAdventure
     team: PublicTeam
     checkpoint: PublicCheckpoint
+
+    created_at: datetime
 
 
 class CreateScore(BaseModel):

@@ -15,4 +15,5 @@ export interface PublicScore {
   adventure: PublicAdventure;
   team: PublicTeam;
   checkpoint: PublicCheckpoint;
+  created_at: string;
 }
