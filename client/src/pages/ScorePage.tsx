@@ -5,7 +5,7 @@ import { useAdventure } from "@contexts/AdventureContext";
 import { useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { t } from "i18next";
-import { useCallback, useMemo, useState } from "react";
+import { ReactNode, useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import toast from 'react-hot-toast';
@@ -141,6 +141,48 @@ function RadioField<T extends Primitive>({ values, checked, label, onChange }: R
     )
 }
 
+interface GridProps {
+    rows: (ReactNode)[][];
+    headers?: string[];
+}
+
+function Grid({ rows, headers }: GridProps) {
+    const col_count = rows[0]?.length ?? 0;
+    const row_count = rows.length;
+
+    return (
+        <div className={`grid grid-cols-[auto_1fr_auto_auto] border border-zinc-400`}>
+            <div className="contents">
+                {
+                    headers?.map(header => (
+                        <span key={header} className="px-4 py-2 border-b border-zinc-400 bg-zinc-300 font-bold">
+                            {header}
+                        </span>
+                    ))
+                }
+            </div>
+            {
+                rows.map((row, i) => (
+                    <div className="contents" key={i}>
+                        {
+                            row.map((cell, j) => (
+                                <div key={j} className={clsx(
+                                    "px-4 py-2 border-zinc-400",
+                                    ((i + 1) % 2 === 0) && "bg-zinc-100",
+                                    i !== (row_count - 1) && "border-b",
+                                    j !== (col_count - 1) && "border-r"
+                                )}>
+                                    {cell}
+                                </div>
+                            ))
+                        }
+                    </div>
+                ))
+            }
+        </div>
+    )
+}
+
 export function ScorePage() {
     const { slug } = useParams<{ slug: string }>();
 
@@ -238,25 +280,13 @@ export function ScorePage() {
                 }
             </form>
             <div>
-                <h3 className="font-bold text-center mt-4">{t("scores-from-checkpoint")}:</h3>
-                <ul className="grid grid-cols-[auto_1fr_auto_auto] gap-y-2 gap-x-4">
-                    <li className="contents font-bold">
-                        <span>{t("time")}</span>
-                        <span>{t("team")}</span>
-                        <span>{t("score")}</span>
-                        <span>{t("players")}</span>
-                    </li>
-                    {
-                        checkpoint_scores.map(score => (
-                            <li key={score.id} className="contents">
-                                <span>{score.created_at ?? "0-000-0"}</span>
-                                <span>{score.team.name}</span>
-                                <span className="text-center">{score.score}</span>
-                                <span className="text-center">{score.players}</span>
-                            </li>
-                        ))
-                    }
-                </ul>
+                <Grid headers={[t("time"), t("team"), t("score"), t("players")]}
+                    rows={checkpoint_scores.map(score => ([
+                        <span>datetime?</span>,
+                        <span>{score.team.name}</span>,
+                        <span>{score.score}</span>,
+                        <span>{score.players}</span>,
+                    ]))} />
             </div>
         </div>
     )
