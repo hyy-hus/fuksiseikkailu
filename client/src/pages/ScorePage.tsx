@@ -151,11 +151,11 @@ function Grid({ rows, headers }: GridProps) {
     const row_count = rows.length;
 
     return (
-        <div className={`grid grid-cols-[auto_1fr_auto_auto] border border-zinc-400`}>
+        <div className={`grid grid-cols-[auto_1fr_auto_auto] border border-zinc-400 dark:border-slate-700`}>
             <div className="contents">
                 {
                     headers?.map(header => (
-                        <span key={header} className="px-4 py-2 border-b border-zinc-400 bg-zinc-300 font-bold">
+                        <span key={header} className="px-4 py-2 border-b border-zinc-400 bg-zinc-300 dark:bg-slate-800 dark:border-slate-700 font-bold">
                             {header}
                         </span>
                     ))
@@ -167,8 +167,8 @@ function Grid({ rows, headers }: GridProps) {
                         {
                             row.map((cell, j) => (
                                 <div key={j} className={clsx(
-                                    "px-4 py-2 border-zinc-400",
-                                    ((i + 1) % 2 === 0) && "bg-zinc-100",
+                                    "px-4 py-2 border-zinc-400 dark:border-slate-700",
+                                    ((i + 1) % 2 === 0) && "bg-zinc-100 dark:bg-slate-950",
                                     i !== (row_count - 1) && "border-b",
                                     j !== (col_count - 1) && "border-r"
                                 )}>
@@ -181,6 +181,26 @@ function Grid({ rows, headers }: GridProps) {
             }
         </div>
     )
+}
+
+
+const dateTimeFormat = new Intl.DateTimeFormat(undefined, {
+    hour: "2-digit", minute: "2-digit"
+})
+
+function formatDate(dateString: string | null | undefined): string {
+    if (!dateString) {
+        return "-"
+    }
+
+
+    try {
+        const date = new Date(dateString + "Z");
+        return dateTimeFormat.format(date)
+    } catch (error) {
+        console.error("Could not parse ", dateString)
+        return t("invalid-date")
+    }
 }
 
 export function ScorePage() {
@@ -282,10 +302,10 @@ export function ScorePage() {
             <div>
                 <Grid headers={[t("time"), t("team"), t("score"), t("players")]}
                     rows={checkpoint_scores.map(score => ([
-                        <span>datetime?</span>,
+                        <span className="text-center block">{formatDate(score.created_at)}</span>,
                         <span>{score.team.name}</span>,
-                        <span>{score.score}</span>,
-                        <span>{score.players}</span>,
+                        <span className="text-center block">{score.score}</span>,
+                        <span className="text-center block">{score.players}</span>,
                     ]))} />
             </div>
         </div>
