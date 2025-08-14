@@ -59,6 +59,7 @@ import type {
   PublicScore,
   PublicTeam,
   PublicUser,
+  TeamLeaderboard,
   Token,
   UpdateUser,
   VapidKeyResponse
@@ -3236,6 +3237,94 @@ export const useCreateScore = <TError = HTTPValidationError,
       return useMutation(mutationOptions , queryClient);
     }
     
+/**
+ * @summary Return a leaderboard of scores
+ */
+export const leaderboard = (
+    adventureId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<TeamLeaderboard[]>(
+      {url: `/adventures/${adventureId}/scores/leaderboard`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getLeaderboardQueryKey = (adventureId: number,) => {
+    return [`/adventures/${adventureId}/scores/leaderboard`] as const;
+    }
+
+    
+export const getLeaderboardQueryOptions = <TData = Awaited<ReturnType<typeof leaderboard>>, TError = HTTPValidationError>(adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof leaderboard>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getLeaderboardQueryKey(adventureId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof leaderboard>>> = ({ signal }) => leaderboard(adventureId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(adventureId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof leaderboard>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type LeaderboardQueryResult = NonNullable<Awaited<ReturnType<typeof leaderboard>>>
+export type LeaderboardQueryError = HTTPValidationError
+
+
+export function useLeaderboard<TData = Awaited<ReturnType<typeof leaderboard>>, TError = HTTPValidationError>(
+ adventureId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof leaderboard>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof leaderboard>>,
+          TError,
+          Awaited<ReturnType<typeof leaderboard>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useLeaderboard<TData = Awaited<ReturnType<typeof leaderboard>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof leaderboard>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof leaderboard>>,
+          TError,
+          Awaited<ReturnType<typeof leaderboard>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useLeaderboard<TData = Awaited<ReturnType<typeof leaderboard>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof leaderboard>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Return a leaderboard of scores
+ */
+
+export function useLeaderboard<TData = Awaited<ReturnType<typeof leaderboard>>, TError = HTTPValidationError>(
+ adventureId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof leaderboard>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getLeaderboardQueryOptions(adventureId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
 /**
  * Returns publicly available information about the score specified by *score_id*.
  * @summary Fetch a score in an adventure

@@ -90,6 +90,8 @@ export * from './publicScore';
 export * from './publicTeam';
 export * from './publicUser';
 export * from './role';
+export * from './teamLeaderboard';
+export * from './teamLeaderboardLastScoreAt';
 export * from './token';
 export * from './updateUser';
 export * from './updateUserActive';
