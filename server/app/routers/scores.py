@@ -5,6 +5,8 @@ from sqlmodel import select
 from app.schemas.base import DeleteResponse
 from app.deps import SessionDep, UserDep
 
+from sqlalchemy import func, desc
+
 from app.models.scores import (
     DBScore,
     PublicScore,
@@ -12,6 +14,8 @@ from app.models.scores import (
     ModifyScore,
     CreateScore,
 )
+
+from app.models.teams import DBTeam, TeamLeaderboard
 
 AdventureId = Annotated[int, Path(..., description="ID of the adventure")]
 ScoreId = Annotated[int, Path(..., description="ID of the score")]
@@ -59,6 +63,44 @@ def list_scores(
     session: SessionDep,
 ) -> list[PublicScore]:
     return session.exec(select(DBScore).where(DBScore.active)).all()
+
+
+@router.get(
+    "/leaderboard",
+    response_model=list[TeamLeaderboard],
+    operation_id="leaderboard",
+    summary="Return a leaderboard of scores",
+)
+def leaderboard(
+    adventure_id: AdventureId,
+    session: SessionDep,
+) -> list[TeamLeaderboard]:
+    total_points = func.coalesce(func.sum(DBScore.score), 0).label("score")
+    entries = func.count(DBScore.id).label("checkpoints")
+    last_score_at = func.max(DBScore.created_at).label("last_score_at")
+
+    stmt = (
+        select(
+            DBTeam.id.label("id"),
+            DBTeam.name.label("name"),
+            total_points,
+            entries,
+            last_score_at,
+        )
+        .select_from(DBTeam)
+        # keep LEFT JOIN semantics; put right-table filters in the ON clause
+        .join(
+            DBScore,
+            (DBScore.team_id == DBTeam.id) & (DBScore.active.is_(True)),
+            isouter=True,
+        )
+        .where(DBTeam.adventure_id == adventure_id)
+        .group_by(DBTeam.id, DBTeam.name)
+        .order_by(total_points.desc(), DBTeam.name)  # ✅ use the labeled column object
+        # .order_by(total_points.desc(), last_score_at.desc())  # optional tiebreaker
+    )
+    rows = session.exec(stmt).all()
+    return [TeamLeaderboard(**dict(row._mapping)) for row in rows]
 
 
 @router.get(

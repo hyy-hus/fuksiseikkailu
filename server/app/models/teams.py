@@ -4,6 +4,8 @@ from pydantic import BaseModel, Field as PydanticField
 
 from app.models.adventures import PublicAdventure, DBAdventure
 
+from datetime import datetime
+
 if TYPE_CHECKING:
     from app.models.scores import DBScore
 
@@ -38,6 +40,14 @@ class PublicTeam(BaseTeam):
     name: str
 
     adventure: PublicAdventure
+
+
+class TeamLeaderboard(BaseTeam):
+    id: int
+    name: str
+    score: int
+    checkpoints: int
+    last_score_at: datetime | None
 
 
 class CreateTeam(BaseModel):
