@@ -29,16 +29,16 @@ export function Input({
     placeholder,
     onChange,
 }: InputProps) {
-    const colors = invalid ? "border-pink-700/30 bg-pink-900/30" : "bg-zinc-200 dark:bg-slate-900 focus-within:bg-zinc-300 dark:focus-within:bg-slate-800 border-zinc-400 dark:border-slate-700 dark:hover:border-slate-600 dark:has-[:disabled]:hover:border-slate-700 dark:text-slate-300";
+    const colors = invalid ? "border-pink-700/30 bg-pink-900/30" : "bg-fuksi-200 dark:bg-fuksi-900 focus-within:bg-fuksi-100 dark:focus-within:bg-fuksi-950 border-black dark:border-fuksi-700 dark:hover:border-fuksi-500 dark:has-[:disabled]:hover:border-slate-700 dark:text-slate-300";
 
     return (
         <div>
-            <label htmlFor={name} className={`group relative flex flex-col border rounded mt-2 has-[:invalid]:border-pink-700/30 has-[:invalid]:bg-pink-900/30   ${colors} ${className}`}>
+            <label htmlFor={name} className={`group relative flex flex-col border-3 bg-fuksi-200 border-black mt-2 has-[:invalid]:border-pink-700/30 has-[:invalid]:bg-pink-900/30   ${colors} ${className}`}>
                 <span className="
-                absolute -top-2 left-2 text-xs pointer-events-none px-1 w-fit
+                absolute -top-3 left-2 text-xs pointer-events-none px-1 w-fit
                 ">
                     <span className="relative z-20 dark:text-slate-400 dark:group-has-[:disabled]:text-slate-600">{label}</span>
-                    <div className={`absolute left-0 bottom-[1px] inline h-2 w-10 ${!invalid ? "bg-zinc-200 dark:bg-slate-900 group-focus-within:bg-zinc-300 dark:group-focus-within:bg-slate-800" : "bg-pink-transparent border-pink-700"} z-10 w-full group-has-[:invalid]:bg-transparent`}></div>
+                    <div className={`absolute left-0 bottom-[1px] inline h-2 w-10 ${!invalid ? "bg-fuksi-200 dark:bg-fuksi-900 group-focus-within:bg-fuksi-100 dark:group-focus-within:bg-slate-800" : "bg-pink-transparent border-pink-700"} z-10 w-full group-has-[:invalid]:bg-transparent`}></div>
                 </span>
 
                 {

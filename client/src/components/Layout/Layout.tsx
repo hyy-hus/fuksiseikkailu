@@ -16,13 +16,14 @@ import { useNotifications } from "@contexts/NotificationContext";
 import { GoBell } from "react-icons/go";
 
 import { Toaster } from 'react-hot-toast';
+import clsx from "clsx";
 
 
 type LayoutVariant = "guest" | "admin";
 
 function Hr() {
     return (
-        <hr className="text-zinc-400 dark:text-slate-600" />
+        <hr className="text-olive dark:text-jonquil" />
     )
 }
 
@@ -73,12 +74,12 @@ export function Layout({
     }, [data, selectedAdventure, setSelectedAdventure])
 
     const navbar = cva(
-        "col-span-2 border-b grid grid-cols-[auto_1fr_auto] items-center p-2",
+        "col-span-2 border-b-3 border-black dark:border-jonquil bg-jonquil dark:bg-black text-black dark:text-white border-black grid grid-cols-[auto_1fr_auto] items-center p-2",
         {
             variants: {
                 variant: {
-                    guest: "bg-zinc-300 dark:bg-slate-900 border-zinc-400 dark:border-slate-700",
-                    admin: "bg-rose-300 dark:bg-rose-950 border-rose-400 dark:border-rose-800",
+                    guest: "",
+                    admin: "",
                 },
                 defaultVariants: {
                     variant: "guest",
@@ -153,7 +154,11 @@ export function Layout({
 
             </nav>
 
-            <aside className={`Sidebar h-full overflow-y-auto bg-zinc-300 dark:bg-slate-900 border-r border-zinc-400 dark:border-slate-700 p-4 grid grid-rows-[auto_1fr_auto] ${sidebarOpen ? "w-full" : "overflow-hidden hidden"}`}>
+            <aside className={clsx(
+                "h-full overflow-y-auto p-4 grid grid-rows-[auto_1fr_auto] border-r-3 border-black dark:border-jonquil",
+                "bg-jonquil text-black dark:bg-black dark:text-jonquil",
+                sidebarOpen ? "w-full" : "overflow-hidden hidden",
+            )} >
                 <ul className="flex flex-col gap-4">
                     {
                         variant === "admin" ? (
@@ -219,7 +224,7 @@ export function Layout({
                 </div>
             </aside>
 
-            <main className={`bg-zinc-200 dark:bg-slate-900 dark:text-zinc-100 p-4 overflow-y-auto ${sidebarOpen ? "hidden md:block md:w-full" : ""}`}>
+            <main className={`bg-naples text-black dark:bg-black dark:text-white p-4 overflow-y-auto ${sidebarOpen ? "hidden md:block md:w-full" : ""}`}>
                 <Outlet />
             </main>
 
