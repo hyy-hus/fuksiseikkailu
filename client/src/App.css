@@ -3,6 +3,25 @@
 @theme {
     --font-display: "Poppins", sans-serif;
     --font-monospace: "Google Sans Code", monospace;
+
+    --color-jonquil: hsla(49, 100%, 51%, 1);
+    --color-naples: hsla(49, 100%, 68%, 1);
+    --color-naples-light: #FFEA8A;
+    --color-olive: hsla(51, 98%, 25%, 1);
+    --color-black: hsla(0, 0%, 0%, 1);
+    --color-turquoise: hsla(173, 100%, 48%, 1);
+    --color-white: hsla(120, 100%, 100%, 1);
+
+    --color-fuksi-950: #251E00;
+    --color-fuksi-900: #382E00;
+    --color-fuksi-800: #5D4C00;
+    --color-fuksi-700: #BA9800;
+    --color-fuksi-600: #DFB600;
+    --color-fuksi-500: #F2C500;
+    --color-fuksi-400: #FFD103;
+    --color-fuksi-300: #FFE25E;
+    --color-fuksi-200: #FFEFA6;
+    --color-fuksi-100: #FFF8DB;
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
