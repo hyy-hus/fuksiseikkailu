@@ -23,7 +23,7 @@ type LayoutVariant = "guest" | "admin";
 
 function Hr() {
     return (
-        <hr className="text-olive dark:text-jonquil" />
+        <hr className="text-olive dark:text-jonquil border-1 border-black" />
     )
 }
 
@@ -155,8 +155,8 @@ export function Layout({
             </nav>
 
             <aside className={clsx(
-                "h-full overflow-y-auto p-4 grid grid-rows-[auto_1fr_auto] border-r-3 border-black dark:border-jonquil",
-                "bg-jonquil text-black dark:bg-black dark:text-jonquil",
+                "min-w-60 h-full overflow-y-auto p-4 grid grid-rows-[auto_1fr_auto] border-r-3 border-black dark:border-jonquil",
+                "bg-fuksi-300 text-black dark:bg-black dark:text-jonquil",
                 sidebarOpen ? "w-full" : "overflow-hidden hidden",
             )} >
                 <ul className="flex flex-col gap-4">
@@ -224,13 +224,13 @@ export function Layout({
                 </div>
             </aside>
 
-            <main className={`bg-naples text-black dark:bg-black dark:text-white p-4 overflow-y-auto ${sidebarOpen ? "hidden md:block md:w-full" : ""}`}>
+            <main className={`bg-fuksi-100 text-black dark:bg-black dark:text-white p-4 overflow-y-auto ${sidebarOpen ? "hidden md:block md:w-full" : ""}`}>
                 <Outlet />
             </main>
 
             {
                 notificationBar && (
-                    <div className="absolute top-2 left-2 right-2 bg-zinc-100 dark:bg-slate-800 border border-zinc-300 dark:border-slate-600 rounded p-4 grid grid-cols-[1fr_auto] gap-4 z-50 items-center">
+                    <div className="absolute top-8 left-8 right-8 bg-white dark:bg-slate-800 border-3 border-black dark:border-slate-600 p-4 grid grid-cols-[1fr_auto] gap-4 z-50 items-center">
                         <span
                             className="flex gap-2 hover:underline cursor-pointer"
                             onClick={() => {

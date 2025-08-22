@@ -29,16 +29,16 @@ export function Input({
     placeholder,
     onChange,
 }: InputProps) {
-    const colors = invalid ? "border-pink-700/30 bg-pink-900/30" : "bg-fuksi-200 dark:bg-fuksi-900 focus-within:bg-fuksi-100 dark:focus-within:bg-fuksi-950 border-black dark:border-fuksi-700 dark:hover:border-fuksi-500 dark:has-[:disabled]:hover:border-slate-700 dark:text-slate-300";
+    const colors = invalid ? "border-pink-900 bg-pink-100 text-pink-900" : "bg-white dark:bg-fuksi-900 focus-within:bg-fuksi-200 dark:focus-within:bg-fuksi-950 border-black dark:border-fuksi-700 dark:hover:border-fuksi-500 dark:has-[:disabled]:hover:border-slate-700 dark:text-slate-300";
 
     return (
         <div>
-            <label htmlFor={name} className={`group relative flex flex-col border-3 bg-fuksi-200 border-black mt-2 has-[:invalid]:border-pink-700/30 has-[:invalid]:bg-pink-900/30   ${colors} ${className}`}>
+            <label htmlFor={name} className={`group relative flex flex-col border-2 border-black mt-2 ${colors} ${className}`}>
                 <span className="
                 absolute -top-3 left-2 text-xs pointer-events-none px-1 w-fit
                 ">
                     <span className="relative z-20 dark:text-slate-400 dark:group-has-[:disabled]:text-slate-600">{label}</span>
-                    <div className={`absolute left-0 bottom-[1px] inline h-2 w-10 ${!invalid ? "bg-fuksi-200 dark:bg-fuksi-900 group-focus-within:bg-fuksi-100 dark:group-focus-within:bg-slate-800" : "bg-pink-transparent border-pink-700"} z-10 w-full group-has-[:invalid]:bg-transparent`}></div>
+                    <div className={`absolute left-0 bottom-[-2px] inline h-2 w-10 ${!invalid ? "bg-white dark:bg-fuksi-900 group-focus-within:bg-fuksi-200 dark:group-focus-within:bg-slate-800" : "bg-pink-100 border-pink-400"} z-10 w-full group-has-[:invalid]:bg-transparent`}></div>
                 </span>
 
                 {
@@ -71,7 +71,7 @@ export function Input({
 
             </label>
             {invalid && errorMessage && (
-                <div className="mt-1 text-sm text-red-600 dark:text-rose-400/50">
+                <div className="mt-1 text-sm text-pink-900 dark:text-rose-400/50">
                     {errorMessage}
                 </div>
             )}

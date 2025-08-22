@@ -103,11 +103,11 @@ export function List<T extends Record<string, any>>({ items, columns, defaultSor
                 )}
             </div>
             <div
-                className="parent grid border border-gray-400 dark:border-slate-700 overflow-x-auto text-xs"
+                className="parent grid border border-t-2 border-l-2 border-black overflow-x-auto text-xs"
                 style={{ gridTemplateColumns: gridTemplate }}
             >
                 <div className="contents">
-                    <div className="bg-gray-100 dark:bg-slate-800 font-bold px-4 py-2 flex items-center justify-center border-b border-gray-400 dark:border-slate-700">
+                    <div className="bg-fuksi-400 dark:bg-slate-800 font-bold px-4 py-2 flex items-center justify-center border-b-2 border-r-2 border-black dark:border-slate-700">
                         <input type="checkbox" onClick={selectAll}
                             checked={selected.size === filteredItems.length} readOnly
                         />
@@ -117,7 +117,7 @@ export function List<T extends Record<string, any>>({ items, columns, defaultSor
                         <div
                             key={col.header}
                             onClick={() => setSort(col.header)}
-                            className="bg-gray-100 dark:bg-slate-800 font-bold px-4 py-2 flex items-center border-b border-gray-400 dark:border-slate-700 cursor-pointer select-none"
+                            className="bg-fuksi-400 dark:bg-slate-800 font-bold px-4 py-2 flex items-center border-b-2 border-r-2 border-black dark:border-slate-700 cursor-pointer select-none"
                         >
                             {t(col.header)}
                             {col.header === sortColumn ?
@@ -129,7 +129,7 @@ export function List<T extends Record<string, any>>({ items, columns, defaultSor
                                 <span className="w-2"></span>}
                         </div>
                     ))}
-                    <div className="bg-gray-100 dark:bg-slate-800 font-bold px-4 py-2 border-b border-gray-400 dark:border-slate-700 flex items-center justify-center">
+                    <div className="bg-fuksi-400 dark:bg-slate-800 font-bold px-4 py-2 border-b-2 border-r-2 border-black dark:border-slate-700 flex items-center justify-center">
                         {t("controls")}
                     </div>
                 </div>
@@ -163,8 +163,8 @@ export function List<T extends Record<string, any>>({ items, columns, defaultSor
                     .map((item) => {
                         const key = getKey(item);
                         return (
-                            <div key={key} className="contents divide-x divide-slate-700 odd:bg-zinc-300 dark:odd:bg-slate-800">
-                                <div className="py-2 px-4 flex items-center justify-center bg-inherit">
+                            <div key={key} className="contents even:bg-fuksi-100 odd:bg-fuksi-200 dark:odd:bg-slate-800">
+                                <div className="py-2 px-4 flex items-center justify-center bg-inherit border-r-2 border-b-2">
                                     <input
                                         type="checkbox"
                                         checked={selected.has(key)}
@@ -172,13 +172,13 @@ export function List<T extends Record<string, any>>({ items, columns, defaultSor
                                     />
                                 </div>
                                 {columns.map((col) => (
-                                    <div key={col.header} className="py-2 px-4 flex items-center bg-inherit"
+                                    <div key={col.header} className="py-2 px-4 flex items-center bg-inherit border-r-2 border-b-2"
                                         onClick={() => setSelected(new Set([key]))}
                                     >
                                         {col.render(item)}
                                     </div>
                                 ))}
-                                <div className="py-2 px-4 flex items-center justify-center bg-inherit">
+                                <div className="py-2 px-4 flex items-center justify-center bg-inherit border-r-2 border-b-2">
                                     <Button variant="transparent" aria-label="Edit" onClick={() => handleEdit?.(item)}>
                                         <FaEdit />
                                     </Button>
