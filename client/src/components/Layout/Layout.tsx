@@ -147,7 +147,7 @@ export function Layout({
                         ) : (
                             !token ?
                                 <Button variant="transparent" onClick={() => navigate("/team")}>{t("team")}</Button>
-                                : <Button variant="red" onClick={() => logout()} >{t("team")}</Button>
+                                : <Button variant="transparent" onClick={() => logout()} >{t("team")}</Button>
                         )
                     }
                 </div>
