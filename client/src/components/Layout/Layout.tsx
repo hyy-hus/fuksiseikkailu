@@ -112,6 +112,7 @@ export function Layout({
         const isDark = html.classList.contains("dark");
         if (isDark) {
             html.classList.remove("dark");
+            localStorage.setItem("theme", "light");
             setDarkMode(false);
         }
         else {
