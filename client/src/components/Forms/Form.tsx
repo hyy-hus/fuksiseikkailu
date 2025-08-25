@@ -55,7 +55,7 @@ export function Form<T extends Record<string, any>>({
                         )
                     } else if (field.type === "option") {
                         return (
-                            <Select key={field.key} options={field.options ?? []} label={field.name} onChange={(e: ChangeEvent<HTMLSelectElement>) => handleChange(field, e.target.value)} value={data[field.key] ?? ""} />
+                            <Select key={field.key} options={field.options ?? []} label={field.name} onChange={(value: string | number ) => handleChange(field, value)} value={data[field.key] ?? ""} />
                         )
                     } else {
                         return (
