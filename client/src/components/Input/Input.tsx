@@ -29,7 +29,7 @@ export function Input({
     placeholder,
     onChange,
 }: InputProps) {
-    const colors = invalid ? "border-pink-900 bg-pink-100 text-pink-900" : "bg-white dark:bg-fuksi-900 focus-within:bg-fuksi-200 dark:focus-within:bg-fuksi-950 border-black dark:border-fuksi-700 dark:hover:border-fuksi-500 dark:has-[:disabled]:hover:border-slate-700 dark:text-slate-300";
+    const colors = invalid ? "border-pink-900 bg-pink-100 text-pink-900 dark:border-black dark:bg-pink-950 dark:text-pink-300" : "bg-white dark:bg-fuksi-900 focus-within:bg-fuksi-200 dark:focus-within:bg-fuksi-950 border-black dark:border-black dark:text-fuksi-100";
 
     return (
         <div>

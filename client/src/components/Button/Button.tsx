@@ -6,8 +6,8 @@ type variant_name = "blue" | "red" | "green" | "gray" | "fuksi" | "transparent";
 
 function get_variant(variant: variant_name) {
     const common = clsx("flex items-center justify-center gap-2",
-        "border-2 border black px-2 py-1 md:py-2 font-medium",
-        "transition-all duration-200"
+        "border-2 border-black px-2 py-1 md:py-2 font-medium",
+        "transition-all duration-200 text-inherit"
     );
 
     if (variant == "transparent") {
@@ -19,13 +19,13 @@ function get_variant(variant: variant_name) {
         "shadow-[4px_4px_black]",
         "hover:shadow-[2px_2px_black] hover:translate-y-[2px]",
         "active:shadow-[0px_0px_black] active:translate-y-[4px]",
-        variant == "blue" && "bg-blue-400",
-        variant == "red" && "bg-rose-400",
-        variant == "green" && "bg-emerald-400",
-        variant == "gray" && "bg-white",
-        variant == "fuksi" && "bg-fuksi",
+        variant == "blue" && "bg-blue-400 dark:bg-sky-700",
+        variant == "red" && "bg-rose-400 dark:bg-rose-600",
+        variant == "green" && "bg-emerald-400 dark:bg-emerald-600",
+        variant == "gray" && "bg-white dark:bg-gray-500",
+        variant == "fuksi" && "bg-fuksi-400 dark:bg-fuksi-600",
     );
-} 
+}
 
 interface ButtonProps {
     type?: "button" | "submit";

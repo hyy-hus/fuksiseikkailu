@@ -74,7 +74,7 @@ export function Layout({
     }, [data, selectedAdventure, setSelectedAdventure])
 
     const navbar = cva(
-        "col-span-2 border-b-3 border-black dark:border-jonquil bg-jonquil dark:bg-black text-black dark:text-white border-black grid grid-cols-[auto_1fr_auto] items-center p-2",
+        "col-span-2 border-b-3 border-black dark:border-black bg-jonquil dark:bg-fuksi-800 text-black dark:text-fuksi-400 grid grid-cols-[auto_1fr_auto] items-center p-2",
         {
             variants: {
                 variant: {
@@ -130,7 +130,7 @@ export function Layout({
             <div><Toaster /></div>
             <nav className={navbar({ variant })}>
                 <Button variant="transparent" onClick={() => toggleSidebar()}><IoMenu /></Button>
-                <h1 className="font-bold hover:underline flex content-center justify-center-safe">
+                <h1 className="font-bold hover:underline flex content-center justify-center-safe dark:text-fuksi-400">
                     {
                         variant === "admin" ? (
                             <Link to="/admin">{t("fresher-adventure")} 2025 - {t("admin")}</Link>
@@ -156,8 +156,8 @@ export function Layout({
             </nav>
 
             <aside className={clsx(
-                "min-w-60 h-full overflow-y-auto p-4 grid grid-rows-[auto_1fr_auto] border-r-3 border-black dark:border-jonquil",
-                "bg-fuksi-300 text-black dark:bg-black dark:text-jonquil",
+                "min-w-60 h-full overflow-y-auto p-4 grid grid-rows-[auto_1fr_auto] border-r-3 border-black dark:border-black",
+                "bg-fuksi-300 text-black dark:bg-fuksi-900 dark:text-fuksi-400",
                 sidebarOpen ? "w-full" : "overflow-hidden hidden",
             )} >
                 <ul className="flex flex-col gap-4">
@@ -225,13 +225,13 @@ export function Layout({
                 </div>
             </aside>
 
-            <main className={`bg-fuksi-100 text-black dark:bg-black dark:text-white p-4 overflow-y-auto ${sidebarOpen ? "hidden md:block md:w-full" : ""}`}>
+            <main className={`bg-fuksi-100 text-black dark:bg-fuksi-950 dark:text-white p-4 overflow-y-auto ${sidebarOpen ? "hidden md:block md:w-full" : ""}`}>
                 <Outlet />
             </main>
 
             {
                 notificationBar && (
-                    <div className="absolute top-8 left-8 right-8 bg-white dark:bg-slate-800 border-3 border-black dark:border-slate-600 p-4 grid grid-cols-[1fr_auto] gap-4 z-50 items-center">
+                    <div className="absolute top-8 left-8 right-8 bg-white dark:bg-fuksi-700 border-3 border-black dark:border-black p-4 grid grid-cols-[1fr_auto] gap-4 z-50 items-center">
                         <span
                             className="flex gap-2 hover:underline cursor-pointer"
                             onClick={() => {
