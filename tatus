@@ -1,0 +1,133 @@
+[33mcommit 4b82929f8fc3817c744c6d089e3494421fc05cb4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/style-revamp[m[33m, [m[1;31morigin/feature/style-revamp[m[33m)[m
+Author: Janne Salokoski <salokoski.janne@gmail.com>
+Date:   Mon Aug 25 11:16:19 2025 +0300
+
+    feat(styles): make admin-map-page responsive
+
+[1mdiff --git a/client/src/components/Input/Input.tsx b/client/src/components/Input/Input.tsx[m
+[1mindex 7d96466..2b4cd39 100644[m
+[1m--- a/client/src/components/Input/Input.tsx[m
+[1m+++ b/client/src/components/Input/Input.tsx[m
+[36m@@ -45,7 +45,7 @@[m [mexport function Input({[m
+                     type === "textarea" ? ([m
+                         <textarea[m
+                             name={name ?? ""}[m
+[31m-                            className="w-full text-base outline-none px-3 py-3 bg-transparent disabled:text-slate-500"[m
+[32m+[m[32m                            className="max-w-full min-w-20 text-base outline-none px-3 py-3 bg-transparent disabled:text-slate-500"[m
+                             disabled={disabled}[m
+                             onChange={onChange}[m
+                             placeholder={placeholder}[m
+[36m@@ -56,7 +56,7 @@[m [mexport function Input({[m
+                     ) : ([m
+                         <input[m
+                             name={name ?? ""}[m
+[31m-                            className="w-full text-base outline-none px-3 py-3 bg-transparent disabled:text-slate-500"[m
+[32m+[m[32m                            className="max-w-full min-w-20 text-base outline-none px-3 py-3 bg-transparent disabled:text-slate-500"[m
+                             type={type}[m
+                             disabled={disabled}[m
+                             onChange={onChange}[m
+[1mdiff --git a/client/src/components/Map/Map.tsx b/client/src/components/Map/Map.tsx[m
+[1mindex a16e9d5..0b23f5e 100644[m
+[1m--- a/client/src/components/Map/Map.tsx[m
+[1m+++ b/client/src/components/Map/Map.tsx[m
+[36m@@ -256,7 +256,7 @@[m [mfunction LeafletMap({[m
+         }[m
+     }, [selected_id]);[m
+ [m
+[31m-    return <div ref={mapContainerRef} className="w-full h-full min-w-100 min-h-100 z-0" />;[m
+[32m+[m[32m    return <div ref={mapContainerRef} className="w-full h-full min-w-50 min-h-50 z-0" />;[m
+ }[m
+ [m
+ export { LeafletMap as Map };[m
+[1mdiff --git a/client/src/pages/AdminMapPage.tsx b/client/src/pages/AdminMapPage.tsx[m
+[1mindex 899290c..43ae901 100644[m
+[1m--- a/client/src/pages/AdminMapPage.tsx[m
+[1m+++ b/client/src/pages/AdminMapPage.tsx[m
+[36m@@ -5,8 +5,10 @@[m [mimport { Button } from "@components/Button";[m
+ import { Input } from "@components/Input";[m
+ import { useAdventure } from "@contexts/AdventureContext";[m
+ import { useQueryClient } from "@tanstack/react-query";[m
+[32m+[m[32mimport clsx from "clsx";[m
+ import { t } from "i18next";[m
+ import { useCallback, useMemo, useState } from "react";[m
+[32m+[m[32mimport { FaUniversalAccess } from "react-icons/fa";[m
+ import { IoRefresh } from "react-icons/io5";[m
+ [m
+ interface Option {[m
+[36m@@ -33,14 +35,14 @@[m [mfunction SearchBar({[m
+     }[m
+ [m
+     return ([m
+[31m-        <form className="relative grid w-full grid-cols-[1fr_auto] items-end gap-4" onSubmit={(e) => {[m
+[32m+[m[32m        <form className="relative grid w-full grid-cols-[1fr_auto] items-end gap-4 overflow-hidden" onSubmit={(e) => {[m
+             e.preventDefault();[m
+             if (searchResults.length > 0) {[m
+                 const targetIndex = focusedIndex >= 0 ? focusedIndex : 0;[m
+                 handleSelect(searchResults[targetIndex].key);[m
+             }[m
+         }}>[m
+[31m-            <div onKeyDown={(e) => {[m
+[32m+[m[32m            <div className="min-w-0" onKeyDown={(e) => {[m
+                 if (e.key === "ArrowDown") {[m
+                     e.preventDefault();[m
+                     setFocusedIndex((prev) => Math.min(prev + 1, searchResults.length - 1));[m
+[36m@@ -96,23 +98,20 @@[m [mfunction CheckpointCard({ adventureId, checkpointId, open, onClick }: Checkpoint[m
+ [m
+     return ([m
+         <ul className="p-3 md:p-6 grid grid-cols-[1fr_auto_1fr] gap-1 md:gap-2 w-full justify-items-center text-sm md:text-base h-full">[m
+[31m-            <li className="col-span-full" onClick={() => onClick()}>[m
+[31m-                <hr className="bg-slate-500 text-slate-500 hover:bg-slate-400 hover:bg-slate-400 w-20 rounded-full h-1 mb-4" />[m
+[32m+[m[32m            <li className="group col-span-full w-full" onClick={() => onClick()}>[m
+[32m+[m[32m                <hr className="mx-auto bg-slate-500 text-slate-500 group-hover:bg-slate-400 hover:bg-slate-400 w-20 rounded-full h-1 mb-4" />[m
+             </li>[m
+             <li className="contents">[m
+[31m-                <span className="justify-self-start text-sm">{cp?.number}</span>[m
+[31m-                <span className="font-bold justify-self-center text-center">{cp?.org_name} ({cp?.org_abbreviation})</span>[m
+[31m-                <span className="justify-self-end px-2 py-1 border border-slate-500 bg-slate-400/20 rounded text-xs">{cp?.category}</span>[m
+[31m-            </li>[m
+[31m-            <li className="col-span-full">[m
+[31m-                <span className="text-sm">{cp?.area}</span>[m
+[32m+[m[32m                <span className="justify-self-start text-sm"></span>[m
+[32m+[m[32m                <span className="font-bold justify-self-center text-center">#{cp?.number} {cp?.org_name} ({cp?.org_abbreviation})</span>[m
+[32m+[m[32m                <span title={cp?.accessible ? t("accessible") : t("not-accessible")} className={clsx("justify-self-end text-2xl", cp?.accessible ? "text-sky-400" : "text-gray-500/50")}><FaUniversalAccess /></span>[m
+             </li>[m
+             <li className="col-span-full">[m
+                 <span className="italic text-sm">{cp?.address}</span>[m
+             </li>[m
+             {[m
+                 open && ([m
+[31m-                    <li className="col-span-full p-2 min-h-10 justify-self-start overflow-y-auto">[m
+[32m+[m[32m                    <li className="col-span-full p-2 min-h-10 justify-self-center overflow-y-auto">[m
+                         <span>{cp?.requirements}</span>[m
+                     </li>[m
+                 )[m
+[36m@@ -218,7 +217,7 @@[m [mexport function AdminMapPage() {[m
+             <div>[m
+                 <SearchBar options={searchOptions} onSubmit={handleCheckpointClick} />[m
+             </div>[m
+[31m-            <div className="relative w-full h-full border border-zinc-300 dark:border-slate-700">[m
+[32m+[m[32m            <div className="relative w-full h-full">[m
+                 <Button variant="gray"[m
+                     onClick={handleRefresh}[m
+                     aria-label={t("refresh")}[m
+[36m@@ -228,6 +227,7 @@[m [mexport function AdminMapPage() {[m
+                         <IoRefresh />[m
+                     </span>[m
+                 </Button>[m
+[32m+[m[32m                <div className="h-full w-full border-2 border-black">[m
+                 <Map[m
+                     clickCallback={(id: number) => setSelectedCheckpointId(id)}[m
+                     checkpoints={checkpoints}[m
+[36m@@ -236,10 +236,11 @@[m [mexport function AdminMapPage() {[m
+                     dragEnabled={true}[m
+                 />[m
+             </div>[m
+[32m+[m[32m            </div>[m
+             {[m
+                 selectedCheckpoint && ([m
+                     <div className={`absolute w-full flex justify-center bottom-0 ${drawerOpen ? "max-h-100" : "max-h-30"}`}>[m
+[31m-                        <div className="bg-slate-900/80 rounded-t w-[90%] md:w-[80%] max-w-200 overflow-y-hidden">[m
+[32m+[m[32m                        <div className="bg-fuksi-100 dark:bg-fuksi-950 border-2 border-b-0 border-black w-[90%] md:w-[80%] max-w-200 overflow-y-hidden">[m
+                             <CheckpointCard adventureId={selectedAdventure?.id ?? 0} checkpointId={selectedCheckpointId} open={drawerOpen} onClick={() => setDrawerOpen(prev => !prev)} />[m
+                         </div>[m
+                     </div>[m

@@ -92,8 +92,8 @@ export function List<T extends Record<string, any>>({ items, columns, defaultSor
     ].join(" ");
 
     return (
-        <div className="flex flex-col gap-4">
-            <div className={`grid ${selected.size > 0 ? "grid-cols-[1fr_auto]" : "grid-cols-1"} gap-4 items-end`}>
+        <div className="min-w-0 flex flex-col gap-4">
+            <div className={`min-w-0 grid ${selected.size > 0 ? "grid-cols-[1fr_auto]" : "grid-cols-1"} gap-4 items-end`}>
                 <Input type="search" label={t("search")} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                 {selected.size > 0 && (
                     <Button variant="red" aria-label="Delete" onClick={() => handleRemove?.(items.filter(item => selected.has(getKey(item))))} className="text-sm h-12">
