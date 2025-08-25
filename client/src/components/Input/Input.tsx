@@ -45,7 +45,7 @@ export function Input({
                     type === "textarea" ? (
                         <textarea
                             name={name ?? ""}
-                            className="w-full text-base outline-none px-3 py-3 bg-transparent disabled:text-slate-500"
+                            className="max-w-full min-w-20 text-base outline-none px-3 py-3 bg-transparent disabled:text-slate-500"
                             disabled={disabled}
                             onChange={onChange}
                             placeholder={placeholder}
@@ -56,7 +56,7 @@ export function Input({
                     ) : (
                         <input
                             name={name ?? ""}
-                            className="w-full text-base outline-none px-3 py-3 bg-transparent disabled:text-slate-500"
+                            className="max-w-full min-w-20 text-base outline-none px-3 py-3 bg-transparent disabled:text-slate-500"
                             type={type}
                             disabled={disabled}
                             onChange={onChange}
