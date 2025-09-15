@@ -15,7 +15,6 @@ interface SelectProps {
 }
 
 export function Select({
-  disabled = false,
   invalid = false,
   errorMessage,
   options = [],

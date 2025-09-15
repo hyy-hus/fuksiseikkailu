@@ -1,6 +1,6 @@
 import { Button } from "@components/Button";
 import { Input, Select, Toggle } from "@components/Input";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { FieldType } from "@components/Input";
 

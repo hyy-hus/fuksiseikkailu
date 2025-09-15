@@ -3,8 +3,10 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { authStore } from "@auth";
 import { navigate } from '../router/navigate';
 
+const baseUrl = import.meta.env.VITE_API_URL;
+
 const axiosInstance = axios.create({
-    baseURL: '/api',
+    baseURL: baseUrl || "/api",
 })
 
 axiosInstance.interceptors.request.use((config) => {
