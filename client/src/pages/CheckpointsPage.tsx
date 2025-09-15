@@ -60,8 +60,8 @@ function ColumnMappingRow({ header, value, onChange }: ColumnMappingRowProps) {
             <div className="flex items-center w-full">
                 <Select options={adminCheckpointOptions}
                     value={value?.outputColumn ?? "skip"}
-                    onChange={(e) => {
-                        onChange({ outputColumn: e.target.value })
+                    onChange={(value: string | number) => {
+                        onChange({ outputColumn: String(value) })
                     }
                     }
                 />

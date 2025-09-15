@@ -100,25 +100,25 @@ class PublicCheckpoint(BaseCheckpoint):
 
 
 class CreateCheckpoint(BaseModel):
-    number: int
-    area: int
-    org_name: str
-    org_abbreviation: str
-    contact_person: str
-    contact_email: str
-    contact_phone: str
-    category: str
+    number: Optional[int] = 0
+    area: Optional[int] = 0
+    org_name: Optional[str] = ""
+    org_abbreviation: Optional[str] = ""
+    contact_person: Optional[str] = ""
+    contact_email: Optional[str] = ""
+    contact_phone: Optional[str] = ""
+    category: Optional[str] = ""
     latitude: Optional[str] = PydanticField(default="60.1699")
     longitude: Optional[str] = PydanticField(default="24.9384")
-    address: str
-    requirements: str
-    lanes: int
-    checkpoint_description: str
-    org_description: str
-    org_link: str
-
-    photo_permission: bool
-    accessible: bool
+    address: Optional[str] = ""
+    requirements: Optional[str] = ""
+    lanes: Optional[int] = 0
+    checkpoint_description: Optional[str] = ""
+    org_description: Optional[str] = ""
+    org_link: Optional[str] = ""
+    
+    photo_permission: Optional[bool] = True
+    accessible: Optional[bool] = False
 
 
 class ModifyCheckpoint(BaseCheckpoint):

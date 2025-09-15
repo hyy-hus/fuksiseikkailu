@@ -256,7 +256,7 @@ function LeafletMap({
         }
     }, [selected_id]);
 
-    return <div ref={mapContainerRef} className="w-full h-full min-w-100 min-h-100 z-0" />;
+    return <div ref={mapContainerRef} className="w-full h-full min-w-50 min-h-50 z-0" />;
 }
 
 export { LeafletMap as Map };

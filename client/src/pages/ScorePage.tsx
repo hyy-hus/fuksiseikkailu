@@ -34,7 +34,7 @@ function SearchBar({
     }
 
     return (
-        <div className="relative grid w-full grid-cols-[1fr_auto] items-end gap-4" onSubmit={(e) => {
+        <div className="relative grid w-full grid-cols-[1fr_auto] items-end gap-2" onSubmit={(e) => {
             e.preventDefault();
             if (searchResults.length > 0) {
                 const targetIndex = focusedIndex >= 0 ? focusedIndex : 0;
@@ -63,7 +63,7 @@ function SearchBar({
             </div>
             <Button type="submit" className="h-9/10" variant="green">{t("search")}</Button>
             {searchResults.length > 0 && (
-                <ul className="absolute top-full left-0 z-1 mt-1 max-h-60 overflow-y-auto shadow-lg w-full bg-zinc-300 dark:bg-slate-800 border rounded dark:border-slate-700">
+                <ul className="absolute top-full left-0 z-1 mt-2 max-h-60 overflow-y-auto shadow-lg w-full bg-zinc-300 dark:bg-slate-800 border-2 dark:border-slate-700">
                     {
                         searchResults.map((result, index) => (
                             <li className={`py-2 px-4 dark:hover:bg-slate-700 cursor-pointer ${index === focusedIndex
@@ -98,9 +98,13 @@ function RadioBox<T extends Primitive>({ name, value, checked, onChange }: Radio
     return (
         <label htmlFor={id}
             className={clsx(
-                "px-3 py-1 border rounded cursor-pointer select-none",
+                !checked ? "shadow-[2px_2px_black]" : " shadow-[0px_0px_black] inset-shadow-[2px_2px_black] translate-y-[2px]",
+                "transition-all duration-200",
+                // "hover:shadow-[2px_2px_black] hover:translate-y-[2px]",
+                "active:shadow-[0px_0px_black]",
+                "px-3 py-1 border-2 cursor-pointer select-none",
                 "peer-[[data-focus=true]]:ring-2 peer-[[data-focus=true]]:ring-sky-400",
-                checked ? "bg-sky-400 dark:bg-sky-500 border-sky-500 dark:bg-sky-600" : "border-zinc-400 bg-zinc-300 dark:border-slate-700 dark:bg-slate-600",
+                checked ? "bg-fuksi-400 dark:bg-sky-500 border-black dark:bg-sky-600" : "border-black bg-fuksi-200 dark:border-slate-700 dark:bg-slate-600",
             )}
         >
             <span>
@@ -130,7 +134,7 @@ function RadioField<T extends Primitive>({ values, checked, label, onChange }: R
     return (
         <div>
             <span>{label}:</span>
-            <fieldset className="flex gap-2">
+            <fieldset className="flex gap-4">
                 {
                     values.map((val: T) => (
                         <RadioBox key={val} value={val} name={`${label}-${val}`} checked={val === checked} onChange={onChange} />
@@ -151,11 +155,11 @@ function Grid({ rows, headers }: GridProps) {
     const row_count = rows.length;
 
     return (
-        <div className={`grid grid-cols-[auto_1fr_auto_auto] border border-zinc-400 dark:border-slate-700`}>
+        <div className={`grid grid-cols-[auto_1fr_auto_auto] border-2 border-black dark:border-slate-700`}>
             <div className="contents">
                 {
                     headers?.map(header => (
-                        <span key={header} className="px-4 py-2 border-b border-zinc-400 bg-zinc-300 dark:bg-slate-800 dark:border-slate-700 font-bold">
+                        <span key={header} className="px-4 py-2 border-b-2 border-black bg-fuksi-400 dark:bg-slate-800 dark:border-slate-700 font-bold">
                             {header}
                         </span>
                     ))
@@ -168,7 +172,7 @@ function Grid({ rows, headers }: GridProps) {
                             row.map((cell, j) => (
                                 <div key={j} className={clsx(
                                     "px-4 py-2 border-zinc-400 dark:border-slate-700",
-                                    ((i + 1) % 2 === 0) && "bg-zinc-100 dark:bg-slate-950",
+                                    ((i + 1) % 2 === 0) && "bg-fuksi-200 dark:bg-slate-950",
                                     i !== (row_count - 1) && "border-b",
                                     j !== (col_count - 1) && "border-r"
                                 )}>
@@ -277,7 +281,7 @@ export function ScorePage() {
         <div className="flex flex-col gap-4 items-center">
             <h2 className="font-bold text-lg">{t("checkpoint")} #{checkpoint?.number} - {checkpoint?.org_name}</h2>
             <form onSubmit={handleSubmit}
-                className="flex flex-col gap-4"
+                className="flex flex-col gap-6"
             >
                 <SearchBar options={searchOptions} onSubmit={(v) => setSelectedTeamId(Number(v))} />
                 <p>

@@ -16,13 +16,14 @@ import { useNotifications } from "@contexts/NotificationContext";
 import { GoBell } from "react-icons/go";
 
 import { Toaster } from 'react-hot-toast';
+import clsx from "clsx";
 
 
 type LayoutVariant = "guest" | "admin";
 
 function Hr() {
     return (
-        <hr className="text-zinc-400 dark:text-slate-600" />
+        <hr className="text-olive dark:text-jonquil border-1 border-black" />
     )
 }
 
@@ -73,12 +74,12 @@ export function Layout({
     }, [data, selectedAdventure, setSelectedAdventure])
 
     const navbar = cva(
-        "col-span-2 border-b grid grid-cols-[auto_1fr_auto] items-center p-2",
+        "col-span-2 border-b-3 border-black dark:border-black bg-jonquil dark:bg-fuksi-800 text-black dark:text-fuksi-400 grid grid-cols-[auto_1fr_auto] items-center p-2",
         {
             variants: {
                 variant: {
-                    guest: "bg-zinc-300 dark:bg-slate-900 border-zinc-400 dark:border-slate-700",
-                    admin: "bg-rose-300 dark:bg-rose-950 border-rose-400 dark:border-rose-800",
+                    guest: "",
+                    admin: "",
                 },
                 defaultVariants: {
                     variant: "guest",
@@ -111,6 +112,7 @@ export function Layout({
         const isDark = html.classList.contains("dark");
         if (isDark) {
             html.classList.remove("dark");
+            localStorage.setItem("theme", "light");
             setDarkMode(false);
         }
         else {
@@ -128,7 +130,7 @@ export function Layout({
             <div><Toaster /></div>
             <nav className={navbar({ variant })}>
                 <Button variant="transparent" onClick={() => toggleSidebar()}><IoMenu /></Button>
-                <h1 className="font-bold hover:underline flex content-center justify-center-safe">
+                <h1 className="font-bold hover:underline flex content-center justify-center-safe dark:text-fuksi-400">
                     {
                         variant === "admin" ? (
                             <Link to="/admin">{t("fresher-adventure")} 2025 - {t("admin")}</Link>
@@ -146,14 +148,18 @@ export function Layout({
                         ) : (
                             !token ?
                                 <Button variant="transparent" onClick={() => navigate("/team")}>{t("team")}</Button>
-                                : <Button variant="red" onClick={() => logout()} >{t("team")}</Button>
+                                : <Button variant="transparent" onClick={() => logout()} >{t("team")}</Button>
                         )
                     }
                 </div>
 
             </nav>
 
-            <aside className={`Sidebar h-full overflow-y-auto bg-zinc-300 dark:bg-slate-900 border-r border-zinc-400 dark:border-slate-700 p-4 grid grid-rows-[auto_1fr_auto] ${sidebarOpen ? "w-full" : "overflow-hidden hidden"}`}>
+            <aside className={clsx(
+                "min-w-60 h-full overflow-y-auto p-4 grid grid-rows-[auto_1fr_auto] border-r-3 border-black dark:border-black",
+                "bg-fuksi-300 text-black dark:bg-fuksi-900 dark:text-fuksi-400",
+                sidebarOpen ? "w-full" : "overflow-hidden hidden",
+            )} >
                 <ul className="flex flex-col gap-4">
                     {
                         variant === "admin" ? (
@@ -163,8 +169,8 @@ export function Layout({
                                         name="adventure"
                                         label={t("adventure")}
                                         options={adventureOptions}
-                                        onChange={(e) => {
-                                            const id = Number(e.target.value);
+                                        onChange={(value: string | number) => {
+                                            const id = Number(value);
                                             const name = adventureOptions.find(o => Number(o.key) === id)?.value ?? "unknown";
                                             setSelectedAdventure({ id, name });
                                         }}
@@ -219,13 +225,13 @@ export function Layout({
                 </div>
             </aside>
 
-            <main className={`bg-zinc-200 dark:bg-slate-900 dark:text-zinc-100 p-4 overflow-y-auto ${sidebarOpen ? "hidden md:block md:w-full" : ""}`}>
+            <main className={`bg-fuksi-100 text-black dark:bg-fuksi-950 dark:text-white p-4 overflow-y-auto ${sidebarOpen ? "hidden md:block md:w-full" : ""}`}>
                 <Outlet />
             </main>
 
             {
                 notificationBar && (
-                    <div className="absolute top-2 left-2 right-2 bg-zinc-100 dark:bg-slate-800 border border-zinc-300 dark:border-slate-600 rounded p-4 grid grid-cols-[1fr_auto] gap-4 z-50 items-center">
+                    <div className="absolute top-8 left-8 right-8 bg-white dark:bg-fuksi-700 border-3 border-black dark:border-black p-4 grid grid-cols-[1fr_auto] gap-4 z-50 items-center">
                         <span
                             className="flex gap-2 hover:underline cursor-pointer"
                             onClick={() => {

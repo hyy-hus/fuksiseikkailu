@@ -20,7 +20,7 @@ export function Toggle({ value = false, onChange }: ToggleProps) {
                 }
             }}
             className={`
-            group border border-zinc-400 dark:border-slate-700 rounded-full
+            group border-2 border-black dark:border-slate-700 rounded-full
             inline-flex items-center w-12 h-6 px-1 py-1
             cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500
             transition-colors duration-300 ease-in-out
@@ -28,7 +28,7 @@ export function Toggle({ value = false, onChange }: ToggleProps) {
             ${value ? "bg-green-300 dark:bg-emerald-500" : "bg-zinc-300 dark:bg-slate-700"}
             `}>
             <div className={
-                `bg-zinc-100 border border-zinc-400 dark:border-none rounded-full w-4 h-4
+                `bg-zinc-100 border border-black dark:border-none rounded-full w-4 h-4
                 transition-transform duration-300 ease-in-out
                 ${value ? "translate-x-14/10" : "translate-x-0"}
                 `}></div>

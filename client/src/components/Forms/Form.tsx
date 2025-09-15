@@ -1,6 +1,6 @@
 import { Button } from "@components/Button";
 import { Input, Select, Toggle } from "@components/Input";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { FieldType } from "@components/Input";
 
@@ -55,7 +55,7 @@ export function Form<T extends Record<string, any>>({
                         )
                     } else if (field.type === "option") {
                         return (
-                            <Select key={field.key} options={field.options ?? []} label={field.name} onChange={(e: ChangeEvent<HTMLSelectElement>) => handleChange(field, e.target.value)} value={data[field.key] ?? ""} />
+                            <Select key={field.key} options={field.options ?? []} label={field.name} onChange={(value: string | number ) => handleChange(field, value)} value={data[field.key] ?? ""} />
                         )
                     } else {
                         return (

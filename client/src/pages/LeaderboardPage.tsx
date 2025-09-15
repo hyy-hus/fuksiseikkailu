@@ -14,11 +14,11 @@ function Grid({ rows, headers }: GridProps) {
     const row_count = rows.length;
 
     return (
-        <div className={`grid grid-cols-[auto_1fr_auto_auto_auto_auto] border border-zinc-400 dark:border-slate-700`}>
+        <div className={`grid grid-cols-[auto_1fr_auto_auto_auto_auto] border-2 border-black dark:border-slate-700`}>
             <div className="contents">
                 {
                     headers?.map(header => (
-                        <span key={header} className="px-4 py-2 border-b border-zinc-400 bg-zinc-300 dark:bg-slate-800 dark:border-slate-700 font-bold">
+                        <span key={header} className="px-4 py-2 border-b-2 border-black bg-fuksi-400 dark:bg-slate-800 dark:border-slate-700 font-bold">
                             {header}
                         </span>
                     ))
@@ -30,8 +30,8 @@ function Grid({ rows, headers }: GridProps) {
                         {
                             row.map((cell, j) => (
                                 <div key={j} className={clsx(
-                                    "px-4 py-2 border-zinc-400 dark:border-slate-700",
-                                    ((i + 1) % 2 === 0) && "bg-zinc-100 dark:bg-slate-950",
+                                    "px-4 py-2 border-black dark:border-slate-700",
+                                    ((i + 1) % 2 === 0) && "bg-white dark:bg-slate-950",
                                     i !== (row_count - 1) && "border-b",
                                     j !== (col_count - 1) && "border-r"
                                 )}>
@@ -80,7 +80,7 @@ export function LeaderboardPage() {
             <h2>{t("leaderboard")}</h2>
             <ol className="flex flex-col gap-4">
                 <Grid rows={rows.map((row, pos) => [
-                    <span className="block text-center">{pos + 1}</span>,
+                    <span className="block text-center">{pos + 1}.</span>,
                     <span>#{row.id} - {row.name}</span>,
                     <span className="block text-center">{row.score}</span>,
                     <span className="block text-center">{row.checkpoints}</span>,

@@ -5,8 +5,10 @@ import { Button } from "@components/Button";
 import { Input } from "@components/Input";
 import { useAdventure } from "@contexts/AdventureContext";
 import { useQueryClient } from "@tanstack/react-query";
+import clsx from "clsx";
 import { t } from "i18next";
 import { useCallback, useMemo, useState } from "react";
+import { FaUniversalAccess } from "react-icons/fa";
 import { IoRefresh } from "react-icons/io5";
 
 interface Option {
@@ -33,14 +35,14 @@ function SearchBar({
     }
 
     return (
-        <form className="relative grid w-full grid-cols-[1fr_auto] items-end gap-4" onSubmit={(e) => {
+        <form className="relative grid w-full grid-cols-[1fr_auto] items-end gap-4 overflow-hidden" onSubmit={(e) => {
             e.preventDefault();
             if (searchResults.length > 0) {
                 const targetIndex = focusedIndex >= 0 ? focusedIndex : 0;
                 handleSelect(searchResults[targetIndex].key);
             }
         }}>
-            <div onKeyDown={(e) => {
+            <div className="min-w-0" onKeyDown={(e) => {
                 if (e.key === "ArrowDown") {
                     e.preventDefault();
                     setFocusedIndex((prev) => Math.min(prev + 1, searchResults.length - 1));
@@ -96,23 +98,20 @@ function CheckpointCard({ adventureId, checkpointId, open, onClick }: Checkpoint
 
     return (
         <ul className="p-3 md:p-6 grid grid-cols-[1fr_auto_1fr] gap-1 md:gap-2 w-full justify-items-center text-sm md:text-base h-full">
-            <li className="col-span-full" onClick={() => onClick()}>
-                <hr className="bg-slate-500 text-slate-500 hover:bg-slate-400 hover:bg-slate-400 w-20 rounded-full h-1 mb-4" />
+            <li className="group col-span-full w-full" onClick={() => onClick()}>
+                <hr className="mx-auto bg-slate-500 text-slate-500 group-hover:bg-slate-400 hover:bg-slate-400 w-20 rounded-full h-1 mb-4" />
             </li>
             <li className="contents">
-                <span className="justify-self-start text-sm">{cp?.number}</span>
-                <span className="font-bold justify-self-center text-center">{cp?.org_name} ({cp?.org_abbreviation})</span>
-                <span className="justify-self-end px-2 py-1 border border-slate-500 bg-slate-400/20 rounded text-xs">{cp?.category}</span>
-            </li>
-            <li className="col-span-full">
-                <span className="text-sm">{cp?.area}</span>
+                <span className="justify-self-start text-sm"></span>
+                <span className="font-bold justify-self-center text-center">#{cp?.number} {cp?.org_name} ({cp?.org_abbreviation})</span>
+                <span title={cp?.accessible ? t("accessible") : t("not-accessible")} className={clsx("justify-self-end text-2xl", cp?.accessible ? "text-sky-400" : "text-gray-500/50")}><FaUniversalAccess /></span>
             </li>
             <li className="col-span-full">
                 <span className="italic text-sm">{cp?.address}</span>
             </li>
             {
                 open && (
-                    <li className="col-span-full p-2 min-h-10 justify-self-start overflow-y-auto">
+                    <li className="col-span-full p-2 min-h-10 justify-self-center overflow-y-auto">
                         <span>{cp?.requirements}</span>
                     </li>
                 )
@@ -218,7 +217,7 @@ export function AdminMapPage() {
             <div>
                 <SearchBar options={searchOptions} onSubmit={handleCheckpointClick} />
             </div>
-            <div className="relative w-full h-full border border-zinc-300 dark:border-slate-700">
+            <div className="relative w-full h-full">
                 <Button variant="gray"
                     onClick={handleRefresh}
                     aria-label={t("refresh")}
@@ -228,6 +227,7 @@ export function AdminMapPage() {
                         <IoRefresh />
                     </span>
                 </Button>
+                <div className="h-full w-full border-2 border-black">
                 <Map
                     clickCallback={(id: number) => setSelectedCheckpointId(id)}
                     checkpoints={checkpoints}
@@ -236,10 +236,11 @@ export function AdminMapPage() {
                     dragEnabled={true}
                 />
             </div>
+            </div>
             {
                 selectedCheckpoint && (
                     <div className={`absolute w-full flex justify-center bottom-0 ${drawerOpen ? "max-h-100" : "max-h-30"}`}>
-                        <div className="bg-slate-900/80 rounded-t w-[90%] md:w-[80%] max-w-200 overflow-y-hidden">
+                        <div className="bg-fuksi-100 dark:bg-fuksi-950 border-2 border-b-0 border-black w-[90%] md:w-[80%] max-w-200 overflow-y-hidden">
                             <CheckpointCard adventureId={selectedAdventure?.id ?? 0} checkpointId={selectedCheckpointId} open={drawerOpen} onClick={() => setDrawerOpen(prev => !prev)} />
                         </div>
                     </div>
