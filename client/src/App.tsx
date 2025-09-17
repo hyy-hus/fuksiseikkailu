@@ -27,6 +27,8 @@ const LeaderboardPage = lazy(() => import("./pages/LeaderboardPage").then((m) =>
 const NotFound = lazy(() => import("./pages/NotFound").then((m) => ({ default: m.NotFound })));
 const LoadingPage = lazy(() => import("./pages/LoadingPage").then((m) => ({ default: m.LoadingPage })));
 
+const SettingsPage = lazy(() => import("./pages/SettingsPage").then((m) => ({ default: m.SettingsPage })));
+
 export function App() {
     return (
         <Suspense fallback={<LoadingPage />}>
@@ -41,6 +43,7 @@ export function App() {
                     <Route path="map" element={<AdminMapPage />} />
                     <Route path="teams" element={<TeamsPage />} />
                     <Route path="news" element={<AdminNewsPage />} />
+                    <Route path="settings" element={<SettingsPage />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
                 <Route path="/" element={<Layout variant="guest" />}>

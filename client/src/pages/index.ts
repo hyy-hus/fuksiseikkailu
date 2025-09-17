@@ -7,3 +7,5 @@ export { TeamsPage } from "./TeamsPage";
 export { PlaygroundPage } from "./PlaygroundPage";
 export { CheckpointsPage } from "./CheckpointsPage";
 export { NotFound } from "./NotFound";
+export { SettingsPage } from "./SettingsPage";
+
