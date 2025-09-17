@@ -36,7 +36,6 @@ router = APIRouter(
     responses={200: {"description": "AppSettings fetched succesfully"}},
 )
 def fetch_app_settings(
-    user: UserDep,
     session: SessionDep,
 ):
     query = select(DBAppSettings).where(
