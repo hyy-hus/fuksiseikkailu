@@ -18,13 +18,13 @@ function Grid({ rows, headers, rowIds, onRowClick, selectedRowId, colsClass }: G
   const row_count = rows.length;
 
   return (
-    <div className={clsx(`grid border-2 border-black dark:border-slate-700`,
+    <div className={clsx(`grid border-2 border-black`,
       colsClass ?? "grid-cols-[auto_1fr_auto_auto_auto_auto]"
     )}>
       <div className="contents">
         {
           headers?.map(header => (
-            <span key={header} className="px-4 py-2 border-b-2 border-black bg-fuksi-400 dark:bg-slate-800 dark:border-slate-700 font-bold">
+            <span key={header} className="px-4 py-2 border-b-2 border-black bg-fuksi-400 dark:bg-fuksi-800 font-bold">
               {header}
             </span>
           ))
@@ -43,8 +43,8 @@ function Grid({ rows, headers, rowIds, onRowClick, selectedRowId, colsClass }: G
               {
                 row.map((cell, j) => (
                   <div key={j} className={clsx(
-                    "px-4 py-2 border-black dark:border-slate-700",
-                    ((i + 1) % 2 === 0) && "bg-white dark:bg-slate-950",
+                    "px-4 py-2 border-black",
+                    ((i + 1) % 2 === 0) && "bg-white dark:bg-fuksi-900",
                     i !== (row_count - 1) && "border-b",
                     j !== (col_count - 1) && "border-r"
                   )}>
