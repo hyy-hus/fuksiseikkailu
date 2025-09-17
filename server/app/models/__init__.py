@@ -34,6 +34,12 @@ from app.models.scores import (
     CreateScore,
 )
 
+from app.models.app_settings import (
+    DBAppSettings,
+    PublicAppSettings,
+    ModifyAppSettings,
+)
+
 for model in [
     LinkedAdventure,
     PublicAdventure,
@@ -60,6 +66,9 @@ for model in [
     PublicScore,
     ModifyScore,
     CreateScore,
+    DBAppSettings,
+    PublicAppSettings,
+    ModifyAppSettings,
 ]:
     model.model_rebuild()
 
@@ -71,4 +80,5 @@ __all__ = [
     "DBPushSubscription",
     "DBNews",
     "DBScore",
+    "DBAppSettings"
 ]

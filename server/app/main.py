@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
-from app.routers import users, auth, adventures, checkpoints, teams, push, news, scores
+from app.routers import users, auth, adventures, checkpoints, teams, push, news, scores, app_settings
 
 app = FastAPI(root_path="/api")
 
@@ -31,3 +31,4 @@ app.include_router(teams.router)
 app.include_router(push.router)
 app.include_router(news.router)
 app.include_router(scores.router)
+app.include_router(app_settings.router)

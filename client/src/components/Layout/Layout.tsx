@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useAdventure } from "@contexts/AdventureContext";
 import { Select } from "@components/Input";
 import { PublicAdventure } from "@api/model";
-import { useListAdventuresAdventuresGet } from "@api/endpoints";
+import { useFetchAppSettings, useListAdventuresAdventuresGet } from "@api/endpoints";
 import { useNotifications } from "@contexts/NotificationContext";
 import { GoBell } from "react-icons/go";
 
@@ -62,6 +62,18 @@ export function Layout({
             value: adventure.name,
         }));
     }, [data])
+
+    const { data: settings } = useFetchAppSettings();
+
+    useEffect(() => {
+        const adv = settings?.data.current_adventure;
+        if (adv) {
+            setSelectedAdventure({
+                id: adv.id,
+                name: adv.name
+            })
+        }
+    }, [settings])
 
     useEffect(() => {
         if (data?.data && data.data.length > 0 && !selectedAdventure) {
@@ -188,6 +200,7 @@ export function Layout({
                                 <li><Link to="/admin/costumes" className="hover:underline">{t("costume-contest")}</Link></li>
                                 <li><Link to="/admin/leaderboard" className="hover:underline">{t("leaderboard")}</Link></li>
                                 <li><Link to="/admin/adventures" className="hover:underline">{t("adventures")}</Link></li>
+                                <li><Link to="/admin/settings" className="hover:underline">{t("settings")}</Link></li>
                                 <li><Hr /></li>
                                 <li><Link to="/admin/users" className="hover:underline">{t("users")}</Link></li>
                                 <li><Hr /></li>

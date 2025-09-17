@@ -48,12 +48,14 @@ import type {
   LinkedAdventure,
   ListUsersUsersGetParams,
   ModifyAdventure,
+  ModifyAppSettings,
   ModifyCheckpoint,
   ModifyNews,
   ModifyScore,
   ModifyTeam,
   NotificationStatus,
   PublicAdventure,
+  PublicAppSettings,
   PublicCheckpoint,
   PublicNews,
   PublicScore,
@@ -3737,3 +3739,157 @@ export function useFetchAdminScore<TData = Awaited<ReturnType<typeof fetchAdminS
 
 
 
+/**
+ * Returns all the settings defined for the application
+ * @summary Fetch the application settings
+ */
+export const fetchAppSettings = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicAppSettings>(
+      {url: `/admin/app_settings/`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getFetchAppSettingsQueryKey = () => {
+    return [`/admin/app_settings/`] as const;
+    }
+
+    
+export const getFetchAppSettingsQueryOptions = <TData = Awaited<ReturnType<typeof fetchAppSettings>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAppSettings>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getFetchAppSettingsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof fetchAppSettings>>> = ({ signal }) => fetchAppSettings(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof fetchAppSettings>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type FetchAppSettingsQueryResult = NonNullable<Awaited<ReturnType<typeof fetchAppSettings>>>
+export type FetchAppSettingsQueryError = unknown
+
+
+export function useFetchAppSettings<TData = Awaited<ReturnType<typeof fetchAppSettings>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAppSettings>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchAppSettings>>,
+          TError,
+          Awaited<ReturnType<typeof fetchAppSettings>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchAppSettings<TData = Awaited<ReturnType<typeof fetchAppSettings>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAppSettings>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchAppSettings>>,
+          TError,
+          Awaited<ReturnType<typeof fetchAppSettings>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchAppSettings<TData = Awaited<ReturnType<typeof fetchAppSettings>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAppSettings>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Fetch the application settings
+ */
+
+export function useFetchAppSettings<TData = Awaited<ReturnType<typeof fetchAppSettings>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchAppSettings>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getFetchAppSettingsQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * Update the settings of the application
+ * @summary Update application settings
+ */
+export const patchAppSettings = (
+    modifyAppSettings: ModifyAppSettings,
+ ) => {
+      
+      
+      return customInstance<PublicAppSettings>(
+      {url: `/admin/app_settings/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: modifyAppSettings
+    },
+      );
+    }
+  
+
+
+export const getPatchAppSettingsMutationOptions = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchAppSettings>>, TError,{data: ModifyAppSettings}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof patchAppSettings>>, TError,{data: ModifyAppSettings}, TContext> => {
+
+const mutationKey = ['patchAppSettings'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof patchAppSettings>>, {data: ModifyAppSettings}> = (props) => {
+          const {data} = props ?? {};
+
+          return  patchAppSettings(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PatchAppSettingsMutationResult = NonNullable<Awaited<ReturnType<typeof patchAppSettings>>>
+    export type PatchAppSettingsMutationBody = ModifyAppSettings
+    export type PatchAppSettingsMutationError = void | HTTPValidationError
+
+    /**
+ * @summary Update application settings
+ */
+export const usePatchAppSettings = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchAppSettings>>, TError,{data: ModifyAppSettings}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof patchAppSettings>>,
+        TError,
+        {data: ModifyAppSettings},
+        TContext
+      > => {
+
+      const mutationOptions = getPatchAppSettingsMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
