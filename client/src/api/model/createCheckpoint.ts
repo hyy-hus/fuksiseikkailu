@@ -4,26 +4,42 @@
  * FastAPI
  * OpenAPI spec version: 0.1.0
  */
+import type { CreateCheckpointNumber } from './createCheckpointNumber';
+import type { CreateCheckpointArea } from './createCheckpointArea';
+import type { CreateCheckpointOrgName } from './createCheckpointOrgName';
+import type { CreateCheckpointOrgAbbreviation } from './createCheckpointOrgAbbreviation';
+import type { CreateCheckpointContactPerson } from './createCheckpointContactPerson';
+import type { CreateCheckpointContactEmail } from './createCheckpointContactEmail';
+import type { CreateCheckpointContactPhone } from './createCheckpointContactPhone';
+import type { CreateCheckpointCategory } from './createCheckpointCategory';
 import type { CreateCheckpointLatitude } from './createCheckpointLatitude';
 import type { CreateCheckpointLongitude } from './createCheckpointLongitude';
+import type { CreateCheckpointAddress } from './createCheckpointAddress';
+import type { CreateCheckpointRequirements } from './createCheckpointRequirements';
+import type { CreateCheckpointLanes } from './createCheckpointLanes';
+import type { CreateCheckpointCheckpointDescription } from './createCheckpointCheckpointDescription';
+import type { CreateCheckpointOrgDescription } from './createCheckpointOrgDescription';
+import type { CreateCheckpointOrgLink } from './createCheckpointOrgLink';
+import type { CreateCheckpointPhotoPermission } from './createCheckpointPhotoPermission';
+import type { CreateCheckpointAccessible } from './createCheckpointAccessible';
 
 export interface CreateCheckpoint {
-  number: number;
-  area: number;
-  org_name: string;
-  org_abbreviation: string;
-  contact_person: string;
-  contact_email: string;
-  contact_phone: string;
-  category: string;
+  number?: CreateCheckpointNumber;
+  area?: CreateCheckpointArea;
+  org_name?: CreateCheckpointOrgName;
+  org_abbreviation?: CreateCheckpointOrgAbbreviation;
+  contact_person?: CreateCheckpointContactPerson;
+  contact_email?: CreateCheckpointContactEmail;
+  contact_phone?: CreateCheckpointContactPhone;
+  category?: CreateCheckpointCategory;
   latitude?: CreateCheckpointLatitude;
   longitude?: CreateCheckpointLongitude;
-  address: string;
-  requirements: string;
-  lanes: number;
-  checkpoint_description: string;
-  org_description: string;
-  org_link: string;
-  photo_permission: boolean;
-  accessible: boolean;
+  address?: CreateCheckpointAddress;
+  requirements?: CreateCheckpointRequirements;
+  lanes?: CreateCheckpointLanes;
+  checkpoint_description?: CreateCheckpointCheckpointDescription;
+  org_description?: CreateCheckpointOrgDescription;
+  org_link?: CreateCheckpointOrgLink;
+  photo_permission?: CreateCheckpointPhotoPermission;
+  accessible?: CreateCheckpointAccessible;
 }
