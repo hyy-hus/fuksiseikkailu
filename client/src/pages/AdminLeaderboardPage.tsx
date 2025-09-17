@@ -98,20 +98,69 @@ export function LeaderboardPage() {
   });
   const rows = leaderboardRequest?.data?.data ?? [];
 
+  const scoreRequest = useListAdminScores(advId ?? 0, {
+    query: {
+      enabled: !!advId,
+      refetchInterval: 10000,
+      refetchOnWindowFocus: false,
+      refetchIntervalInBackground: true,
+      staleTime: 0,
+    }
+  })
+  const scores = scoreRequest?.data?.data ?? [];
+
+  const [opened, setOpened] = useState<number | undefined>(undefined);
+
+  const teamScoreRows = useMemo(() => {
+    if (opened == null) return [];
+    const filtered = (scores ?? [])
+      .filter(s => s.team?.id === opened)
+      .sort((a, b) => Date.parse(b.created_at ?? "") - Date.parse(a.created_at ?? ""));
+    return filtered.map(score => ([
+      <span className="block text-center">{formatDate(score.created_at)}</span>,
+      <span className="truncate">{score.checkpoint?.org_name ?? "—"}</span>,
+      <span className="block text-center">
+        {Array.isArray(score.players) ? score.players.length : (score.players ?? "—")}
+      </span>,
+      <span className="block text-center">{score.score}</span>,
+    ]));
+  }, [opened, scores]);
 
   return (
     <div className="flex flex-col gap-4">
       <h2>{t("leaderboard")}</h2>
       <ol className="flex flex-col gap-4">
-        <Grid rows={rows.slice(0, 10).map((row, pos) => [
+        <Grid rows={rows.map((row, pos) => [
           <span className="block text-center">{pos + 1}.</span>,
-          <span>{t("team")} #{row.id}</span>,
+          <span>#{row.id} - {row.name}</span>,
           <span className="block text-center">{row.score}</span>,
+          <span className="block text-center">{row.checkpoints}</span>,
+          <span className="block text-center">
+             {Number.isFinite(row.checkpoints) && row.checkpoints > 0
+    ? (Math.round((row.score / row.checkpoints) * 100) / 100).toFixed(2)
+    : "—"}
+          </span>,
+          <span className="block text-center">{formatDate(row.last_score_at)}</span>,
         ])}
-          headers={["#", t("team"), t("score") ]}
-          colsClass="grid-cols-[auto_1fr_auto]"  // 3 columns
+          headers={["#", t("team"), t("score"), t("checkpoints"), t("avg"), t("latest-score")]}
+          rowIds={rows.map((r) => r.id)}
+          onRowClick={(id) => setOpened(Number(id))}
+          selectedRowId={opened}
         />
       </ol>
+      <div className="mt-4">
+        {opened != null && (
+          teamScoreRows.length > 0 ? (
+            <Grid
+              rows={teamScoreRows}
+              headers={[t("time"), t("checkpoint"), t("players"), t("score")]}
+              colsClass="grid-cols-[auto_1fr_auto_auto]"  // 4 columns
+            />
+          ) : (
+            <div className="opacity-60">{t("no-scores-yet")}</div>
+          )
+        )}
+      </div>
     </div>
   )
 }
