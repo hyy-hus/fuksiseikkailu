@@ -135,7 +135,11 @@ export function LeaderboardPage() {
           <span>#{row.id} - {row.name}</span>,
           <span className="block text-center">{row.score}</span>,
           <span className="block text-center">{row.checkpoints}</span>,
-          <span className="block text-center">{Math.round(((row.score / row.checkpoints) + Number.EPSILON) * 100) / 100}</span>,
+          <span className="block text-center">
+             {Number.isFinite(row.checkpoints) && row.checkpoints > 0
+    ? (Math.round((row.score / row.checkpoints) * 100) / 100).toFixed(2)
+    : "—"}
+          </span>,
           <span className="block text-center">{formatDate(row.last_score_at)}</span>,
         ])}
           headers={["#", t("team"), t("score"), t("checkpoints"), t("avg"), t("latest-score")]}
