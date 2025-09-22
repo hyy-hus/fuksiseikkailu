@@ -4,12 +4,17 @@
  * FastAPI
  * OpenAPI spec version: 0.1.0
  */
+import type { AdminTeamNumber } from './adminTeamNumber';
 import type { DBAdventure } from './dBAdventure';
+import type { AdminPlayer } from './adminPlayer';
 
 export interface AdminTeam {
   name: string;
   id: number;
+  number: AdminTeamNumber;
   adventure_id: number;
   adventure: DBAdventure;
+  players: AdminPlayer[];
+  player_count: number;
   active: boolean;
 }

@@ -4,8 +4,13 @@
  * FastAPI
  * OpenAPI spec version: 0.1.0
  */
+import type { CreateTeamNumber } from './createTeamNumber';
+import type { Player } from './player';
 
 export interface CreateTeam {
   /** Name of the team */
   name: string;
+  /** Number of the team */
+  number: CreateTeamNumber;
+  players?: Player[];
 }
