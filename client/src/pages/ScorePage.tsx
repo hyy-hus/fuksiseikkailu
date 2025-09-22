@@ -8,6 +8,8 @@ import { t } from "i18next";
 import { ReactNode, useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
+import { decodeSlug } from "@utils/slug";
+
 import toast from 'react-hot-toast';
 
 interface Option {
@@ -218,7 +220,8 @@ export function ScorePage() {
         )
     }
 
-    const team_id = parseInt(slug);
+    let decoded_slug = slug ? decodeSlug(slug) : "";
+    const team_id = parseInt(decoded_slug.split("-")[1]);
 
     const { selectedAdventure } = useAdventure();
     const { data } = useFetchCheckpoint(selectedAdventure?.id ?? 0, team_id);
@@ -228,7 +231,7 @@ export function ScorePage() {
     const teams = teams_query?.data?.data ?? [];
 
     const searchOptions = useMemo(() =>
-        teams.map(team => ({ key: team.id, value: `#${team.id} - ${team.name}` })),
+        teams.map(team => ({ key: team.id, value: `#${team.number} - ${team.name}` })),
         [teams]
     );
 
@@ -272,7 +275,7 @@ export function ScorePage() {
             {
                 loading: t("adding-score"),
                 success: t("score-added"),
-                error: (err: any) => err?.message ?? t("adding-score-failed"),
+                error: (err: any) => err.status == 409 ? t("no-duplicate-scores") : (err?.message ?? t("adding-score-failed")),
             }
         )
     }, [selectedAdventure, score, players, checkpoint, selectedTeam]);
@@ -286,7 +289,7 @@ export function ScorePage() {
                 <SearchBar options={searchOptions} onSubmit={(v) => setSelectedTeamId(Number(v))} />
                 <p>
                     <span className="mr-2 font-bold">{t("team")}:</span>
-                    #{selectedTeam?.id ?? 0} - {selectedTeam?.name ?? (<span className="italic">{t("no-team-selected")}</span>)}
+                    #{selectedTeam?.number ?? 0} - {selectedTeam?.name ?? (<span className="italic">{t("no-team-selected")}</span>)}
                 </p>
                 {selectedTeam && (
                     <>

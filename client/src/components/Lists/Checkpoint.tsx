@@ -5,6 +5,7 @@ import { t } from "i18next";
 import { Link } from "react-router-dom";
 import { useListAdminCheckpoints } from "@api/endpoints";
 import { useAdventure } from "@contexts/AdventureContext";
+import { encodeSlug } from "@utils/slug";
 
 interface ListProps {
     onChange?: (items: AdminCheckpoint[]) => void;
@@ -55,6 +56,7 @@ export function CheckpointList(
         { header: "photo_permission", render: (a: AdminCheckpoint) => a.photo_permission },
         { header: "adventure", render: (a: AdminCheckpoint) => <Link className="hover:underline" to={`/admin/adventures/${a.adventure.id}`}>{a.adventure.name}</Link> },
         { header: "active", render: (a: AdminCheckpoint) => a.active ? "true" : "false" },
+        { header: "active", render: (a: AdminCheckpoint) => encodeSlug(`checkpoint-${a.id}`)}
     ]
 
     return (
