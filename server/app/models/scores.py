@@ -2,7 +2,7 @@ from typing import Optional
 from sqlmodel import SQLModel, Field, Relationship
 
 from app.models.adventures import PublicAdventure, DBAdventure
-from app.models.teams import PublicTeam, DBTeam
+from app.models.teams import PublicTeam, UnlinkedTeam, DBTeam
 from app.models.checkpoints import PublicCheckpoint, DBCheckpoint
 
 from pydantic import BaseModel
@@ -54,7 +54,7 @@ class PublicScore(BaseScore):
     players: int
 
     adventure: PublicAdventure
-    team: PublicTeam
+    team: UnlinkedTeam
     checkpoint: PublicCheckpoint
 
     created_at: datetime

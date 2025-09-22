@@ -50,7 +50,7 @@ class AdminTeam(BaseTeam):
     adventure: DBAdventure
 
     players: list["AdminPlayer"]
-    player_count: int
+    player_count: Optional[int]
 
     active: bool
 
@@ -60,7 +60,7 @@ class PublicTeam(BaseTeam):
     name: str
     number: Optional[int]
 
-    player_count: int
+    player_count: Optional[int]
 
     adventure: PublicAdventure
 

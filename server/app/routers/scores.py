@@ -136,13 +136,35 @@ def create_score(
     adventure_id: AdventureId,
     session: SessionDep,
 ) -> PublicScore:
+    existing = session.exec(
+        select(DBScore).where(
+            DBScore.adventure_id == adventure_id,
+            DBScore.team_id == score.team_id,
+            DBScore.checkpoint_id == score.checkpoint_id,
+            DBScore.active == True,
+        )
+    ).first()
+
+    if existing:
+        raise HTTPException(
+            status_code=409,
+            detail="A score for this adventure/team/checkpoint already exists."
+        )
+
     db_score = DBScore.model_validate(score)
     db_score.adventure_id = adventure_id
 
     session.add(db_score)
-    session.commit()
-    session.refresh(db_score)
+    try:
+        session.commit()             # DB-level constraint is the final guard
+    except IntegrityError:
+        session.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="A score for this adventure/team/checkpoint already exists."
+        )
 
+    session.refresh(db_score)
     return db_score
 
 
