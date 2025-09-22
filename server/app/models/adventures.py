@@ -36,7 +36,7 @@ class PublicAdventure(BaseAdventure):
 class LinkedAdventure(BaseAdventure):
     id: int
     checkpoints: list["PublicCheckpoint"]
-    teams: list["PublicTeam"]
+    teams: list["UnlinkedTeam"]
     news: list["PublicNews"]
     scores: list["PublicScore"]
 
