@@ -7,6 +7,7 @@
 import type { AdminTeamNumber } from './adminTeamNumber';
 import type { DBAdventure } from './dBAdventure';
 import type { AdminPlayer } from './adminPlayer';
+import type { AdminTeamPlayerCount } from './adminTeamPlayerCount';
 
 export interface AdminTeam {
   name: string;
@@ -15,6 +16,6 @@ export interface AdminTeam {
   adventure_id: number;
   adventure: DBAdventure;
   players: AdminPlayer[];
-  player_count: number;
+  player_count: AdminTeamPlayerCount;
   active: boolean;
 }

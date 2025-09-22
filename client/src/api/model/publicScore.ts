@@ -5,7 +5,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { PublicAdventure } from './publicAdventure';
-import type { PublicTeam } from './publicTeam';
+import type { UnlinkedTeam } from './unlinkedTeam';
 import type { PublicCheckpoint } from './publicCheckpoint';
 
 export interface PublicScore {
@@ -13,7 +13,7 @@ export interface PublicScore {
   score: number;
   players: number;
   adventure: PublicAdventure;
-  team: PublicTeam;
+  team: UnlinkedTeam;
   checkpoint: PublicCheckpoint;
   created_at: string;
 }

@@ -5,6 +5,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { PublicTeamNumber } from './publicTeamNumber';
+import type { PublicTeamPlayerCount } from './publicTeamPlayerCount';
 import type { PublicAdventure } from './publicAdventure';
 
 export interface PublicTeam {
@@ -12,6 +13,6 @@ export interface PublicTeam {
   /** Unique identifier */
   id: number;
   number: PublicTeamNumber;
-  player_count: number;
+  player_count: PublicTeamPlayerCount;
   adventure: PublicAdventure;
 }

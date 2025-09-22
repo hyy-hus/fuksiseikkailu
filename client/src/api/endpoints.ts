@@ -47,7 +47,6 @@ import type {
   HTTPValidationError,
   ImportPayload,
   ImportResult,
-  LinkedAdventure,
   ListUsersUsersGetParams,
   ModifyAdventure,
   ModifyAppSettings,
@@ -541,7 +540,7 @@ export const listAdventuresAdventuresGet = (
 ) => {
       
       
-      return customInstance<LinkedAdventure[]>(
+      return customInstance<PublicAdventure[]>(
       {url: `/adventures/`, method: 'GET', signal
     },
       );
