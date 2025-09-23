@@ -227,7 +227,6 @@ export function Layout({
                     </Button>
                     <select className="p-4" value={selectedLanguage} onChange={(e) => setSelectedLanguage(e.target.value as Language)}>
                         <option value="fi">FI</option>
-                        <option value="sv">SV</option>
                         <option value="en">EN</option>
                     </select>
                 </div>

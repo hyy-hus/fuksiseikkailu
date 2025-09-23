@@ -41,6 +41,7 @@ export function TeamList(
     const columns: ColumnDef<AdminTeam>[] = [
         { header: "id", render: (a: AdminTeam) => a.id },
         { header: "adventure", render: (a: AdminTeam) => <Link className="hover:underline" to={`/admin/adventures/${a.adventure.id}`}>{a.adventure.name}</Link> },
+        { header: "number", render: (a: AdminTeam) => a.number },
         { header: "name", render: (a: AdminTeam) => a.name },
         { header: "active", render: (a: AdminTeam) => a.active ? "true" : "false" },
         { header: "active", render: (a: AdminTeam) => encodeSlug(`team-${a.id}`) },
