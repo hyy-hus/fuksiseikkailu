@@ -39,6 +39,7 @@ export function CheckpointList(
 
     const columns: ColumnDef<AdminCheckpoint>[] = [
         { header: "id", render: (a: AdminCheckpoint) => a.id },
+        { header: "number", render: (a: AdminCheckpoint) => a.number },
         { header: "org_name", render: (a: AdminCheckpoint) => a.org_name },
         { header: "org_abbreviation", render: (a: AdminCheckpoint) => a.org_abbreviation },
         { header: "category", render: (a: AdminCheckpoint) => a.category },
