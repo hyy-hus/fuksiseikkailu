@@ -68,20 +68,14 @@ export function Layout({
     useEffect(() => {
         const adv = settings?.data.current_adventure;
         if (adv) {
-            setSelectedAdventure({
-                id: adv.id,
-                name: adv.name
-            })
+            setSelectedAdventure(adv);
         }
     }, [settings])
 
     useEffect(() => {
         if (data?.data && data.data.length > 0 && !selectedAdventure) {
             const firstAdventure = data.data[0];
-            setSelectedAdventure({
-                id: firstAdventure.id,
-                name: firstAdventure.name
-            });
+            setSelectedAdventure(firstAdventure);
         }
     }, [data, selectedAdventure, setSelectedAdventure])
 
@@ -181,8 +175,11 @@ export function Layout({
                                         options={adventureOptions}
                                         onChange={(value: string | number) => {
                                             const id = Number(value);
-                                            const name = adventureOptions.find(o => Number(o.key) === id)?.value ?? "unknown";
-                                            setSelectedAdventure({ id, name });
+                                            const adv = data?.data?.find(a => a.id == id);
+                                            // const name = adventureOptions.find(o => Number(o.key) === id)?.value ?? "unknown";
+                                            if (adv) {
+                                                setSelectedAdventure(adv);
+                                            }
                                         }}
                                         value={selectedAdventure?.id ?? ""}
                                     />

@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, Field, Relationship
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from app.models.checkpoints import DBCheckpoint, PublicCheckpoint
@@ -12,6 +12,7 @@ class BaseAdventure(SQLModel):
     name: str
     year: int
     ongoing: bool
+    can_add_scores: bool
     test: bool
 
 
@@ -23,6 +24,8 @@ class DBAdventure(BaseAdventure, table=True):
     test: bool = Field(default=False)
     active: bool = Field(default=True)
 
+    can_add_scores: Optional[bool] = Field(default=True)
+
     checkpoints: list["DBCheckpoint"] = Relationship(back_populates="adventure")
     teams: list["DBTeam"] = Relationship(back_populates="adventure")
     news: list["DBNews"] = Relationship(back_populates="adventure")
@@ -31,14 +34,22 @@ class DBAdventure(BaseAdventure, table=True):
 
 class PublicAdventure(BaseAdventure):
     id: int
+    ongoing: bool
+    test: bool
+    can_add_scores: bool
 
 
 class LinkedAdventure(BaseAdventure):
     id: int
+
     checkpoints: list["PublicCheckpoint"]
-    teams: list["PublicTeam"]
+    teams: list["UnlinkedTeam"]
     news: list["PublicNews"]
     scores: list["PublicScore"]
+
+    ongoing: bool
+    test: bool
+    can_add_scores: bool
 
 
 class CreateAdventure(BaseAdventure):
@@ -50,3 +61,4 @@ class ModifyAdventure(BaseAdventure):
     year: int | None = None
     ongoing: bool | None = None
     test: bool | None = None
+    can_add_scores: bool | None = None

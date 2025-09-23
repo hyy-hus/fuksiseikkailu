@@ -13,7 +13,7 @@ from sqlmodel import Session
 router = APIRouter(prefix="/adventures", tags=["adventures"])
 
 
-@router.get("/", response_model=list[LinkedAdventure])
+@router.get("/", response_model=list[PublicAdventure])
 def list_adventures(
     session: Session = Depends(get_session),
 ):

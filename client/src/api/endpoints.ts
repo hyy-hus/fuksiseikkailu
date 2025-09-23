@@ -26,6 +26,7 @@ import type {
 import type {
   AdminCheckpoint,
   AdminNews,
+  AdminPlayer,
   AdminScore,
   AdminTeam,
   AllocateAreasResult,
@@ -35,6 +36,7 @@ import type {
   CreateAdventure,
   CreateCheckpoint,
   CreateNews,
+  CreatePlayer,
   CreatePushSubscription,
   CreateScore,
   CreateTeam,
@@ -45,12 +47,12 @@ import type {
   HTTPValidationError,
   ImportPayload,
   ImportResult,
-  LinkedAdventure,
   ListUsersUsersGetParams,
   ModifyAdventure,
   ModifyAppSettings,
   ModifyCheckpoint,
   ModifyNews,
+  ModifyPlayer,
   ModifyScore,
   ModifyTeam,
   NotificationStatus,
@@ -538,7 +540,7 @@ export const listAdventuresAdventuresGet = (
 ) => {
       
       
-      return customInstance<LinkedAdventure[]>(
+      return customInstance<PublicAdventure[]>(
       {url: `/adventures/`, method: 'GET', signal
     },
       );
@@ -2112,6 +2114,73 @@ export const useDeleteTeam = <TError = void | HTTPValidationError,
     }
     
 /**
+ * Creates multiple teams from a JSON list. Each item matches CreateTeam.
+ * @summary Bulk create teams
+ */
+export const bulkCreateTeams = (
+    adventureId: number,
+    createTeam: CreateTeam[],
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicTeam[]>(
+      {url: `/adventures/${adventureId}/teams/bulk`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createTeam, signal
+    },
+      );
+    }
+  
+
+
+export const getBulkCreateTeamsMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bulkCreateTeams>>, TError,{adventureId: number;data: CreateTeam[]}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof bulkCreateTeams>>, TError,{adventureId: number;data: CreateTeam[]}, TContext> => {
+
+const mutationKey = ['bulkCreateTeams'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof bulkCreateTeams>>, {adventureId: number;data: CreateTeam[]}> = (props) => {
+          const {adventureId,data} = props ?? {};
+
+          return  bulkCreateTeams(adventureId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type BulkCreateTeamsMutationResult = NonNullable<Awaited<ReturnType<typeof bulkCreateTeams>>>
+    export type BulkCreateTeamsMutationBody = CreateTeam[]
+    export type BulkCreateTeamsMutationError = HTTPValidationError
+
+    /**
+ * @summary Bulk create teams
+ */
+export const useBulkCreateTeams = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bulkCreateTeams>>, TError,{adventureId: number;data: CreateTeam[]}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof bulkCreateTeams>>,
+        TError,
+        {adventureId: number;data: CreateTeam[]},
+        TContext
+      > => {
+
+      const mutationOptions = getBulkCreateTeamsMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
  * Returns admin level list of all active teams for the specified adventure.
  * @summary List all teams in an adventure
  */
@@ -2201,7 +2270,7 @@ export function useListAdminTeams<TData = Awaited<ReturnType<typeof listAdminTea
 
 
 /**
- * Fetches a team in an adventure specified by it's id
+ * Fetches a team in an adventure specified by its id
  * @summary Fetch a single team in an adventure
  */
 export const fetchAdminTeam = (
@@ -2296,6 +2365,70 @@ export function useFetchAdminTeam<TData = Awaited<ReturnType<typeof fetchAdminTe
 
 
 
+/**
+ * Assign numbers for all teams in the adventure that don't have a number
+ * @summary Assign numbers for teams
+ */
+export const postAssignTeamNumbers = (
+    adventureId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<unknown>(
+      {url: `/adventures/${adventureId}/teams/admin/assign_numbers`, method: 'POST', signal
+    },
+      );
+    }
+  
+
+
+export const getPostAssignTeamNumbersMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAssignTeamNumbers>>, TError,{adventureId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postAssignTeamNumbers>>, TError,{adventureId: number}, TContext> => {
+
+const mutationKey = ['postAssignTeamNumbers'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postAssignTeamNumbers>>, {adventureId: number}> = (props) => {
+          const {adventureId} = props ?? {};
+
+          return  postAssignTeamNumbers(adventureId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostAssignTeamNumbersMutationResult = NonNullable<Awaited<ReturnType<typeof postAssignTeamNumbers>>>
+    
+    export type PostAssignTeamNumbersMutationError = HTTPValidationError
+
+    /**
+ * @summary Assign numbers for teams
+ */
+export const usePostAssignTeamNumbers = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAssignTeamNumbers>>, TError,{adventureId: number}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postAssignTeamNumbers>>,
+        TError,
+        {adventureId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getPostAssignTeamNumbersMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
 /**
  * Return the VAPID public key for notifications
  * @summary Get VAPID public key
@@ -3893,3 +4026,376 @@ export const usePatchAppSettings = <TError = void | HTTPValidationError,
       return useMutation(mutationOptions , queryClient);
     }
     
+/**
+ * Creates a new player specified by *request body*
+ * @summary Create a player
+ */
+export const createPlayer = (
+    createPlayer: CreatePlayer,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<AdminPlayer>(
+      {url: `/players/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createPlayer, signal
+    },
+      );
+    }
+  
+
+
+export const getCreatePlayerMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPlayer>>, TError,{data: CreatePlayer}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof createPlayer>>, TError,{data: CreatePlayer}, TContext> => {
+
+const mutationKey = ['createPlayer'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createPlayer>>, {data: CreatePlayer}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createPlayer(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreatePlayerMutationResult = NonNullable<Awaited<ReturnType<typeof createPlayer>>>
+    export type CreatePlayerMutationBody = CreatePlayer
+    export type CreatePlayerMutationError = HTTPValidationError
+
+    /**
+ * @summary Create a player
+ */
+export const useCreatePlayer = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPlayer>>, TError,{data: CreatePlayer}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createPlayer>>,
+        TError,
+        {data: CreatePlayer},
+        TContext
+      > => {
+
+      const mutationOptions = getCreatePlayerMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * Returns admin level list of all active players for the specified adventure.
+ * @summary List all players in a team
+ */
+export const listPlayers = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<AdminPlayer[]>(
+      {url: `/players/`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getListPlayersQueryKey = () => {
+    return [`/players/`] as const;
+    }
+
+    
+export const getListPlayersQueryOptions = <TData = Awaited<ReturnType<typeof listPlayers>>, TError = HTTPValidationError>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPlayers>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListPlayersQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listPlayers>>> = ({ signal }) => listPlayers(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listPlayers>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListPlayersQueryResult = NonNullable<Awaited<ReturnType<typeof listPlayers>>>
+export type ListPlayersQueryError = HTTPValidationError
+
+
+export function useListPlayers<TData = Awaited<ReturnType<typeof listPlayers>>, TError = HTTPValidationError>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPlayers>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listPlayers>>,
+          TError,
+          Awaited<ReturnType<typeof listPlayers>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListPlayers<TData = Awaited<ReturnType<typeof listPlayers>>, TError = HTTPValidationError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPlayers>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listPlayers>>,
+          TError,
+          Awaited<ReturnType<typeof listPlayers>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListPlayers<TData = Awaited<ReturnType<typeof listPlayers>>, TError = HTTPValidationError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPlayers>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List all players in a team
+ */
+
+export function useListPlayers<TData = Awaited<ReturnType<typeof listPlayers>>, TError = HTTPValidationError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPlayers>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListPlayersQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * Update player specified by *player_id* and *adventure_id*
+ * @summary Update a player
+ */
+export const patchPlayer = (
+    playerId: number,
+    modifyPlayer: ModifyPlayer,
+ ) => {
+      
+      
+      return customInstance<AdminPlayer>(
+      {url: `/players/${playerId}`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: modifyPlayer
+    },
+      );
+    }
+  
+
+
+export const getPatchPlayerMutationOptions = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchPlayer>>, TError,{playerId: number;data: ModifyPlayer}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof patchPlayer>>, TError,{playerId: number;data: ModifyPlayer}, TContext> => {
+
+const mutationKey = ['patchPlayer'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof patchPlayer>>, {playerId: number;data: ModifyPlayer}> = (props) => {
+          const {playerId,data} = props ?? {};
+
+          return  patchPlayer(playerId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PatchPlayerMutationResult = NonNullable<Awaited<ReturnType<typeof patchPlayer>>>
+    export type PatchPlayerMutationBody = ModifyPlayer
+    export type PatchPlayerMutationError = void | HTTPValidationError
+
+    /**
+ * @summary Update a player
+ */
+export const usePatchPlayer = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchPlayer>>, TError,{playerId: number;data: ModifyPlayer}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof patchPlayer>>,
+        TError,
+        {playerId: number;data: ModifyPlayer},
+        TContext
+      > => {
+
+      const mutationOptions = getPatchPlayerMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * Delete player specified by *player_id* and *adventure_id*
+ * @summary Delete a player
+ */
+export const deletePlayer = (
+    playerId: number,
+ ) => {
+      
+      
+      return customInstance<DeleteResponse>(
+      {url: `/players/${playerId}`, method: 'DELETE'
+    },
+      );
+    }
+  
+
+
+export const getDeletePlayerMutationOptions = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePlayer>>, TError,{playerId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deletePlayer>>, TError,{playerId: number}, TContext> => {
+
+const mutationKey = ['deletePlayer'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deletePlayer>>, {playerId: number}> = (props) => {
+          const {playerId} = props ?? {};
+
+          return  deletePlayer(playerId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeletePlayerMutationResult = NonNullable<Awaited<ReturnType<typeof deletePlayer>>>
+    
+    export type DeletePlayerMutationError = void | HTTPValidationError
+
+    /**
+ * @summary Delete a player
+ */
+export const useDeletePlayer = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePlayer>>, TError,{playerId: number}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deletePlayer>>,
+        TError,
+        {playerId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeletePlayerMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * Fetches a player in an adventure specified by it's id
+ * @summary Fetch a single player in an adventure
+ */
+export const fetchPlayer = (
+    playerId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<AdminPlayer>(
+      {url: `/players/${playerId}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getFetchPlayerQueryKey = (playerId: number,) => {
+    return [`/players/${playerId}`] as const;
+    }
+
+    
+export const getFetchPlayerQueryOptions = <TData = Awaited<ReturnType<typeof fetchPlayer>>, TError = void | HTTPValidationError>(playerId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchPlayer>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getFetchPlayerQueryKey(playerId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof fetchPlayer>>> = ({ signal }) => fetchPlayer(playerId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(playerId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof fetchPlayer>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type FetchPlayerQueryResult = NonNullable<Awaited<ReturnType<typeof fetchPlayer>>>
+export type FetchPlayerQueryError = void | HTTPValidationError
+
+
+export function useFetchPlayer<TData = Awaited<ReturnType<typeof fetchPlayer>>, TError = void | HTTPValidationError>(
+ playerId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchPlayer>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchPlayer>>,
+          TError,
+          Awaited<ReturnType<typeof fetchPlayer>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchPlayer<TData = Awaited<ReturnType<typeof fetchPlayer>>, TError = void | HTTPValidationError>(
+ playerId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchPlayer>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchPlayer>>,
+          TError,
+          Awaited<ReturnType<typeof fetchPlayer>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchPlayer<TData = Awaited<ReturnType<typeof fetchPlayer>>, TError = void | HTTPValidationError>(
+ playerId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchPlayer>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Fetch a single player in an adventure
+ */
+
+export function useFetchPlayer<TData = Awaited<ReturnType<typeof fetchPlayer>>, TError = void | HTTPValidationError>(
+ playerId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchPlayer>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getFetchPlayerQueryOptions(playerId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+

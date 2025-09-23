@@ -19,10 +19,18 @@ from app.models.checkpoints import (
 from app.models.teams import (
     DBTeam,
     AdminTeam,
+    UnlinkedTeam,
     PublicTeam,
     ModifyTeam,
     CreateTeam,
 )
+
+from app.models.players import (
+        DBPlayer,
+        AdminPlayer,
+        ModifyPlayer,
+        CreatePlayer,
+    )
 
 from app.models.news import DBNews, AdminNews, PublicNews, ModifyNews, CreateNews
 
@@ -69,6 +77,10 @@ for model in [
     DBAppSettings,
     PublicAppSettings,
     ModifyAppSettings,
+    DBPlayer,
+    AdminPlayer,
+    ModifyPlayer,
+    CreatePlayer,
 ]:
     model.model_rebuild()
 
@@ -80,5 +92,6 @@ __all__ = [
     "DBPushSubscription",
     "DBNews",
     "DBScore",
-    "DBAppSettings"
+    "DBAppSettings",
+    "DBPlayer"
 ]

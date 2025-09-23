@@ -4,12 +4,14 @@
  * FastAPI
  * OpenAPI spec version: 0.1.0
  */
+import type { DBAdventureCanAddScores } from './dBAdventureCanAddScores';
 import type { DBAdventureId } from './dBAdventureId';
 
 export interface DBAdventure {
   name: string;
   year: number;
   ongoing?: boolean;
+  can_add_scores?: DBAdventureCanAddScores;
   test?: boolean;
   id?: DBAdventureId;
   active?: boolean;

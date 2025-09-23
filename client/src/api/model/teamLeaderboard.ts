@@ -4,11 +4,13 @@
  * FastAPI
  * OpenAPI spec version: 0.1.0
  */
+import type { TeamLeaderboardNumber } from './teamLeaderboardNumber';
 import type { TeamLeaderboardLastScoreAt } from './teamLeaderboardLastScoreAt';
 
 export interface TeamLeaderboard {
   name: string;
   id: number;
+  number: TeamLeaderboardNumber;
   score: number;
   checkpoints: number;
   last_score_at: TeamLeaderboardLastScoreAt;

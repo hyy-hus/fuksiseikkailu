@@ -5,6 +5,7 @@ import { ColumnDef, List } from "./List";
 import { t } from "i18next";
 import { Link } from "react-router-dom";
 import { useAdventure } from "@contexts/AdventureContext";
+import { encodeSlug } from "@utils/slug";
 
 interface ListProps {
     onChange?: (items: AdminTeam[]) => void;
@@ -42,6 +43,7 @@ export function TeamList(
         { header: "adventure", render: (a: AdminTeam) => <Link className="hover:underline" to={`/admin/adventures/${a.adventure.id}`}>{a.adventure.name}</Link> },
         { header: "name", render: (a: AdminTeam) => a.name },
         { header: "active", render: (a: AdminTeam) => a.active ? "true" : "false" },
+        { header: "active", render: (a: AdminTeam) => encodeSlug(`team-${a.id}`) },
     ]
 
     return (

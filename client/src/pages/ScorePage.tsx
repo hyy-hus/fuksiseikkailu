@@ -8,6 +8,8 @@ import { t } from "i18next";
 import { ReactNode, useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
+import { decodeSlug } from "@utils/slug";
+
 import toast from 'react-hot-toast';
 
 interface Option {
@@ -218,7 +220,8 @@ export function ScorePage() {
         )
     }
 
-    const team_id = parseInt(slug);
+    let decoded_slug = slug ? decodeSlug(slug) : "";
+    const team_id = parseInt(decoded_slug.split("-")[1]);
 
     const { selectedAdventure } = useAdventure();
     const { data } = useFetchCheckpoint(selectedAdventure?.id ?? 0, team_id);
@@ -228,7 +231,7 @@ export function ScorePage() {
     const teams = teams_query?.data?.data ?? [];
 
     const searchOptions = useMemo(() =>
-        teams.map(team => ({ key: team.id, value: `#${team.id} - ${team.name}` })),
+        teams.map(team => ({ key: team.id, value: `#${team.number} - ${team.name}` })),
         [teams]
     );
 
@@ -272,10 +275,15 @@ export function ScorePage() {
             {
                 loading: t("adding-score"),
                 success: t("score-added"),
-                error: (err: any) => err?.message ?? t("adding-score-failed"),
+                error: (err: any) => err.status == 409 ? t("no-duplicate-scores") : (err?.message ?? t("adding-score-failed")),
             }
         )
     }, [selectedAdventure, score, players, checkpoint, selectedTeam]);
+
+    const canAdd = selectedAdventure?.can_add_scores ?? true;
+    const isDuplicate = scores.some(
+          s => s.checkpoint?.id === checkpoint?.id && s.team?.id === selectedTeam?.id
+    );
 
     return (
         <div className="flex flex-col gap-4 items-center">
@@ -286,7 +294,7 @@ export function ScorePage() {
                 <SearchBar options={searchOptions} onSubmit={(v) => setSelectedTeamId(Number(v))} />
                 <p>
                     <span className="mr-2 font-bold">{t("team")}:</span>
-                    #{selectedTeam?.id ?? 0} - {selectedTeam?.name ?? (<span className="italic">{t("no-team-selected")}</span>)}
+                    #{selectedTeam?.number ?? 0} - {selectedTeam?.name ?? (<span className="italic">{t("no-team-selected")}</span>)}
                 </p>
                 {selectedTeam && (
                     <>
@@ -294,7 +302,13 @@ export function ScorePage() {
                         <RadioField label={t("players")} values={[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]} checked={players} onChange={setPlayers} />
                         <div className="flex w-full justify-center">
                             <Button variant="green" type="submit"
-                                disabled={score === 0 && players === 0 && scores.some(score => (score.checkpoint?.id === checkpoint?.id && score.team.id === selectedTeam.id))}
+                                 disabled={
+                                    !canAdd ||              // disable if cannot add
+                                    score === 0 ||          // or invalid score
+                                    players === 0 ||        // or invalid players
+                                    isDuplicate ||          // or duplicate exists
+                                    submitScore.isPending   // optional: disable while submitting
+                                  }
                             >
                                 {t("submit-score")}
                             </Button>

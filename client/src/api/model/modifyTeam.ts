@@ -4,8 +4,11 @@
  * FastAPI
  * OpenAPI spec version: 0.1.0
  */
+import type { ModifyTeamNumber } from './modifyTeamNumber';
 
 export interface ModifyTeam {
   /** Name of the team */
   name: string;
+  /** Number of the team */
+  number: ModifyTeamNumber;
 }

@@ -9,6 +9,7 @@ export interface PublicAdventure {
   name: string;
   year: number;
   ongoing: boolean;
+  can_add_scores: boolean;
   test: boolean;
   id: number;
 }

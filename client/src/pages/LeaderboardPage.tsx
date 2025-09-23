@@ -1,7 +1,7 @@
-import { useLeaderboard, useListAdminScores } from "@api/endpoints";
+import { useLeaderboard } from "@api/endpoints";
 import { useAdventure } from "@contexts/AdventureContext";
 import clsx from "clsx";
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode } from "react";
 import { useTranslation } from "react-i18next"
 
 interface GridProps {
@@ -61,24 +61,24 @@ function Grid({ rows, headers, rowIds, onRowClick, selectedRowId, colsClass }: G
 }
 
 
-const dateTimeFormat = new Intl.DateTimeFormat(undefined, {
-  hour: "2-digit", minute: "2-digit"
-})
+// const dateTimeFormat = new Intl.DateTimeFormat(undefined, {
+//   hour: "2-digit", minute: "2-digit"
+// })
 
-function formatDate(dateString: string | null | undefined): string {
-  if (!dateString) {
-    return "-"
-  }
+// function formatDate(dateString: string | null | undefined): string {
+//   if (!dateString) {
+//     return "-"
+//   }
 
 
-  try {
-    const date = new Date(dateString + "Z");
-    return dateTimeFormat.format(date)
-  } catch (error) {
-    console.error("Could not parse ", dateString)
-    return "0"
-  }
-}
+//   try {
+//     const date = new Date(dateString + "Z");
+//     return dateTimeFormat.format(date)
+//   } catch (error) {
+//     console.error("Could not parse ", dateString)
+//     return "0"
+//   }
+// }
 
 
 export function LeaderboardPage() {

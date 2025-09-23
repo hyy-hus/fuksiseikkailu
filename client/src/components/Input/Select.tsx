@@ -45,7 +45,7 @@ export function Select({
             </ListboxButton>
 
             {/* This is your fully stylable dropdown panel */}
-            <ListboxOptions className="absolute mt-1 max-h-60 w-full overflow-auto border-2 border-black bg-white py-1 dark:bg-fuksi-800">
+            <ListboxOptions className="absolute mt-1 max-h-60 w-full overflow-auto border-2 border-black bg-white py-1 dark:bg-fuksi-800 z-100 min-w-sm">
               {options.map((opt) => (
                 <ListboxOption
                   key={opt.key}
