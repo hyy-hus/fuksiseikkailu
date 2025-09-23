@@ -1,5 +1,5 @@
 import { t } from "i18next";
-import { useEffect, useState } from "react";
+import { isValidElement, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@components/Button";
 
@@ -91,7 +91,60 @@ export function List<T extends Record<string, any>>({ items, columns, defaultSor
         "auto",
     ].join(" ");
 
+
+  function nodeToPlainText(node: React.ReactNode): string {
+    if (node === null || node === undefined || node === false) return "";
+    if (typeof node === "string" || typeof node === "number" || typeof node === "boolean") {
+      return String(node);
+    }
+    if (Array.isArray(node)) {
+      return node.map(nodeToPlainText).join("");
+    }
+    // React element or fragment
+    if (isValidElement(node)) {
+      const props: any = (node as any).props ?? {};
+      // Prefer children text
+      if (props.children !== undefined) {
+        return nodeToPlainText(props.children);
+      }
+      // Fallback: try common text props
+      for (const k of ["value", "label", "title", "alt"]) {
+        if (props[k] !== undefined) return String(props[k]);
+      }
+      return "";
+    }
+    // Symbol, BigInt, etc.
+    try {
+      return String(node);
+    } catch {
+      return "";
+    }
+  }
+
+
+  function cellToTSV(value: unknown): string {
+    if (value === null || value === undefined) return "";
+    return String(value)
+      .replace(/\t/g, " ")       // no tabs inside cells
+      .replace(/\r?\n/g, " ")    // no newlines inside cells
+      .trim();
+  }
+
+    const tsvdata = useMemo(() => {
+        const headerRow = columns.map((c) => cellToTSV(t(c.header)));
+        const lines = items.map((item) =>
+            columns.map((col) => {
+                const rendered = col.render(item);
+                const plain = nodeToPlainText(rendered);
+                return cellToTSV(plain);
+            }).join("\t")
+        );
+
+        return [headerRow.join("\t"), ...lines].join("\n");
+    }, [columns, items]);
+
     return (
+        <>
         <div className="min-w-0 flex flex-col gap-4">
             <div className={`min-w-0 grid ${selected.size > 0 ? "grid-cols-[1fr_auto]" : "grid-cols-1"} gap-4 items-end`}>
                 <Input type="search" label={t("search")} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
@@ -113,9 +166,9 @@ export function List<T extends Record<string, any>>({ items, columns, defaultSor
                         />
                     </div>
 
-                    {columns.map((col) => (
+                    {columns.map((col, i) => (
                         <div
-                            key={col.header}
+                            key={`${col.header}-${i}`}
                             onClick={() => setSort(col.header)}
                             className="bg-fuksi-400 dark:bg-slate-800 font-bold px-4 py-2 flex items-center border-b-2 border-r-2 border-black dark:border-slate-700 cursor-pointer select-none"
                         >
@@ -171,8 +224,8 @@ export function List<T extends Record<string, any>>({ items, columns, defaultSor
                                         onChange={() => toggleSelect(key)}
                                     />
                                 </div>
-                                {columns.map((col) => (
-                                    <div key={col.header} className="py-2 px-4 flex items-center bg-inherit border-r-2 border-b-2"
+                                {columns.map((col, i) => (
+                                    <div key={`${col.header}-${i}`} className="py-2 px-4 flex items-center bg-inherit border-r-2 border-b-2"
                                         onClick={() => setSelected(new Set([key]))}
                                     >
                                         {col.render(item)}
@@ -191,6 +244,16 @@ export function List<T extends Record<string, any>>({ items, columns, defaultSor
                     }))}
             </div>
         </div>
+        <div>
+            <Button
+                variant="gray"
+                onClick={() => navigator.clipboard.writeText(tsvdata)}
+            >
+                {t("copy-tsv")}
+            </Button>
+
+        </div>
+    </>
     );
 }
 
