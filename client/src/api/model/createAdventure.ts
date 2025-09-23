@@ -9,5 +9,6 @@ export interface CreateAdventure {
   name: string;
   year: number;
   ongoing: boolean;
+  can_add_scores: boolean;
   test: boolean;
 }

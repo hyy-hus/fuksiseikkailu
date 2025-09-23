@@ -7,11 +7,13 @@
 import type { ModifyAdventureName } from './modifyAdventureName';
 import type { ModifyAdventureYear } from './modifyAdventureYear';
 import type { ModifyAdventureOngoing } from './modifyAdventureOngoing';
+import type { ModifyAdventureCanAddScores } from './modifyAdventureCanAddScores';
 import type { ModifyAdventureTest } from './modifyAdventureTest';
 
 export interface ModifyAdventure {
   name?: ModifyAdventureName;
   year?: ModifyAdventureYear;
   ongoing?: ModifyAdventureOngoing;
+  can_add_scores?: ModifyAdventureCanAddScores;
   test?: ModifyAdventureTest;
 }

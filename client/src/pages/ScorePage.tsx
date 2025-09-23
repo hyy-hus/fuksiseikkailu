@@ -280,6 +280,11 @@ export function ScorePage() {
         )
     }, [selectedAdventure, score, players, checkpoint, selectedTeam]);
 
+    const canAdd = selectedAdventure?.can_add_scores ?? true;
+    const isDuplicate = scores.some(
+          s => s.checkpoint?.id === checkpoint?.id && s.team?.id === selectedTeam?.id
+    );
+
     return (
         <div className="flex flex-col gap-4 items-center">
             <h2 className="font-bold text-lg">{t("checkpoint")} #{checkpoint?.number} - {checkpoint?.org_name}</h2>
@@ -297,7 +302,13 @@ export function ScorePage() {
                         <RadioField label={t("players")} values={[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]} checked={players} onChange={setPlayers} />
                         <div className="flex w-full justify-center">
                             <Button variant="green" type="submit"
-                                disabled={score === 0 && players === 0 && scores.some(score => (score.checkpoint?.id === checkpoint?.id && score.team.id === selectedTeam.id))}
+                                 disabled={
+                                    !canAdd ||              // disable if cannot add
+                                    score === 0 ||          // or invalid score
+                                    players === 0 ||        // or invalid players
+                                    isDuplicate ||          // or duplicate exists
+                                    submitScore.isPending   // optional: disable while submitting
+                                  }
                             >
                                 {t("submit-score")}
                             </Button>

@@ -3,6 +3,10 @@ import { createContext, useContext, useState, ReactNode } from "react";
 export interface Adventure {
     id: number;
     name: string;
+
+    ongoing: boolean;
+    can_add_scores: boolean;
+    test: boolean;
 }
 
 interface AdventureContextType {

@@ -45,7 +45,8 @@ export function ModifyAdventureForm({ adventureId }: AdventureFormProps) {
     const fields: FieldDef<ModifyAdventure>[] = [
         { key: "name", name: t("name"), type: "text" },
         { key: "year", name: t("year"), type: "number" },
-        { key: "ongoing", name: t("year"), type: "toggle" },
+        { key: "ongoing", name: t("ongoing"), type: "toggle" },
+        { key: "can_add_scores", name: t("can-add-scores"), type: "toggle" },
         { key: "test", name: t("test"), type: "toggle" },
     ]
 

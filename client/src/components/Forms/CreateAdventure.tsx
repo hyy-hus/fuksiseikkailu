@@ -22,6 +22,7 @@ export function CreateAdventureForm() {
         { key: "name", name: t("name"), type: "text" },
         { key: "year", name: t("year"), type: "number" },
         { key: "ongoing", name: t("ongoing"), type: "toggle" },
+        { key: "can_add_scores", name: t("can-add-scores"), type: "toggle" },
         { key: "test", name: t("test"), type: "toggle" },
     ]
 

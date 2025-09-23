@@ -38,6 +38,7 @@ export function AdventureList(
         { header: "year", render: (a: PublicAdventure) => a.year },
         { header: "name", render: (a: PublicAdventure) => a.name, width: "1fr" },
         { header: "ongoing", render: (a: PublicAdventure) => a.ongoing ? "true" : "false" },
+        { header: "can_add_scores", render: (a: PublicAdventure) => a.can_add_scores ? "true" : "false" },
         { header: "test", render: (a: PublicAdventure) => a.test ? "true" : "false" },
     ]
 
