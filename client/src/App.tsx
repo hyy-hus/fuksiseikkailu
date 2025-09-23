@@ -15,6 +15,7 @@ const PlaygroundPage = lazy(() => import("./pages/PlaygroundPage").then((m) => (
 
 const AdventuresPage = lazy(() => import("./pages/AdventuresPage").then((m) => ({ default: m.AdventuresPage })));
 const CheckpointsPage = lazy(() => import("./pages/CheckpointsPage").then((m) => ({ default: m.CheckpointsPage })));
+const UserCheckpointsPage = lazy(() => import("./pages/usersCheckpointPage").then((m) => ({ default: m.CheckpointsPage })));
 const TeamsPage = lazy(() => import("./pages/TeamsPage").then((m) => ({ default: m.TeamsPage })));
 
 const AdminMapPage = lazy(() => import("./pages/AdminMapPage").then((m) => ({ default: m.AdminMapPage })));
@@ -54,6 +55,7 @@ export function App() {
                     <Route path="news" element={<NewsPage />} />
                     <Route path="scores/:slug" element={<ScorePage />} />
                     <Route path="leaderboard" element={<LeaderboardPage />} />
+                    <Route path="checkpoints" element={<UserCheckpointsPage />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
                 <Route path="loading" element={<LoadingPage />} />
