@@ -24,6 +24,7 @@ export function CreateCheckpointForm() {
 
 
     const fields: FieldDef<CreateCheckpoint>[] = [
+        { key: "number", name: t("number"), type: "number" },
         { key: "org_name", name: t("org-name"), type: "text" },
         { key: "org_abbreviation", name: t("org-abbreviation"), type: "text" },
         { key: "category", name: t("category"), type: "text" },

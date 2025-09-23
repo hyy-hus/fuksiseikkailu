@@ -16,6 +16,7 @@ import { FaArrowRight } from "react-icons/fa";
 const adminCheckpointOptions = [
     { key: "skip", value: t("skip") },
 
+    { key: "number", value: t("number") },
     { key: "org_name", value: t("org_name") },
     { key: "org_abbreviation", value: t("org_abbreviation") },
     { key: "category", value: t("category") },
