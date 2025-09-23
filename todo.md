@@ -1,0 +1,9 @@
+- App settings
+- Leaderboard
+- Correct info in checkpoints
+- Fixed score-tool
+- Bulk-import teams
+- Team-authentication
+- Reporting
+- Admin dashboard
+- Live location

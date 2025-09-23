@@ -175,8 +175,11 @@ export function Layout({
                                         options={adventureOptions}
                                         onChange={(value: string | number) => {
                                             const id = Number(value);
-                                            const name = adventureOptions.find(o => Number(o.key) === id)?.value ?? "unknown";
-                                            setSelectedAdventure({ id, name });
+                                            const adv = data?.data?.find(a => a.id == id);
+                                            // const name = adventureOptions.find(o => Number(o.key) === id)?.value ?? "unknown";
+                                            if (adv) {
+                                                setSelectedAdventure(adv);
+                                            }
                                         }}
                                         value={selectedAdventure?.id ?? ""}
                                     />
