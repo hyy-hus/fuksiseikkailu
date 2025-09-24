@@ -136,7 +136,7 @@ function RadioField<T extends Primitive>({ values, checked, label, onChange }: R
     return (
         <div>
             <span>{label}:</span>
-            <fieldset className="flex gap-4">
+            <fieldset className="flex flex-wrap justify-center items-center gap-y-4 gap-4">
                 {
                     values.map((val: T) => (
                         <RadioBox key={val} value={val} name={`${label}-${val}`} checked={val === checked} onChange={onChange} />
