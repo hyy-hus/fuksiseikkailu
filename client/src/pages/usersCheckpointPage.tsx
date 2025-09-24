@@ -101,6 +101,8 @@ export function CheckpointsPage() {
 
     }, []);
 
+    console.log(selectedTeam);
+
 
     const { selectedAdventure } = useAdventure();
 
