@@ -160,37 +160,36 @@ export function UploadForm({
         }
     }
 
+    const CONCURRENCY = 4;
+
+    async function uploadOne(name: string, file: Blob, resized: Blob, thumb: Blob) {
+        setImageStatus(name, "uploading");
+
+        try {
+            await uploadPhoto.mutateAsync({ data: { original: file, resized: resized, thumb: thumb}});
+            setImageStatus(name, "finished");
+        } catch {
+            setImageStatus(name, "error");
+        }
+    }
+
     async function uploadImages() {
         const ready = images.filter(
             (img) => img.valid && img.resized && img.thumb
         );
 
-        const tasks = ready.map(async (img) => {
-            const { file, resized, thumb } = img;
-            setImageStatus(file.name, "uploading");
-
-            const formData = new FormData();
-            formData.append("original", file);
-            formData.append(
-                "resized",
-                resized!,
-                file.name.replace(/\.\w+$/, ".webp")
-            );
-            formData.append(
-                "thumb",
-                thumb!,
-                "thumb-" + file.name.replace(/\.\w+$/, ".webp")
-            );
-
-            console.log("Hei")
-
-            if (resized && thumb) {
-              uploadPhoto.mutateAsync( { data: { original: file, resized: resized, thumb: thumb } } );
+        let index = 0;
+        const workers = Array.from({ length: CONCURRENCY }, async () => {
+            while (index < ready.length) {
+                const i = index++;
+                const img = ready[i];
+                if (img.file && img.resized && img.thumb) {
+                    await uploadOne(img.file.name, img.file, img.resized, img.thumb);
+                }
             }
-        });
+        })
 
-        await Promise.all(tasks);
-
+        await Promise.all(workers);
         setUploaded(true);
     }
 
