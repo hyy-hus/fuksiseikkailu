@@ -18,6 +18,11 @@ class Settings(BaseSettings):
 
     SECRET: str
 
+    R2_ACCESS_KEY: str
+    R2_SECRET_KEY: str
+    R2_ENDPOINT: str
+    R2_BUCKET: str
+
     class Config:
         env_file = ".env"
 

@@ -33,12 +33,15 @@ import type {
   AllocateCheckpointAreasParams,
   AllocateResult,
   BodyLoginAuthLoginPost,
+  BodyUploadPhoto,
+  BodyUploadPhotos,
   CreateAdventure,
   CreateCheckpoint,
   CreateNews,
   CreatePlayer,
   CreatePushSubscription,
   CreateScore,
+  CreateTag,
   CreateTeam,
   CreateUser,
   DeleteResponse,
@@ -47,6 +50,7 @@ import type {
   HTTPValidationError,
   ImportPayload,
   ImportResult,
+  ListPhotosParams,
   ListUsersUsersGetParams,
   ModifyAdventure,
   ModifyAppSettings,
@@ -60,7 +64,9 @@ import type {
   PublicAppSettings,
   PublicCheckpoint,
   PublicNews,
+  PublicPhoto,
   PublicScore,
+  PublicTag,
   PublicTeam,
   PublicUser,
   TeamLeaderboard,
@@ -2181,6 +2187,73 @@ export const useBulkCreateTeams = <TError = HTTPValidationError,
     }
     
 /**
+ * Adds or updates teams in bulk
+ * @summary Update / Add many teams at once
+ */
+export const importTeams = (
+    adventureId: number,
+    importPayload: ImportPayload,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<ImportResult | void>(
+      {url: `/adventures/${adventureId}/teams/import`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: importPayload, signal
+    },
+      );
+    }
+  
+
+
+export const getImportTeamsMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importTeams>>, TError,{adventureId: number;data: ImportPayload}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof importTeams>>, TError,{adventureId: number;data: ImportPayload}, TContext> => {
+
+const mutationKey = ['importTeams'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof importTeams>>, {adventureId: number;data: ImportPayload}> = (props) => {
+          const {adventureId,data} = props ?? {};
+
+          return  importTeams(adventureId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ImportTeamsMutationResult = NonNullable<Awaited<ReturnType<typeof importTeams>>>
+    export type ImportTeamsMutationBody = ImportPayload
+    export type ImportTeamsMutationError = HTTPValidationError
+
+    /**
+ * @summary Update / Add many teams at once
+ */
+export const useImportTeams = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importTeams>>, TError,{adventureId: number;data: ImportPayload}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof importTeams>>,
+        TError,
+        {adventureId: number;data: ImportPayload},
+        TContext
+      > => {
+
+      const mutationOptions = getImportTeamsMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
  * Returns admin level list of all active teams for the specified adventure.
  * @summary List all teams in an adventure
  */
@@ -2269,6 +2342,69 @@ export function useListAdminTeams<TData = Awaited<ReturnType<typeof listAdminTea
 
 
 
+/**
+ * Delete teams in an adventure
+ * @summary Delete teams
+ */
+export const deleteTeams = (
+    adventureId: number,
+ ) => {
+      
+      
+      return customInstance<DeleteResponse>(
+      {url: `/adventures/${adventureId}/teams/admin/`, method: 'DELETE'
+    },
+      );
+    }
+  
+
+
+export const getDeleteTeamsMutationOptions = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTeams>>, TError,{adventureId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteTeams>>, TError,{adventureId: number}, TContext> => {
+
+const mutationKey = ['deleteTeams'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteTeams>>, {adventureId: number}> = (props) => {
+          const {adventureId} = props ?? {};
+
+          return  deleteTeams(adventureId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteTeamsMutationResult = NonNullable<Awaited<ReturnType<typeof deleteTeams>>>
+    
+    export type DeleteTeamsMutationError = void | HTTPValidationError
+
+    /**
+ * @summary Delete teams
+ */
+export const useDeleteTeams = <TError = void | HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTeams>>, TError,{adventureId: number}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteTeams>>,
+        TError,
+        {adventureId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteTeamsMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
 /**
  * Fetches a team in an adventure specified by its id
  * @summary Fetch a single team in an adventure
@@ -4399,3 +4535,1117 @@ export function useFetchPlayer<TData = Awaited<ReturnType<typeof fetchPlayer>>, 
 
 
 
+/**
+ * @summary Get Upload Url
+ */
+export const getUploadUrl = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<unknown>(
+      {url: `/photos/upload-url`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetUploadUrlQueryKey = () => {
+    return [`/photos/upload-url`] as const;
+    }
+
+    
+export const getGetUploadUrlQueryOptions = <TData = Awaited<ReturnType<typeof getUploadUrl>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUploadUrl>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetUploadUrlQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUploadUrl>>> = ({ signal }) => getUploadUrl(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUploadUrl>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetUploadUrlQueryResult = NonNullable<Awaited<ReturnType<typeof getUploadUrl>>>
+export type GetUploadUrlQueryError = unknown
+
+
+export function useGetUploadUrl<TData = Awaited<ReturnType<typeof getUploadUrl>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUploadUrl>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUploadUrl>>,
+          TError,
+          Awaited<ReturnType<typeof getUploadUrl>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetUploadUrl<TData = Awaited<ReturnType<typeof getUploadUrl>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUploadUrl>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUploadUrl>>,
+          TError,
+          Awaited<ReturnType<typeof getUploadUrl>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetUploadUrl<TData = Awaited<ReturnType<typeof getUploadUrl>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUploadUrl>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get Upload Url
+ */
+
+export function useGetUploadUrl<TData = Awaited<ReturnType<typeof getUploadUrl>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUploadUrl>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetUploadUrlQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary Upload File
+ */
+export const uploadPhoto = (
+    bodyUploadPhoto: BodyUploadPhoto,
+ signal?: AbortSignal
+) => {
+      
+      const formData = new FormData();
+formData.append(`file`, bodyUploadPhoto.file)
+
+      return customInstance<unknown>(
+      {url: `/photos/upload-file`, method: 'POST',
+      headers: {'Content-Type': 'multipart/form-data', },
+       data: formData, signal
+    },
+      );
+    }
+  
+
+
+export const getUploadPhotoMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof uploadPhoto>>, TError,{data: BodyUploadPhoto}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof uploadPhoto>>, TError,{data: BodyUploadPhoto}, TContext> => {
+
+const mutationKey = ['uploadPhoto'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof uploadPhoto>>, {data: BodyUploadPhoto}> = (props) => {
+          const {data} = props ?? {};
+
+          return  uploadPhoto(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UploadPhotoMutationResult = NonNullable<Awaited<ReturnType<typeof uploadPhoto>>>
+    export type UploadPhotoMutationBody = BodyUploadPhoto
+    export type UploadPhotoMutationError = HTTPValidationError
+
+    /**
+ * @summary Upload File
+ */
+export const useUploadPhoto = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof uploadPhoto>>, TError,{data: BodyUploadPhoto}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof uploadPhoto>>,
+        TError,
+        {data: BodyUploadPhoto},
+        TContext
+      > => {
+
+      const mutationOptions = getUploadPhotoMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Upload Photo
+ */
+export const uploadPhotos = (
+    bodyUploadPhotos: BodyUploadPhotos,
+ signal?: AbortSignal
+) => {
+      
+      const formData = new FormData();
+formData.append(`original`, bodyUploadPhotos.original)
+formData.append(`resized`, bodyUploadPhotos.resized)
+formData.append(`thumb`, bodyUploadPhotos.thumb)
+
+      return customInstance<unknown>(
+      {url: `/photos/photos`, method: 'POST',
+      headers: {'Content-Type': 'multipart/form-data', },
+       data: formData, signal
+    },
+      );
+    }
+  
+
+
+export const getUploadPhotosMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof uploadPhotos>>, TError,{data: BodyUploadPhotos}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof uploadPhotos>>, TError,{data: BodyUploadPhotos}, TContext> => {
+
+const mutationKey = ['uploadPhotos'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof uploadPhotos>>, {data: BodyUploadPhotos}> = (props) => {
+          const {data} = props ?? {};
+
+          return  uploadPhotos(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UploadPhotosMutationResult = NonNullable<Awaited<ReturnType<typeof uploadPhotos>>>
+    export type UploadPhotosMutationBody = BodyUploadPhotos
+    export type UploadPhotosMutationError = HTTPValidationError
+
+    /**
+ * @summary Upload Photo
+ */
+export const useUploadPhotos = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof uploadPhotos>>, TError,{data: BodyUploadPhotos}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof uploadPhotos>>,
+        TError,
+        {data: BodyUploadPhotos},
+        TContext
+      > => {
+
+      const mutationOptions = getUploadPhotosMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary List Photos
+ */
+export const listPhotos = (
+    params?: ListPhotosParams,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicPhoto[]>(
+      {url: `/photos/photos`, method: 'GET',
+        params, signal
+    },
+      );
+    }
+  
+
+export const getListPhotosQueryKey = (params?: ListPhotosParams,) => {
+    return [`/photos/photos`, ...(params ? [params]: [])] as const;
+    }
+
+    
+export const getListPhotosQueryOptions = <TData = Awaited<ReturnType<typeof listPhotos>>, TError = HTTPValidationError>(params?: ListPhotosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListPhotosQueryKey(params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listPhotos>>> = ({ signal }) => listPhotos(params, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListPhotosQueryResult = NonNullable<Awaited<ReturnType<typeof listPhotos>>>
+export type ListPhotosQueryError = HTTPValidationError
+
+
+export function useListPhotos<TData = Awaited<ReturnType<typeof listPhotos>>, TError = HTTPValidationError>(
+ params: undefined |  ListPhotosParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listPhotos>>,
+          TError,
+          Awaited<ReturnType<typeof listPhotos>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListPhotos<TData = Awaited<ReturnType<typeof listPhotos>>, TError = HTTPValidationError>(
+ params?: ListPhotosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listPhotos>>,
+          TError,
+          Awaited<ReturnType<typeof listPhotos>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListPhotos<TData = Awaited<ReturnType<typeof listPhotos>>, TError = HTTPValidationError>(
+ params?: ListPhotosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List Photos
+ */
+
+export function useListPhotos<TData = Awaited<ReturnType<typeof listPhotos>>, TError = HTTPValidationError>(
+ params?: ListPhotosParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPhotos>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListPhotosQueryOptions(params,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary Refresh Photos
+ */
+export const refreshPhotos = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<unknown>(
+      {url: `/photos/photos/refresh`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getRefreshPhotosQueryKey = () => {
+    return [`/photos/photos/refresh`] as const;
+    }
+
+    
+export const getRefreshPhotosQueryOptions = <TData = Awaited<ReturnType<typeof refreshPhotos>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof refreshPhotos>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getRefreshPhotosQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof refreshPhotos>>> = ({ signal }) => refreshPhotos(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof refreshPhotos>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type RefreshPhotosQueryResult = NonNullable<Awaited<ReturnType<typeof refreshPhotos>>>
+export type RefreshPhotosQueryError = unknown
+
+
+export function useRefreshPhotos<TData = Awaited<ReturnType<typeof refreshPhotos>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof refreshPhotos>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof refreshPhotos>>,
+          TError,
+          Awaited<ReturnType<typeof refreshPhotos>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRefreshPhotos<TData = Awaited<ReturnType<typeof refreshPhotos>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof refreshPhotos>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof refreshPhotos>>,
+          TError,
+          Awaited<ReturnType<typeof refreshPhotos>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRefreshPhotos<TData = Awaited<ReturnType<typeof refreshPhotos>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof refreshPhotos>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Refresh Photos
+ */
+
+export function useRefreshPhotos<TData = Awaited<ReturnType<typeof refreshPhotos>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof refreshPhotos>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getRefreshPhotosQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary Get Photo
+ */
+export const fetchPhoto = (
+    photoId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicPhoto>(
+      {url: `/photos/photos/${photoId}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getFetchPhotoQueryKey = (photoId: number,) => {
+    return [`/photos/photos/${photoId}`] as const;
+    }
+
+    
+export const getFetchPhotoQueryOptions = <TData = Awaited<ReturnType<typeof fetchPhoto>>, TError = HTTPValidationError>(photoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchPhoto>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getFetchPhotoQueryKey(photoId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof fetchPhoto>>> = ({ signal }) => fetchPhoto(photoId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(photoId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof fetchPhoto>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type FetchPhotoQueryResult = NonNullable<Awaited<ReturnType<typeof fetchPhoto>>>
+export type FetchPhotoQueryError = HTTPValidationError
+
+
+export function useFetchPhoto<TData = Awaited<ReturnType<typeof fetchPhoto>>, TError = HTTPValidationError>(
+ photoId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchPhoto>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchPhoto>>,
+          TError,
+          Awaited<ReturnType<typeof fetchPhoto>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchPhoto<TData = Awaited<ReturnType<typeof fetchPhoto>>, TError = HTTPValidationError>(
+ photoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchPhoto>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchPhoto>>,
+          TError,
+          Awaited<ReturnType<typeof fetchPhoto>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchPhoto<TData = Awaited<ReturnType<typeof fetchPhoto>>, TError = HTTPValidationError>(
+ photoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchPhoto>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get Photo
+ */
+
+export function useFetchPhoto<TData = Awaited<ReturnType<typeof fetchPhoto>>, TError = HTTPValidationError>(
+ photoId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchPhoto>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getFetchPhotoQueryOptions(photoId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary Add Tag To Photo
+ */
+export const tagPhoto = (
+    photoId: number,
+    tagId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicPhoto>(
+      {url: `/photos/photos/${photoId}/tags/${tagId}`, method: 'POST', signal
+    },
+      );
+    }
+  
+
+
+export const getTagPhotoMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof tagPhoto>>, TError,{photoId: number;tagId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof tagPhoto>>, TError,{photoId: number;tagId: number}, TContext> => {
+
+const mutationKey = ['tagPhoto'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof tagPhoto>>, {photoId: number;tagId: number}> = (props) => {
+          const {photoId,tagId} = props ?? {};
+
+          return  tagPhoto(photoId,tagId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type TagPhotoMutationResult = NonNullable<Awaited<ReturnType<typeof tagPhoto>>>
+    
+    export type TagPhotoMutationError = HTTPValidationError
+
+    /**
+ * @summary Add Tag To Photo
+ */
+export const useTagPhoto = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof tagPhoto>>, TError,{photoId: number;tagId: number}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof tagPhoto>>,
+        TError,
+        {photoId: number;tagId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getTagPhotoMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Set Tags
+ */
+export const setAllTags = (
+    photoId: number,
+    setAllTagsBody: number[],
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicPhoto>(
+      {url: `/photos/photos/${photoId}/tags`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: setAllTagsBody, signal
+    },
+      );
+    }
+  
+
+
+export const getSetAllTagsMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setAllTags>>, TError,{photoId: number;data: number[]}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof setAllTags>>, TError,{photoId: number;data: number[]}, TContext> => {
+
+const mutationKey = ['setAllTags'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setAllTags>>, {photoId: number;data: number[]}> = (props) => {
+          const {photoId,data} = props ?? {};
+
+          return  setAllTags(photoId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SetAllTagsMutationResult = NonNullable<Awaited<ReturnType<typeof setAllTags>>>
+    export type SetAllTagsMutationBody = number[]
+    export type SetAllTagsMutationError = HTTPValidationError
+
+    /**
+ * @summary Set Tags
+ */
+export const useSetAllTags = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setAllTags>>, TError,{photoId: number;data: number[]}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof setAllTags>>,
+        TError,
+        {photoId: number;data: number[]},
+        TContext
+      > => {
+
+      const mutationOptions = getSetAllTagsMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Flag Image
+ */
+export const flagPhoto = (
+    photoId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<unknown>(
+      {url: `/photos/photos/${photoId}/flag`, method: 'POST', signal
+    },
+      );
+    }
+  
+
+
+export const getFlagPhotoMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof flagPhoto>>, TError,{photoId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof flagPhoto>>, TError,{photoId: number}, TContext> => {
+
+const mutationKey = ['flagPhoto'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof flagPhoto>>, {photoId: number}> = (props) => {
+          const {photoId} = props ?? {};
+
+          return  flagPhoto(photoId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type FlagPhotoMutationResult = NonNullable<Awaited<ReturnType<typeof flagPhoto>>>
+    
+    export type FlagPhotoMutationError = HTTPValidationError
+
+    /**
+ * @summary Flag Image
+ */
+export const useFlagPhoto = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof flagPhoto>>, TError,{photoId: number}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof flagPhoto>>,
+        TError,
+        {photoId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getFlagPhotoMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary View Photo
+ */
+export const viewPhoto = (
+    photoId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicPhoto>(
+      {url: `/photos/views/${photoId}`, method: 'POST', signal
+    },
+      );
+    }
+  
+
+
+export const getViewPhotoMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof viewPhoto>>, TError,{photoId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof viewPhoto>>, TError,{photoId: number}, TContext> => {
+
+const mutationKey = ['viewPhoto'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof viewPhoto>>, {photoId: number}> = (props) => {
+          const {photoId} = props ?? {};
+
+          return  viewPhoto(photoId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ViewPhotoMutationResult = NonNullable<Awaited<ReturnType<typeof viewPhoto>>>
+    
+    export type ViewPhotoMutationError = HTTPValidationError
+
+    /**
+ * @summary View Photo
+ */
+export const useViewPhoto = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof viewPhoto>>, TError,{photoId: number}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof viewPhoto>>,
+        TError,
+        {photoId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getViewPhotoMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary Like Photo
+ */
+export const likePhoto = (
+    photoId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicPhoto>(
+      {url: `/photos/likes/${photoId}`, method: 'POST', signal
+    },
+      );
+    }
+  
+
+
+export const getLikePhotoMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof likePhoto>>, TError,{photoId: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof likePhoto>>, TError,{photoId: number}, TContext> => {
+
+const mutationKey = ['likePhoto'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof likePhoto>>, {photoId: number}> = (props) => {
+          const {photoId} = props ?? {};
+
+          return  likePhoto(photoId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type LikePhotoMutationResult = NonNullable<Awaited<ReturnType<typeof likePhoto>>>
+    
+    export type LikePhotoMutationError = HTTPValidationError
+
+    /**
+ * @summary Like Photo
+ */
+export const useLikePhoto = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof likePhoto>>, TError,{photoId: number}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof likePhoto>>,
+        TError,
+        {photoId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getLikePhotoMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary View Tags
+ */
+export const listTags = (
+    
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicTag[]>(
+      {url: `/photos/tags`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getListTagsQueryKey = () => {
+    return [`/photos/tags`] as const;
+    }
+
+    
+export const getListTagsQueryOptions = <TData = Awaited<ReturnType<typeof listTags>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTags>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListTagsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listTags>>> = ({ signal }) => listTags(signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listTags>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListTagsQueryResult = NonNullable<Awaited<ReturnType<typeof listTags>>>
+export type ListTagsQueryError = unknown
+
+
+export function useListTags<TData = Awaited<ReturnType<typeof listTags>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTags>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listTags>>,
+          TError,
+          Awaited<ReturnType<typeof listTags>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListTags<TData = Awaited<ReturnType<typeof listTags>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTags>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listTags>>,
+          TError,
+          Awaited<ReturnType<typeof listTags>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListTags<TData = Awaited<ReturnType<typeof listTags>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTags>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary View Tags
+ */
+
+export function useListTags<TData = Awaited<ReturnType<typeof listTags>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTags>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListTagsQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary Create Tag
+ */
+export const createTag = (
+    createTag: CreateTag,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicTag>(
+      {url: `/photos/tags`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createTag, signal
+    },
+      );
+    }
+  
+
+
+export const getCreateTagMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTag>>, TError,{data: CreateTag}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof createTag>>, TError,{data: CreateTag}, TContext> => {
+
+const mutationKey = ['createTag'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createTag>>, {data: CreateTag}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createTag(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateTagMutationResult = NonNullable<Awaited<ReturnType<typeof createTag>>>
+    export type CreateTagMutationBody = CreateTag
+    export type CreateTagMutationError = HTTPValidationError
+
+    /**
+ * @summary Create Tag
+ */
+export const useCreateTag = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTag>>, TError,{data: CreateTag}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createTag>>,
+        TError,
+        {data: CreateTag},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateTagMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
+/**
+ * @summary View Tag
+ */
+export const fetchTag = (
+    tagId: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<PublicTag>(
+      {url: `/photos/tags/${tagId}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getFetchTagQueryKey = (tagId: number,) => {
+    return [`/photos/tags/${tagId}`] as const;
+    }
+
+    
+export const getFetchTagQueryOptions = <TData = Awaited<ReturnType<typeof fetchTag>>, TError = HTTPValidationError>(tagId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchTag>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getFetchTagQueryKey(tagId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof fetchTag>>> = ({ signal }) => fetchTag(tagId, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(tagId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof fetchTag>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type FetchTagQueryResult = NonNullable<Awaited<ReturnType<typeof fetchTag>>>
+export type FetchTagQueryError = HTTPValidationError
+
+
+export function useFetchTag<TData = Awaited<ReturnType<typeof fetchTag>>, TError = HTTPValidationError>(
+ tagId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchTag>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchTag>>,
+          TError,
+          Awaited<ReturnType<typeof fetchTag>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchTag<TData = Awaited<ReturnType<typeof fetchTag>>, TError = HTTPValidationError>(
+ tagId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchTag>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof fetchTag>>,
+          TError,
+          Awaited<ReturnType<typeof fetchTag>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFetchTag<TData = Awaited<ReturnType<typeof fetchTag>>, TError = HTTPValidationError>(
+ tagId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchTag>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary View Tag
+ */
+
+export function useFetchTag<TData = Awaited<ReturnType<typeof fetchTag>>, TError = HTTPValidationError>(
+ tagId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof fetchTag>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getFetchTagQueryOptions(tagId,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary Update Tag
+ */
+export const modifyTag = (
+    tagId: number,
+    createTag: CreateTag,
+ ) => {
+      
+      
+      return customInstance<PublicTag>(
+      {url: `/photos/tags/${tagId}`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: createTag
+    },
+      );
+    }
+  
+
+
+export const getModifyTagMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modifyTag>>, TError,{tagId: number;data: CreateTag}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof modifyTag>>, TError,{tagId: number;data: CreateTag}, TContext> => {
+
+const mutationKey = ['modifyTag'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof modifyTag>>, {tagId: number;data: CreateTag}> = (props) => {
+          const {tagId,data} = props ?? {};
+
+          return  modifyTag(tagId,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ModifyTagMutationResult = NonNullable<Awaited<ReturnType<typeof modifyTag>>>
+    export type ModifyTagMutationBody = CreateTag
+    export type ModifyTagMutationError = HTTPValidationError
+
+    /**
+ * @summary Update Tag
+ */
+export const useModifyTag = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modifyTag>>, TError,{tagId: number;data: CreateTag}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof modifyTag>>,
+        TError,
+        {tagId: number;data: CreateTag},
+        TContext
+      > => {
+
+      const mutationOptions = getModifyTagMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    
