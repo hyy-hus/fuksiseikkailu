@@ -107,7 +107,7 @@ export function CheckpointsPage() {
     const { data } = useListCheckpoints(selectedAdventure?.id ?? 0);
     const checkpoints = data?.data ?? [];
 
-    const filtered = selectedTeam ? checkpoints.filter(cp => cp.id == selectedTeam) : checkpoints;
+    // const filtered = selectedTeam ? checkpoints.filter(cp => cp.id == selectedTeam) : checkpoints;
 
     const searchOptions = useMemo(() =>
         checkpoints.map(team => ({ key: team.id, value: `#${team.number} - ${team.org_name} (${team.org_abbreviation})` })),
