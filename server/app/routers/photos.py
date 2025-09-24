@@ -63,8 +63,16 @@ async def test():
     s3_client.head_bucket(Bucket=R2_BUCKET)  # should not raise
 
 
+from boto3.s3.transfer import TransferConfig
+
+transfer_cfg = TransferConfig(
+    multipart_threshold=5 * 1024 * 1024,  # 5MB
+    multipart_chunksize=5 * 1024 * 1024,
+    max_concurrency=2,  # tune if CPU/IO allows
+)
+
 @router.post("/photos", operation_id="uploadPhotos")
-async def upload_photo(
+def upload_photo(
     session: SessionDep,
     original: UploadFile = File(...),
     resized: UploadFile = File(...),
@@ -72,29 +80,27 @@ async def upload_photo(
 ):
     key = f"{uuid4()}-{original.filename}"
 
-    original_contents = await original.read()
-    resized_contents = await resized.read()
-    thumb_contents = await thumb.read()
-
-    s3_client.put_object(
+    # stream: no .read(), pass file-like objects
+    s3_client.upload_fileobj(
+        Fileobj=original.file,
         Bucket=R2_BUCKET,
         Key=f"orig/{key}",
-        Body=original_contents,
-        ContentType=original.content_type,
+        ExtraArgs={"ContentType": original.content_type},
+        Config=transfer_cfg,
     )
-
-    s3_client.put_object(
+    s3_client.upload_fileobj(
+        Fileobj=resized.file,
         Bucket=R2_BUCKET,
         Key=f"resized/{key}",
-        Body=resized_contents,
-        ContentType=resized.content_type,
+        ExtraArgs={"ContentType": resized.content_type},
+        Config=transfer_cfg,
     )
-
-    s3_client.put_object(
+    s3_client.upload_fileobj(
+        Fileobj=thumb.file,
         Bucket=R2_BUCKET,
         Key=f"thumb/{key}",
-        Body=thumb_contents,
-        ContentType=thumb.content_type,
+        ExtraArgs={"ContentType": thumb.content_type},
+        Config=transfer_cfg,
     )
 
     photo = DBPhoto(
@@ -103,13 +109,11 @@ async def upload_photo(
         original_url=generate_presigned_view_url(f"orig/{key}"),
         resized_url=generate_presigned_view_url(f"resized/{key}"),
         thumb_url=generate_presigned_view_url(f"thumb/{key}"),
-        url_expires_at=datetime.utcnow() + timedelta(seconds=60 * 60),
+        url_expires_at=datetime.utcnow() + timedelta(hours=1),
     )
-
     session.add(photo)
     session.commit()
     session.refresh(photo)
-
     return {"id": photo.id, "key": photo.key}
 
 
