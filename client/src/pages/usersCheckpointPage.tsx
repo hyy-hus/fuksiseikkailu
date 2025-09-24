@@ -2,81 +2,53 @@ import { useListCheckpoints } from "@api/endpoints";
 import { Button } from "@components/Button";
 import { Input } from "@components/Input";
 import { useAdventure } from "@contexts/AdventureContext";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next"
 import { t } from "i18next";
 import { FaAngleDown, FaAngleUp, FaExternalLinkAlt } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
-interface Option {
-    key: string | number;
-    value: string;
-}
 interface SearchBarProps {
-    options?: Option[];
-    onSubmit?: (key: string | number) => void;
+    onSubmit?: () => void;
+    onChange?: (value: string) => void;
+    value: string;
 }
 
 function SearchBar({
-    options = [],
     onSubmit,
+    onChange,
+    value
 }: SearchBarProps) {
-    const [searchQuery, setSearchQuery] = useState<string>("");
-    const [focusedIndex, setFocusedIndex] = useState<number>(-1);
-
-    const searchResults = options.filter(option => searchQuery.trim() !== "" && option.value.toLowerCase().includes(searchQuery.toLowerCase()))
-
-    function handleSelect(key: string | number) {
-        setSearchQuery("");
-        onSubmit?.(key);
-    }
 
     return (
-        <div className="relative grid w-full grid-cols-[1fr_auto] items-end gap-2" onSubmit={(e) => {
-            e.preventDefault();
-            if (searchResults.length > 0) {
-                const targetIndex = focusedIndex >= 0 ? focusedIndex : 0;
-                handleSelect(searchResults[targetIndex].key);
-            }
-        }}>
-            <div onKeyDown={(e) => {
-                if (e.key === "ArrowDown") {
-                    e.preventDefault();
-                    setFocusedIndex((prev) => Math.min(prev + 1, searchResults.length - 1));
-                } else if (e.key === "ArrowUp") {
-                    e.preventDefault();
-                    setFocusedIndex((prev) => Math.max(prev - 1, 0));
-                } else if (e.key === "Enter" && focusedIndex >= 0) {
-                    e.preventDefault();
-                    handleSelect(searchResults[focusedIndex].key);
-                }
-            }}>
-                <Input type="search" label={t("search")} placeholder={`${t("example-abbr.")} Kasvatustieteen Karkurit`}
-                    value={searchQuery}
-                    onChange={(e) => {
-                        setSearchQuery(e.target.value)
-                        setFocusedIndex(-1);
-                    }}
-                />
-            </div>
-            <Button type="submit" className="h-9/10" variant="green">{t("search")}</Button>
-            {searchResults.length > 0 && (
-                <ul className="absolute top-full left-0 z-1 mt-2 max-h-60 overflow-y-auto shadow-lg w-full bg-zinc-300 dark:bg-slate-800 border-2 dark:border-slate-700">
-                    {
-                        searchResults.map((result, index) => (
-                            <li className={`py-2 px-4 dark:hover:bg-slate-700 cursor-pointer ${index === focusedIndex
-                                ? "bg-zinc-200 dark:bg-slate-700"
-                                : "hover:bg-zinc-100 dark:hover:bg-slate-700"
-                                }`}
-                                key={result.key}
-                                onMouseDown={() => handleSelect(result.key)}
-                            >
-                                {result.value}
-                            </li>
-                        ))
-                    }
-                </ul>
-            )}
-        </div>
+      <form
+  className="relative grid w-full min-w-0 grid-cols-[1fr_auto] grid-rows-1 items-stretch gap-2 overflow-x-hidden"
+  onSubmit={(e) => {
+    e.preventDefault();
+    onSubmit?.();
+  }}
+>
+  <div
+    className="min-w-0" /* allow the input column to shrink */
+  >
+    <Input
+      type="search"
+      label={t("search")}
+      placeholder={`${t("example-abbr.")} Akateemiset seikkailijat`}
+      value={value}
+      onChange={(e) => {
+        onChange?.(e.target.value);
+      }}
+      className="h-full w-full min-w-0" /* makes the actual input shrinkable */
+    />
+  </div>
+
+  <div className="flex items-end">
+  <Button type="submit" className="h-13 shrink-0" variant="green">
+    {t("search")}
+  </Button>
+</div>
+</form>
     )
 }
 
@@ -84,7 +56,7 @@ export function CheckpointsPage() {
     const { t } = useTranslation();
 
     const [open, setOpen] = useState<Set<number>>(() => new Set<number>());
-    const [selectedTeam, setSelectedTeamId] = useState<number|undefined>(undefined);
+    const [searchQuery, setSearchQuery] = useState<string>("");
 
     const toggleOpen = useCallback((id: number) => {
         setOpen((prev) => {
@@ -101,34 +73,39 @@ export function CheckpointsPage() {
 
     }, []);
 
-    console.log(selectedTeam);
-
 
     const { selectedAdventure } = useAdventure();
 
     const { data } = useListCheckpoints(selectedAdventure?.id ?? 0);
     const checkpoints = data?.data ?? [];
 
-    // const filtered = selectedTeam ? checkpoints.filter(cp => cp.id == selectedTeam) : checkpoints;
+    const filtered = searchQuery !== "" ? checkpoints.filter(
+      cp => (`${cp.number} - ${cp.org_name} - ${cp.org_abbreviation}`.toLowerCase()).includes(searchQuery.toLowerCase())) : checkpoints
 
-    const searchOptions = useMemo(() =>
-        checkpoints.map(team => ({ key: team.id, value: `#${team.number} - ${team.org_name} (${team.org_abbreviation})` })),
-        [checkpoints]
-    );
+    const sorted = filtered.sort((a, b) => (a.number ?? 0) < (b.number ?? 0) ? -1 : 1);
+
+    function openFirst() {
+      if (sorted.length > 0) {
+        toggleOpen(sorted[0].id);
+      }
+    }
 
     return (
         <div className="flex flex-col gap-4">
             <h2 className="text-xl font-bold">{t("checkpoints")}</h2>
-                <SearchBar options={searchOptions} onSubmit={(v) => setSelectedTeamId(Number(v))} />
+                <SearchBar onSubmit={() => openFirst()}
+                  onChange={(value: string) => setSearchQuery(value)}
+                  value={searchQuery}
+                   />
             <ul className="flex flex-col gap-4">
                 {
-                    checkpoints.sort((a, b) => (a.number ?? 0) > (b.number ?? 0) ? -1 : 1).map((cp) => {
+                    sorted.map((cp) => {
                         const isOpen = open.has(cp.id);
                         return (
                             <li key={cp.id} className={`border-2 "border-black"`}
                                 onClick={() => toggleOpen(cp.id)}>
                                 <div className={`p-4 bg-fuksi-400 dark:bg-slate-800 grid grid-cols-[1fr_auto]`}>
-                                    <h4>#{cp.number} - {cp.org_name} ({cp.org_abbreviation})</h4>
+                                    <h4><span className="font-bold">#{cp.number}</span> - {cp.org_name} {cp.org_abbreviation ? <>({cp.org_abbreviation})</> : <></>}</h4>
                                     {isOpen ? (
                                         <FaAngleUp />) : (
                                         <FaAngleDown />)
@@ -136,15 +113,24 @@ export function CheckpointsPage() {
                                 </div>
                                 {open.has(cp.id) && (
                                     <div className="p-4 border-t-2 border-black dark:border-slate-600 bg-fuksi-200 flex flex-col gap-3">
-                                        <p>{t(cp.category)}</p>
+                                        <p className="italic">{t(cp.category)}</p>
                                         <p>{cp.checkpoint_description}</p>
                                         <p>{cp.org_description}</p>
                                         <p>
+                                          <Link to={`/map/${cp.id}`}>
+                                            <Button>{t("view-at-map")}</Button>
+                                          </Link>
+                                        </p>
+                                        {cp.org_link && (
+                                        <p>
+                                          <Link to={cp.org_link}>
                                           <span className="flex gap-2 align-center">
                                               <FaExternalLinkAlt />
                                               <span>{t("org-link")}</span>
                                           </span>
+                                        </Link>
                                         </p>
+                                        )}
                                     </div>
                                 )
                                 }
