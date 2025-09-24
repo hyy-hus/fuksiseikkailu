@@ -25,6 +25,7 @@ const NewsPage = lazy(() => import("./pages/NewsPage").then((m) => ({ default: m
 
 const ScorePage = lazy(() => import("./pages/ScorePage").then((m) => ({ default: m.ScorePage })));
 const LeaderboardPage = lazy(() => import("./pages/LeaderboardPage").then((m) => ({ default: m.LeaderboardPage })));
+const CostumePage = lazy(() => import("./pages/CostumePage").then((m) => ({ default: m.CostumePage })));
 
 const NotFound = lazy(() => import("./pages/NotFound").then((m) => ({ default: m.NotFound })));
 const LoadingPage = lazy(() => import("./pages/LoadingPage").then((m) => ({ default: m.LoadingPage })));
@@ -57,6 +58,7 @@ export function App() {
                     <Route path="scores/:slug" element={<ScorePage />} />
                     <Route path="leaderboard" element={<LeaderboardPage />} />
                     <Route path="checkpoints" element={<UserCheckpointsPage />} />
+                    <Route path="costumes" element={<CostumePage />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
                 <Route path="loading" element={<LoadingPage />} />
