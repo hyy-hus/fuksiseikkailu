@@ -82,6 +82,7 @@ def leaderboard(
     stmt = (
         select(
             DBTeam.id.label("id"),
+            DBTeam.number.label("number"),
             DBTeam.name.label("name"),
             total_points,
             entries,
