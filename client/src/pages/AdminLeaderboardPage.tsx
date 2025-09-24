@@ -132,7 +132,7 @@ export function LeaderboardPage() {
       <ol className="flex flex-col gap-4">
         <Grid rows={rows.map((row, pos) => [
           <span className="block text-center">{pos + 1}.</span>,
-          <span>#{row.id} - {row.name}</span>,
+          <span>#{row.number} - {row.name}</span>,
           <span className="block text-center">{row.score}</span>,
           <span className="block text-center">{row.checkpoints}</span>,
           <span className="block text-center">

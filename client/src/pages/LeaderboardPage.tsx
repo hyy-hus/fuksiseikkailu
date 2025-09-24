@@ -105,7 +105,7 @@ export function LeaderboardPage() {
       <ol className="flex flex-col gap-4">
         <Grid rows={rows.slice(0, 10).map((row, pos) => [
           <span className="block text-center">{pos + 1}.</span>,
-          <span>{t("team")} #{row.id}</span>,
+          <span>{t("team")} #{row.number}</span>,
           <span className="block text-center">{row.score}</span>,
         ])}
           headers={["#", t("team"), t("score") ]}
