@@ -28,7 +28,7 @@ export function GuestHomePage() {
                     </Link>
                 </Button>
                 <Button>
-                    <Link to="/checkpoints">
+                    <Link to="/map">
                         Etsi rasteja kartalla
                     </Link>
                 </Button>
@@ -50,7 +50,7 @@ export function GuestHomePage() {
                     </Link>
                 </Button>
                 <Button>
-                    <Link to="/checkpoints">
+                    <Link to="/map">
                         Find checkpoints on the map
                     </Link>
                 </Button>
