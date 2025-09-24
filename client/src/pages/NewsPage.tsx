@@ -63,9 +63,9 @@ export function NewsPage() {
                         const contents = post[`contents_${currentLang}` as keyof typeof post] ?? post.contents_fi;
 
                         return (
-                            <li key={post.id} className={`border-2 ${!isRead ? "border-sky-900 dark:border-sky-600" : "border-black dark:border-slate-600"}`}
+                            <li key={post.id} className={`border-2 ${!isRead ? "border-sky-900 dark:border-sky-600" : "border-black"}`}
                                 onClick={() => toggleOpen(post.id)}>
-                                <div className={`p-4 ${!isRead ? "font-bold bg-sky-300" : "font-base"} bg-fuksi-400 dark:bg-slate-800 grid grid-cols-[1fr_auto]`}>
+                                <div className={`p-4 ${!isRead ? "font-bold bg-sky-300" : "font-base"} bg-fuksi-400 dark:bg-fuksi-700 grid grid-cols-[1fr_auto]`}>
                                     <h4>{title}</h4>
                                     {isOpen ? (
                                         <FaAngleUp />) : (
@@ -73,7 +73,7 @@ export function NewsPage() {
                                     }
                                 </div>
                                 {open.has(post.id) && (
-                                    <div className="p-4 border-t-2 border-black dark:border-slate-600 bg-fuksi-200">
+                                    <div className="p-4 border-t-2 border-black bg-fuksi-200 dark:bg-fuksi-800">
                                         <p>{contents}</p>
                                     </div>
                                 )

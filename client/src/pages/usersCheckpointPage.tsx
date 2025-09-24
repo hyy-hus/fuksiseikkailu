@@ -102,9 +102,9 @@ export function CheckpointsPage() {
                     sorted.map((cp) => {
                         const isOpen = open.has(cp.id);
                         return (
-                            <li key={cp.id} className={`border-2 "border-black"`}
+                            <li key={cp.id} className={`border-2 border-black`}
                                 onClick={() => toggleOpen(cp.id)}>
-                                <div className={`p-4 bg-fuksi-400 dark:bg-slate-800 grid grid-cols-[1fr_auto]`}>
+                                <div className={`p-4 bg-fuksi-400 dark:bg-fuksi-800 grid grid-cols-[1fr_auto]`}>
                                     <h4><span className="font-bold">#{cp.number}</span> - {cp.org_name} {cp.org_abbreviation ? <>({cp.org_abbreviation})</> : <></>}</h4>
                                     {isOpen ? (
                                         <FaAngleUp />) : (
@@ -112,7 +112,7 @@ export function CheckpointsPage() {
                                     }
                                 </div>
                                 {open.has(cp.id) && (
-                                    <div className="p-4 border-t-2 border-black dark:border-slate-600 bg-fuksi-200 flex flex-col gap-3">
+                                    <div className="p-4 border-t-2 border-black bg-fuksi-200 dark:bg-fuksi-900 flex flex-col gap-3">
                                         <p className="italic">{t(cp.category)}</p>
                                         <p>{cp.checkpoint_description}</p>
                                         <p>{cp.org_description}</p>
