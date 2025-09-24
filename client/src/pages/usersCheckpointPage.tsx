@@ -123,12 +123,12 @@ export function CheckpointsPage() {
                                         </p>
                                         {cp.org_link && (
                                         <p>
-                                          <Link to={cp.org_link}>
+                                          <a href={cp.org_link}>
                                           <span className="flex gap-2 align-center">
                                               <FaExternalLinkAlt />
                                               <span>{t("org-link")}</span>
                                           </span>
-                                        </Link>
+                                        </a>
                                         </p>
                                         )}
                                     </div>
