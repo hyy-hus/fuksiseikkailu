@@ -610,5 +610,36 @@ def import_checkpoints(
         "status": status.HTTP_207_MULTI_STATUS if errors else status.HTTP_200_OK,
     }
 
+@admin_router.post(
+    "/activate/{checkpoint_id}",
+    response_model=AdminCheckpoint,
+    operation_id="activateCheckpoint",
+    summary="Fetch a single checkpoint in an adventure",
+    description="Fetches a checkpoint in an adventure specified by it's id",
+    responses={
+        200: {"description": "Checkpoint fetched succesfully"},
+        404: {"description": "Checkpoint could not be found"},
+    },
+)
+def activate_checkpoint(
+    session: SessionDep,
+    checkpoint_id: int,
+    user: UserDep,   # unused here, but keep if you do auth/audit
+) -> AdminCheckpoint:
+    # Best: session.get returns a tracked DBCheckpoint or None
+    db_checkpoint = session.get(DBCheckpoint, checkpoint_id)
+    if db_checkpoint is None:
+        raise HTTPException(status_code=404, detail="Checkpoint not found")
+
+    if not db_checkpoint.active:            # idempotent
+        db_checkpoint.active = True
+        # optional: db_checkpoint.activated_at = datetime.utcnow()
+
+        # No need to session.add(); object is already in the session
+        session.commit()
+        session.refresh(db_checkpoint)
+
+    return db_checkpoint
+
 
 router.include_router(admin_router)
