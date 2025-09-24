@@ -28,7 +28,7 @@ export function GuestHomePage() {
                     </Link>
                 </Button>
                 <Button>
-                    <Link to="/map">
+                    <Link to="/checkpoints">
                         Etsi rasteja kartalla
                     </Link>
                 </Button>
@@ -36,12 +36,25 @@ export function GuestHomePage() {
         </>
       ) : (
         <>
+
           <p>
-            On this page you can vote for the winner of the costume competition.
+              The greatest adventure of your fresher autumn awaits! In HYY’s Fresher Adventure, new students at the University of Helsinki complete tasks at exciting checkpoints all around downtown Helsinki. Winners will receive both glory and stunning prizes. Teams are also encouraged to invest in their costumes, as the public’s favourite costume will be handsomely rewarded!
           </p>
           <p>
-            The photos are not yet available. Please come back later!
-          </p>
+            Find more information at <span className="inline flex gap-2"><a href="https://fuksiseikkailu.fi" className="underline">Fresher Adventure's event page <FaExternalLinkAlt className="inline" /></a></span>
+            </p>
+            <div className="flex gap-4">
+                <Button>
+                    <Link to="/checkpoints">
+                        Browse checkpoints
+                    </Link>
+                </Button>
+                <Button>
+                    <Link to="/checkpoints">
+                        Find checkpoints on the map
+                    </Link>
+                </Button>
+            </div>
         </>
       )}
 
