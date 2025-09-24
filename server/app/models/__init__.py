@@ -48,6 +48,17 @@ from app.models.app_settings import (
     ModifyAppSettings,
 )
 
+from app.models.photos import (
+    PhotoTagLink,
+    BasePhoto,
+    DBPhoto,
+    PublicPhoto,
+    BaseTag,
+    DBTag,
+    PublicTag,
+    CreateTag
+)
+
 for model in [
     LinkedAdventure,
     PublicAdventure,
@@ -81,6 +92,14 @@ for model in [
     AdminPlayer,
     ModifyPlayer,
     CreatePlayer,
+    PhotoTagLink,
+    BasePhoto,
+    DBPhoto,
+    PublicPhoto,
+    BaseTag,
+    DBTag,
+    PublicTag,
+    CreateTag
 ]:
     model.model_rebuild()
 
@@ -93,5 +112,7 @@ __all__ = [
     "DBNews",
     "DBScore",
     "DBAppSettings",
-    "DBPlayer"
+    "DBPlayer",
+    "DBPhoto",
+    "DBTag"
 ]
