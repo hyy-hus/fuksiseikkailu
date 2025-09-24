@@ -116,7 +116,7 @@ function Overlay({ photo_id, closeHandler }: { photo_id: number, closeHandler: (
     <div className="absolute w-full h-full top-0 left-0 bg-black/95 text-white" onClick={(e) => {
       if (e.target === e.currentTarget) closeHandler();
     }} tabIndex={-1}>
-      <div className="pt-2 p-0 md:p-10 flex flex-col gap-4" onBlur={closeHandler}>
+      <div className="pt-2 p-0 md:p-10 flex flex-col gap-4" >
         <div>
           <Button variant="transparent" onClick={closeHandler}>X</Button>
         </div>
@@ -144,7 +144,7 @@ function Overlay({ photo_id, closeHandler }: { photo_id: number, closeHandler: (
           <span className="text-sm">{t("team-number")}</span>
           <input className="bg-slate-800 border border-slate-700 p-2" type="number" value={teamNumber} onChange={(e) => setTeamNumber(Number(e.target.value))} />
             </label>
-          <Button>
+          <Button type="submit">
             {t("tag-team")}
           </Button>
         </form>
@@ -266,6 +266,19 @@ export function CostumePage() {
       <h2 className="text-xl font-bold">
         {t("costume-contest")}
       </h2>
+        {currentLang == "fi" ? (
+          <>
+            <p>
+              Tällä sivulla voit äänestää asukilpailun voittajajoukkuetta. Skrollaa kuvia ja äänestä tuplaklikkaamalla parhaita. Kuvan voi myös avata suuremmaksi ja käydä merkitsemässä oman joukkueensa kuvaan!
+            </p>
+          </>
+        ) : (
+          <>
+            <p>
+              On this page you can vote for the winner of the costume competition. Scroll the photos and doubleclick to vote for the best ones. You can also open the image larger and tag your own team to the photo!
+            </p>
+          </>
+        )}
       <div className="flex flex-col gap-4">
         {allPhotos.map((p) => (
           <Photo key={(p as any).id ?? p.resized_url} photo={p} clickHandler={() => setOverlay(p)} />

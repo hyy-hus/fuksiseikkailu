@@ -1,6 +1,8 @@
-import { getListPhotosQueryKey, useUploadPhotos } from "@api/endpoints";
+import { getListPhotosQueryKey, useListPhotos, useUploadPhotos } from "@api/endpoints";
+import { ListPhotosParams, PublicPhoto } from "@api/model";
 import { Button } from "@components/Button";
 import { useQueryClient } from "@tanstack/react-query";
+import { t } from "i18next";
 import { useState } from "react";
 import { useTranslation } from "react-i18next"
 
@@ -289,6 +291,39 @@ export function UploadForm({
     );
 }
 
+function Photo({ photo } : { photo: PublicPhoto }) {
+    return (
+        <div className="flex flex-col gap-2">
+            <a href={photo.original_url}><img src={photo.thumb_url} /></a>
+            <div className="flex flex-col w-full justify-center items-center">
+                <p>{t("likes")}: {photo.likes}</p>
+                { photo.tags && photo.tags.length > 0 && (
+                <p>{t("teams")}: {photo.tags.map(tag => `${tag.name}`).join(", ")}</p>
+                )}
+            </div>
+        </div>
+    )
+}
+
+
+function Leaderboard() {
+    const params: ListPhotosParams = {
+        sort: "liked"
+    }
+    const { data: photoRequest } = useListPhotos(params);
+    const photos = photoRequest?.data ?? [];
+
+    console.log(photos);
+
+    return (
+        <div className="flex flex-col gap-6">
+            {
+                photos.slice(0, 10).filter(p => p.likes > 0).map(photo => <Photo photo={photo} />)
+            }
+        </div>
+    )
+}
+
 export function AdminPhotosPage() {
     const { t } = useTranslation();
 
@@ -302,6 +337,7 @@ export function AdminPhotosPage() {
         <div className="flex flex-col gap-4">
             <h2>{t("photos")}</h2>
             <UploadForm />
+            <Leaderboard />
         </div>
     )
 }
