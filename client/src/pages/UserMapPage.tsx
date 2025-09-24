@@ -7,10 +7,10 @@ import { useAdventure } from "@contexts/AdventureContext";
 import { useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { t } from "i18next";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FaExternalLinkAlt, FaUniversalAccess } from "react-icons/fa";
 import { IoRefresh } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 interface Option {
     key: string | number;
@@ -129,6 +129,9 @@ function CheckpointCard({ adventureId, checkpointId, open, onClick }: Checkpoint
 }
 
 export function UserMapPage() {
+
+    const { slug } = useParams<{ slug: string }>();
+
     const { selectedAdventure } = useAdventure();
     const checkpoint_query = useListCheckpoints(selectedAdventure?.id ?? 0);
     const checkpoints = checkpoint_query?.data?.data ?? [];
@@ -137,6 +140,12 @@ export function UserMapPage() {
     const selectedCheckpoint = checkpoints.find(cp => cp.id === selectedCheckpointId);
 
     const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (slug && Number(slug)) {
+            setSelectedCheckpointId(Number(slug));
+        }
+    }, [slug]);
 
     const handleCheckpointClick = useCallback((id: string | number) => {
         setSelectedCheckpointId(Number(id));

@@ -52,6 +52,7 @@ export function App() {
                 <Route path="/" element={<Layout variant="guest" />}>
                     <Route index element={<GuestHomePage />} />
                     <Route path="map" element={<UserMapPage />} />
+                    <Route path="map/:slug" element={<UserMapPage />} />
                     <Route path="news" element={<NewsPage />} />
                     <Route path="scores/:slug" element={<ScorePage />} />
                     <Route path="leaderboard" element={<LeaderboardPage />} />
