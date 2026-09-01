@@ -1,0 +1,59 @@
+import * as React from 'react'
+import { Map, NavigationControl } from '@vis.gl/react-maplibre'
+import * as maplibregl from 'maplibre-gl'
+import { Protocol } from 'pmtiles'
+import { layers, namedFlavor, type Flavor } from '@protomaps/basemaps'
+
+import 'maplibre-gl/dist/maplibre-gl.css'
+import { cn } from '@/lib/utils'
+
+// Register protocol bound to Protocol instance context
+const protocol = new Protocol()
+maplibregl.addProtocol('pmtiles', (request, callback) => protocol.tile(request, callback))
+
+interface VectorMapProps {
+    className?: string
+    pmtilesUrl?: string
+    presetTheme?: Flavor
+}
+
+export function VectorMap({
+    className,
+    pmtilesUrl = 'https://fuksiseikkailu-maptiles.s3.fr-par.scw.cloud/helsinki.pmtiles',
+    presetTheme = namedFlavor('light'),
+}: VectorMapProps) {
+    const mapStyle = React.useMemo<maplibregl.StyleSpecification>(() => {
+        // Pass 3 arguments: source, flavor, and options object with language
+        const baseLayers = layers('protomaps', presetTheme, { lang: 'en' })
+
+        return {
+            version: 8,
+            glyphs: 'https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf',
+            sources: {
+                protomaps: {
+                    type: 'vector',
+                    url: `pmtiles://${pmtilesUrl}`,
+                },
+            },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            layers: baseLayers as any,
+        }
+    }, [pmtilesUrl, presetTheme])
+
+    return (
+        <div className={cn('relative h-full w-full overflow-hidden rounded-sm border border-border-subtle', className)}>
+            <Map
+                mapLib={maplibregl}
+                initialViewState={{
+                    longitude: 24.9384, // Helsinki Center
+                    latitude: 60.1699,
+                    zoom: 13,
+                }}
+                style={{ width: '100%', height: '100%' }}
+                mapStyle={mapStyle}
+            >
+                <NavigationControl position="top-right" />
+            </Map>
+        </div>
+    )
+}

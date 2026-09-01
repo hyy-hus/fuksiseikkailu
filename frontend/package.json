@@ -10,9 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@protomaps/basemaps": "^5.7.2",
     "@tanstack/react-query": "^5.102.8",
     "@tanstack/react-router": "^1.170.32",
+    "@vis.gl/react-maplibre": "^8.1.2",
     "clsx": "^2.1.1",
+    "maplibre-gl": "^6.6.0",
+    "pmtiles": "^4.5.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "tailwind-merge": "^3.6.0"

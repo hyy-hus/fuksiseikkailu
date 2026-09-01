@@ -8,14 +8,17 @@ import tailwindcss from '@tailwindcss/vite'
 const __dirname = import.meta.dirname ?? path.dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
-  plugins: [
-    TanStackRouterVite({ target: 'react', autoCodeSplitting: true }),
-    react(),
-    tailwindcss(),
-  ],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
+    plugins: [
+        TanStackRouterVite({ target: 'react', autoCodeSplitting: true }),
+        react(),
+        tailwindcss(),
+    ],
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, './src'),
+        },
     },
-  },
+    optimizeDeps: {
+        exclude: ['maplibre-gl'],
+    },
 })
