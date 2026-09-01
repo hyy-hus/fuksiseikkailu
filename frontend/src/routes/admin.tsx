@@ -90,29 +90,27 @@ function RouteComponent() {
     const [checkpoints, setCheckpoints] = React.useState<Checkpoint[]>(INITIAL_CHECKPOINTS)
 
     return (
-        <div className="flex-1 flex flex-col min-h-0 w-full p-4 bg-surface-base">
-            <div className="mx-auto h-full flex-1 flex flex-col min-h-0 w-full max-w-7xl gap-3">
-                <header className="flex items-center justify-between shrink-0">
-                    <div>
-                        <h1 className="text-xl font-bold text-text-main">Checkpoint Admin Tool</h1>
-                        <p className="text-xs text-text-muted">
-                            Drag markers on the map or click "Set Position" to locate unset checkpoints.
-                        </p>
-                    </div>
-                    <button
-                        type="button"
-                        onClick={() => console.log('Current Checkpoints:', checkpoints)}
-                        className="rounded-md bg-vintage-berry-900 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-vintage-berry-800 transition-colors"
-                    >
-                        Log Active State
-                    </button>
-                </header>
+        <div className="flex flex-1 flex-col min-h-0 h-full w-full max-w-7xl mx-auto gap-3">
+            <header className="flex items-center justify-between shrink-0">
+                <div>
+                    <h1 className="text-xl font-bold text-text-main">Checkpoint Admin Tool</h1>
+                    <p className="text-xs text-text-muted">
+                        Drag markers on the map or click "Set Position" to locate unset checkpoints.
+                    </p>
+                </div>
+                <button
+                    type="button"
+                    onClick={() => console.log('Current Checkpoints:', checkpoints)}
+                    className="rounded-md bg-vintage-berry-900 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-vintage-berry-800 transition-colors"
+                >
+                    Log Active State
+                </button>
+            </header>
 
-                <CheckpointPlacementAdmin
-                    checkpoints={checkpoints}
-                    onUpdateCheckpoints={setCheckpoints}
-                />
-            </div>
+            <CheckpointPlacementAdmin
+                checkpoints={checkpoints}
+                onUpdateCheckpoints={setCheckpoints}
+            />
         </div>
     )
 }

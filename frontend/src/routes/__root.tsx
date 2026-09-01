@@ -17,7 +17,7 @@ function RootComponent() {
                     Home
                 </nav>
             </header>
-            <main className={cn('flex-1 p-2')}>
+            <main className={cn('flex-1 p-2 flex flex-col min-h0 overflow-hidden pb-4')}>
                 <Outlet />
             </main>
             <footer className={cn('p-2 border-t border-border-subtle')}>

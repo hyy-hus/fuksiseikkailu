@@ -31,6 +31,8 @@ export function VectorMap({
         return {
             version: 8,
             glyphs: 'https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf',
+            // MapLibre appends .json and .png (or @2x.png) to this base URL automatically
+            sprite: 'https://protomaps.github.io/basemaps-assets/sprites/v4/light',
             sources: {
                 protomaps: {
                     type: 'vector',
