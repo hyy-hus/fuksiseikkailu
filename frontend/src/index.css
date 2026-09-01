@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-vintage-berry-50: oklch(95.36% 0.014 355.01);
+  --color-vintage-berry-100: oklch(90.88% 0.027 359.98);
+  --color-vintage-berry-200: oklch(81.78% 0.056 359.64);
+  --color-vintage-berry-300: oklch(72.67% 0.089 1.19);
+  --color-vintage-berry-400: oklch(63.96% 0.122 2.82);
+  --color-vintage-berry-500: oklch(55.87% 0.153 6.13);
+  --color-vintage-berry-600: oklch(47.65% 0.128 5.60);
+  --color-vintage-berry-700: oklch(39.04% 0.102 5.65);
+  --color-vintage-berry-800: oklch(29.95% 0.071 4.70);
+  --color-vintage-berry-900: oklch(20.15% 0.040 4.69);
+  --color-vintage-berry-950: oklch(17.10% 0.029 4.51);
+
+  --color-surface-base: var(--color-vintage-berry-50);
+  --color-surface-elevated: #ffffff;
+  
+  --color-text-main: var(--color-vintage-berry-950);
+  --color-text-muted: var(--color-vintage-berry-700);
+
+  --color-brand-primary: var(--color-vintage-berry-600);
+  --color-brand-hover: var(--color-vintage-berry-700);
+
+  --color-border-subtle: var(--color-vintage-berry-200);
+}
+
+@layer base {
+  body {
+    @apply bg-surface-base text-text-main flex min-h-screen flex-col;
+  }
+
+  #root {
+    @apply flex min-h-screen flex-1 flex-col;
+  }
+}
