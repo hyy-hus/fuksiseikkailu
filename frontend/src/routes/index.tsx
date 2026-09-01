@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { CheckpointMap, type Checkpoint } from '@/components/CheckpointMap';
+import { Flag, PartyPopper } from 'lucide-react';
 
 export const Route = createFileRoute('/')({
     component: RouteComponent,
@@ -43,7 +44,34 @@ function RouteComponent() {
             latitude: 60.1771,
             longitude: 24.9319,
             category: 'academic',
-        }
+        },
+        {
+            id: 'start-area',
+            name: 'Starting Area (Senaatintori)',
+            description: 'Registration & Kickoff briefing at 16:00.',
+            latitude: 60.1695,
+            longitude: 24.9525,
+            icon: <Flag />,
+            category: 'start',
+        },
+        {
+            id: 'cp-1',
+            number: 4,
+            name: 'Checkpoint 1: Kaisaniemi',
+            description: 'Trivia station.',
+            latitude: 60.174,
+            longitude: 24.946,
+            category: 'academic',
+        },
+        {
+            id: 'afterparty-venue',
+            name: 'Official Afterparty (Tavastia)',
+            description: 'Doors open at 21:00.',
+            latitude: 60.169,
+            longitude: 24.933,
+            icon: <PartyPopper />,
+            category: 'afterparty',
+        },
     ]
 
     return (

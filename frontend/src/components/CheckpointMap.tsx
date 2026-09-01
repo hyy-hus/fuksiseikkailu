@@ -9,12 +9,13 @@ type BBox = [number, number, number, number]
 
 export interface Checkpoint {
     id: string
-    number: number
     name: string
     description?: string
     latitude: number
     longitude: number
-    category?: 'academic' | 'party' | 'sports' | 'default'
+    number?: number // Optional: render number badge if present
+    icon?: React.ReactNode // Optional: render Lucide icon instead of number
+    category?: 'academic' | 'party' | 'sports' | 'start' | 'afterparty' | 'default'
     color?: string
 }
 
@@ -29,6 +30,8 @@ const CATEGORY_COLORS: Record<string, string> = {
     academic: 'bg-blue-600 text-white border-blue-200',
     party: 'bg-pink-600 text-white border-pink-200',
     sports: 'bg-emerald-600 text-white border-emerald-200',
+    start: 'bg-amber-500 text-white border-amber-200 ring-2 ring-amber-400/50',
+    afterparty: 'bg-purple-600 text-white border-purple-200 ring-2 ring-purple-400/50',
     default: 'bg-slate-800 text-white border-slate-200',
 }
 
@@ -55,6 +58,7 @@ function CheckpointMarker({
             onClick={onClick}
         >
             <div className="group flex flex-col items-center cursor-pointer">
+                {/* Badge: Renders icon if present, otherwise number fallback */}
                 <div
                     className={cn(
                         'flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-bold shadow-md transition-transform hover:scale-110',
@@ -62,7 +66,13 @@ function CheckpointMarker({
                     )}
                     style={checkpoint.color ? { backgroundColor: checkpoint.color } : undefined}
                 >
-                    {checkpoint.number}
+                    {checkpoint.icon ? (
+                        <div className="flex items-center justify-center [&>svg]:h-4 [&>svg]:w-4">
+                            {checkpoint.icon}
+                        </div>
+                    ) : (
+                        checkpoint.number ?? '•'
+                    )}
                 </div>
 
                 {showNameLabel && (
@@ -88,9 +98,7 @@ function ClusteredCheckpointMarkers({
     const [selectedCheckpoint, setSelectedCheckpoint] = React.useState<Checkpoint | null>(null)
 
     const supercluster = React.useMemo(() => {
-        // Cast to typeof Supercluster to retain type definitions and generic parameters
         const SuperclusterConstructor = ((Supercluster as unknown as { default: typeof Supercluster }).default || Supercluster) as typeof Supercluster
-
         const sc = new SuperclusterConstructor<CheckpointProperties>({
             radius: 40,
             maxZoom: 16,
@@ -207,8 +215,8 @@ function ClusteredCheckpointMarkers({
                 >
                     <div className="p-1 max-w-xs">
                         <div className="flex items-center gap-2 mb-1">
-                            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-800 text-[10px] font-bold text-white">
-                                {selectedCheckpoint.number}
+                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-800 text-xs font-bold text-white [&>svg]:h-3 font-semibold [&>svg]:w-3">
+                                {selectedCheckpoint.icon ?? selectedCheckpoint.number ?? '•'}
                             </span>
                             <h4 className="font-bold text-sm text-slate-900">{selectedCheckpoint.name}</h4>
                         </div>
