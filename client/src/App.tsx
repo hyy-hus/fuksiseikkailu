@@ -27,6 +27,7 @@ const ScorePage = lazy(() => import("./pages/ScorePage").then((m) => ({ default:
 const LeaderboardPage = lazy(() => import("./pages/LeaderboardPage").then((m) => ({ default: m.LeaderboardPage })));
 const CostumePage = lazy(() => import("./pages/CostumePage").then((m) => ({ default: m.CostumePage })));
 const AdminPhotosPage = lazy(() => import("./pages/AdminPhotosPage").then((m) => ({ default: m.AdminPhotosPage })));
+const AdminScoresPage = lazy(() => import("./pages/AdminScoresPage").then((m) => ({ default: m.AdminScoresPage })));
 
 const NotFound = lazy(() => import("./pages/NotFound").then((m) => ({ default: m.NotFound })));
 const LoadingPage = lazy(() => import("./pages/LoadingPage").then((m) => ({ default: m.LoadingPage })));
@@ -50,6 +51,7 @@ export function App() {
                     <Route path="news" element={<AdminNewsPage />} />
                     <Route path="settings" element={<SettingsPage />} />
                     <Route path="costumes" element={<AdminPhotosPage />} />
+                    <Route path="scores" element={<AdminScoresPage />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
                 <Route path="/" element={<Layout variant="guest" />}>
