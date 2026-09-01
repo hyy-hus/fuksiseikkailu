@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Marker, Popup, useMap } from '@vis.gl/react-maplibre'
 import Supercluster from 'supercluster'
 import type { PointFeature } from 'supercluster'
+import { Search } from 'lucide-react'
 import { VectorMap } from './Map'
 import { cn } from '@/lib/utils'
 
@@ -13,8 +14,8 @@ export interface Checkpoint {
     description?: string
     latitude: number
     longitude: number
-    number?: number // Optional: render number badge if present
-    icon?: React.ReactNode // Optional: render Lucide icon instead of number
+    number?: number
+    icon?: React.ReactNode
     category?: 'academic' | 'party' | 'sports' | 'start' | 'afterparty' | 'default'
     color?: string
 }
@@ -35,6 +36,79 @@ const CATEGORY_COLORS: Record<string, string> = {
     default: 'bg-slate-800 text-white border-slate-200',
 }
 
+function CheckpointSearch({
+    checkpoints,
+    onSelect,
+}: {
+    checkpoints: Checkpoint[]
+    onSelect: (checkpoint: Checkpoint) => void
+}) {
+    const { current: map } = useMap()
+    const [query, setQuery] = React.useState('')
+    const [isOpen, setIsOpen] = React.useState(false)
+
+    const filtered = React.useMemo(() => {
+        if (!query.trim()) return []
+        const q = query.toLowerCase()
+        return checkpoints.filter(
+            (cp) =>
+                cp.name.toLowerCase().includes(q) ||
+                (cp.number !== undefined && cp.number.toString().includes(q))
+        )
+    }, [checkpoints, query])
+
+    const handleSelect = (cp: Checkpoint) => {
+        setQuery('')
+        setIsOpen(false)
+        onSelect(cp)
+
+        map?.flyTo({
+            center: [cp.longitude, cp.latitude],
+            zoom: 16,
+            speed: 1.4,
+            essential: true,
+        })
+    }
+
+    return (
+        <div className="absolute top-3 left-3 z-10 w-72">
+            <div className="relative flex items-center rounded-lg bg-white/95 shadow-md border border-slate-200/80 backdrop-blur-sm">
+                <Search className="ml-3 h-4 w-4 text-slate-400 shrink-0" />
+                <input
+                    type="text"
+                    value={query}
+                    onChange={(e) => {
+                        setQuery(e.target.value)
+                        setIsOpen(true)
+                    }}
+                    onFocus={() => setIsOpen(true)}
+                    placeholder="Search checkpoints..."
+                    className="w-full bg-transparent px-3 py-2 text-base md:text-xs font-medium text-slate-800 placeholder-slate-400 outline-none"
+                />
+            </div>
+
+            {isOpen && filtered.length > 0 && (
+                <ul className="mt-1 max-h-60 overflow-auto rounded-lg bg-white/95 p-1 shadow-lg border border-slate-200 backdrop-blur-sm">
+                    {filtered.map((cp) => (
+                        <li key={cp.id}>
+                            <button
+                                type="button"
+                                onClick={() => handleSelect(cp)}
+                                className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-xs hover:bg-slate-100 transition-colors"
+                            >
+                                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-800 text-[10px] font-bold text-white [&>svg]:h-3 [&>svg]:w-3">
+                                    {cp.icon ?? cp.number ?? '•'}
+                                </span>
+                                <span className="truncate font-medium text-slate-800">{cp.name}</span>
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    )
+}
+
 function CheckpointMarker({
     checkpoint,
     longitude,
@@ -51,14 +125,8 @@ function CheckpointMarker({
     const colorClass = CATEGORY_COLORS[checkpoint.category || 'default']
 
     return (
-        <Marker
-            longitude={longitude}
-            latitude={latitude}
-            anchor="bottom"
-            onClick={onClick}
-        >
+        <Marker longitude={longitude} latitude={latitude} anchor="bottom" onClick={onClick}>
             <div className="group flex flex-col items-center cursor-pointer">
-                {/* Badge: Renders icon if present, otherwise number fallback */}
                 <div
                     className={cn(
                         'flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-bold shadow-md transition-transform hover:scale-110',
@@ -120,24 +188,20 @@ function ClusteredCheckpointMarkers({
     const updateViewState = React.useCallback(() => {
         if (!map) return
         const mapBounds = map.getBounds()
-        const currentZoom = map.getZoom()
-
         setBounds([
             mapBounds.getWest(),
             mapBounds.getSouth(),
             mapBounds.getEast(),
             mapBounds.getNorth(),
         ])
-        setZoom(currentZoom)
+        setZoom(map.getZoom())
     }, [map])
 
     React.useEffect(() => {
         if (!map) return
-
         updateViewState()
         map.on('move', updateViewState)
         map.on('zoom', updateViewState)
-
         return () => {
             map.off('move', updateViewState)
             map.off('zoom', updateViewState)
@@ -149,10 +213,15 @@ function ClusteredCheckpointMarkers({
         return supercluster.getClusters(bounds, Math.floor(zoom))
     }, [supercluster, bounds, zoom])
 
-    const showNameLabel = zoom >= 14
+    const handleSelectCheckpoint = (cp: Checkpoint) => {
+        setSelectedCheckpoint(cp)
+        onCheckpointClick?.(cp)
+    }
 
     return (
         <>
+            <CheckpointSearch checkpoints={checkpoints} onSelect={handleSelectCheckpoint} />
+
             {clusters.map((cluster) => {
                 const [longitude, latitude] = cluster.geometry.coordinates
                 const properties = cluster.properties
@@ -188,6 +257,8 @@ function ClusteredCheckpointMarkers({
                 }
 
                 const cp = properties.checkpoint
+                const isSelected = selectedCheckpoint?.id === cp.id
+                const showNameLabel = zoom >= 14 && !isSelected
 
                 return (
                     <CheckpointMarker
@@ -198,8 +269,7 @@ function ClusteredCheckpointMarkers({
                         showNameLabel={showNameLabel}
                         onClick={(e) => {
                             e.originalEvent.stopPropagation()
-                            setSelectedCheckpoint(cp)
-                            onCheckpointClick?.(cp)
+                            handleSelectCheckpoint(cp)
                         }}
                     />
                 )
@@ -215,7 +285,7 @@ function ClusteredCheckpointMarkers({
                 >
                     <div className="p-1 max-w-xs">
                         <div className="flex items-center gap-2 mb-1">
-                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-800 text-xs font-bold text-white [&>svg]:h-3 font-semibold [&>svg]:w-3">
+                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-800 text-xs font-bold text-white [&>svg]:h-3 [&>svg]:w-3">
                                 {selectedCheckpoint.icon ?? selectedCheckpoint.number ?? '•'}
                             </span>
                             <h4 className="font-bold text-sm text-slate-900">{selectedCheckpoint.name}</h4>
