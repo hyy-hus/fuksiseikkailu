@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Marker, Popup, useMap } from '@vis.gl/react-maplibre'
 import Supercluster from 'supercluster'
 import type { PointFeature } from 'supercluster'
-import { Search } from 'lucide-react'
+import { Search, X } from 'lucide-react'
 import { VectorMap } from './Map'
 import { cn } from '@/lib/utils'
 
@@ -33,7 +33,7 @@ const CATEGORY_COLORS: Record<string, string> = {
     sports: 'bg-emerald-600 text-white border-emerald-200',
     start: 'bg-amber-500 text-white border-amber-200 ring-2 ring-amber-400/50',
     afterparty: 'bg-purple-600 text-white border-purple-200 ring-2 ring-purple-400/50',
-    default: 'bg-slate-800 text-white border-slate-200',
+    default: 'bg-vintage-berry-800 text-white border-white',
 }
 
 function CheckpointSearch({
@@ -71,9 +71,12 @@ function CheckpointSearch({
     }
 
     return (
-        <div className="absolute top-3 left-3 z-10 w-72">
-            <div className="relative flex items-center rounded-lg bg-white/95 shadow-md border border-slate-200/80 backdrop-blur-sm">
-                <Search className="ml-3 h-4 w-4 text-slate-400 shrink-0" />
+        <div
+            className="absolute top-3 left-3 z-10 w-72"
+            onTouchStart={(e) => e.stopPropagation()}
+        >
+            <div className="relative flex items-center rounded-lg bg-surface-elevated/95 shadow-md border border-border-subtle backdrop-blur-sm">
+                <Search className="ml-3 h-4 w-4 text-text-muted shrink-0" />
                 <input
                     type="text"
                     value={query}
@@ -83,23 +86,23 @@ function CheckpointSearch({
                     }}
                     onFocus={() => setIsOpen(true)}
                     placeholder="Search checkpoints..."
-                    className="w-full bg-transparent px-3 py-2 text-base md:text-xs font-medium text-slate-800 placeholder-slate-400 outline-none"
+                    className="w-full bg-transparent px-3 py-2 text-base md:text-xs font-medium text-text-main placeholder-text-muted outline-none"
                 />
             </div>
 
             {isOpen && filtered.length > 0 && (
-                <ul className="mt-1 max-h-60 overflow-auto rounded-lg bg-white/95 p-1 shadow-lg border border-slate-200 backdrop-blur-sm">
+                <ul className="mt-1 max-h-60 overflow-auto rounded-lg bg-surface-elevated p-1 shadow-lg border border-border-subtle backdrop-blur-sm">
                     {filtered.map((cp) => (
                         <li key={cp.id}>
                             <button
                                 type="button"
                                 onClick={() => handleSelect(cp)}
-                                className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-xs hover:bg-slate-100 transition-colors"
+                                className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-xs hover:bg-vintage-berry-100 transition-colors"
                             >
-                                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-800 text-[10px] font-bold text-white [&>svg]:h-3 [&>svg]:w-3">
+                                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-vintage-berry-800 text-[10px] font-bold text-white [&>svg]:h-3 [&>svg]:w-3">
                                     {cp.icon ?? cp.number ?? '•'}
                                 </span>
-                                <span className="truncate font-medium text-slate-800">{cp.name}</span>
+                                <span className="truncate font-medium text-text-main">{cp.name}</span>
                             </button>
                         </li>
                     ))}
@@ -125,8 +128,10 @@ function CheckpointMarker({
     const colorClass = CATEGORY_COLORS[checkpoint.category || 'default']
 
     return (
-        <Marker longitude={longitude} latitude={latitude} anchor="bottom" onClick={onClick}>
-            <div className="group flex flex-col items-center cursor-pointer">
+        /* Changed anchor to "center" so the circle center stays strictly locked to coordinates */
+        <Marker longitude={longitude} latitude={latitude} anchor="center" onClick={onClick}>
+            <div className="relative group flex flex-col items-center cursor-pointer">
+                {/* Circle Pin - Center Anchored */}
                 <div
                     className={cn(
                         'flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-bold shadow-md transition-transform hover:scale-110',
@@ -143,8 +148,9 @@ function CheckpointMarker({
                     )}
                 </div>
 
+                {/* Text Label - Absolutely positioned below the pin without shifting the pin container height */}
                 {showNameLabel && (
-                    <span className="mt-1 whitespace-nowrap rounded bg-white/90 px-1.5 py-0.5 text-[11px] font-semibold text-slate-800 shadow-sm backdrop-blur-sm border border-slate-200">
+                    <span className="absolute top-full mt-1 left-1/2 -translate-x-1/2 pointer-events-none whitespace-nowrap rounded bg-surface-elevated/90 px-1.5 py-0.5 text-[11px] font-semibold text-text-main shadow-sm backdrop-blur-sm border border-border-subtle">
                         {checkpoint.name}
                     </span>
                 )}
@@ -197,14 +203,23 @@ function ClusteredCheckpointMarkers({
         setZoom(map.getZoom())
     }, [map])
 
+    // Attach listener to close popup when clicking on empty map area
     React.useEffect(() => {
         if (!map) return
         updateViewState()
+
+        const handleMapClick = () => {
+            setSelectedCheckpoint(null)
+        }
+
         map.on('move', updateViewState)
         map.on('zoom', updateViewState)
+        map.on('click', handleMapClick)
+
         return () => {
             map.off('move', updateViewState)
             map.off('zoom', updateViewState)
+            map.off('click', handleMapClick)
         }
     }, [map, updateViewState])
 
@@ -249,7 +264,7 @@ function ClusteredCheckpointMarkers({
                                 })
                             }}
                         >
-                            <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-pink-600 font-bold text-white shadow-lg transition-transform hover:scale-110 cursor-pointer">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-vintage-berry-600 font-bold text-white shadow-lg transition-transform hover:scale-110 cursor-pointer">
                                 {pointCount}
                             </div>
                         </Marker>
@@ -281,17 +296,33 @@ function ClusteredCheckpointMarkers({
                     latitude={selectedCheckpoint.latitude}
                     anchor="top"
                     onClose={() => setSelectedCheckpoint(null)}
-                    closeOnClick={false}
+                    closeOnClick={true}
+                    focusAfterOpen={false}
+                    className="[&_.maplibregl-popup-content]:p-0 [&_.maplibregl-popup-content]:rounded-xl [&_.maplibregl-popup-content]:shadow-xl [&_.maplibregl-popup-content]:border [&_.maplibregl-popup-content]:border-border-subtle [&_.maplibregl-popup-close-button]:hidden"
                 >
-                    <div className="p-1 max-w-xs">
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-800 text-xs font-bold text-white [&>svg]:h-3 [&>svg]:w-3">
+                    <div className="relative min-w-[200px] max-w-xs p-3.5 bg-surface-elevated rounded-xl">
+                        {/* Custom Close Button */}
+                        <button
+                            type="button"
+                            onClick={() => setSelectedCheckpoint(null)}
+                            className="absolute top-2.5 right-2.5 flex h-5 w-5 items-center justify-center rounded-full text-text-muted hover:bg-vintage-berry-100 hover:text-text-main transition-colors"
+                        >
+                            <X className="h-3.5 w-3.5" />
+                        </button>
+
+                        <div className="flex items-center gap-2.5 pr-6">
+                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-vintage-berry-800 text-xs font-bold text-white shadow-xs [&>svg]:h-3.5 [&>svg]:w-3.5">
                                 {selectedCheckpoint.icon ?? selectedCheckpoint.number ?? '•'}
                             </span>
-                            <h4 className="font-bold text-sm text-slate-900">{selectedCheckpoint.name}</h4>
+                            <h4 className="font-bold text-sm text-text-main leading-tight">
+                                {selectedCheckpoint.name}
+                            </h4>
                         </div>
+
                         {selectedCheckpoint.description && (
-                            <p className="text-xs text-slate-600 leading-snug">{selectedCheckpoint.description}</p>
+                            <p className="mt-2 text-xs text-text-muted leading-relaxed border-t border-border-subtle/50 pt-2">
+                                {selectedCheckpoint.description}
+                            </p>
                         )}
                     </div>
                 </Popup>

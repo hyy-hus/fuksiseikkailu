@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Marker, Popup } from '@vis.gl/react-maplibre'
 import type { MapMouseEvent } from 'maplibre-gl'
-import { MapPin, Move, Check, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react'
+import { MapPin, Move, Check, AlertCircle, ChevronDown, ChevronUp, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Checkpoint } from './CheckpointMap'
 import { VectorMap } from './Map'
@@ -45,7 +45,7 @@ export function CheckpointPlacementAdmin({
 
     return (
         <div className="flex h-full min-h-0 flex-1 w-full overflow-hidden rounded-lg border border-border-subtle bg-surface-elevated shadow-sm">
-            {/* Expanded Sidebar List */}
+            {/* Sidebar List */}
             <div className="flex w-96 lg:w-[420px] shrink-0 flex-col border-r border-border-subtle bg-surface-base min-h-0">
                 <div className="border-b border-border-subtle p-4 shrink-0">
                     <h3 className="font-bold text-text-main">Checkpoint Locations</h3>
@@ -181,14 +181,15 @@ export function CheckpointPlacementAdmin({
                                 longitude={cp.longitude}
                                 latitude={cp.latitude}
                                 draggable
-                                anchor="bottom"
+                                /* FIXED: Anchor at 'center' so click coordinate matches circle midpoint exactly */
+                                anchor="center"
                                 onDragEnd={(e) => handleDragEnd(cp.id, e.lngLat.lng, e.lngLat.lat)}
                                 onClick={(e) => {
                                     e.originalEvent.stopPropagation()
                                     setSelectedId(cp.id)
                                 }}
                             >
-                                <div className="group flex flex-col items-center cursor-grab active:cursor-grabbing">
+                                <div className="relative group flex flex-col items-center cursor-grab active:cursor-grabbing">
                                     <div
                                         className={cn(
                                             'flex h-9 w-9 items-center justify-center rounded-full border-2 text-xs font-bold shadow-md transition-transform hover:scale-110 [&>svg]:h-4 [&>svg]:w-4',
@@ -199,7 +200,9 @@ export function CheckpointPlacementAdmin({
                                     >
                                         {cp.icon ?? cp.number ?? '•'}
                                     </div>
-                                    <span className="mt-1 whitespace-nowrap rounded bg-surface-elevated/95 px-2 py-0.5 text-xs font-semibold text-text-main shadow-sm border border-border-subtle">
+
+                                    {/* Absolute positioning prevents shifting the pin container height */}
+                                    <span className="absolute top-full mt-1 left-1/2 -translate-x-1/2 pointer-events-none whitespace-nowrap rounded bg-surface-elevated/95 px-2 py-0.5 text-xs font-semibold text-text-main shadow-sm border border-border-subtle">
                                         {cp.name}
                                     </span>
                                 </div>
@@ -211,18 +214,43 @@ export function CheckpointPlacementAdmin({
                         <Popup
                             longitude={selectedCheckpoint.longitude}
                             latitude={selectedCheckpoint.latitude}
-                            anchor="top"
+                            anchor="bottom"
+                            offset={18}
                             onClose={() => setSelectedId(null)}
-                            closeOnClick={false}
+                            closeOnClick={true}
+                            focusAfterOpen={false}
+                            /* FIXED: Applied custom theme overrides to remove MapLibre white box padding */
+                            className="[&_.maplibregl-popup-content]:p-0 [&_.maplibregl-popup-content]:rounded-xl [&_.maplibregl-popup-content]:shadow-xl [&_.maplibregl-popup-content]:border [&_.maplibregl-popup-content]:border-border-subtle [&_.maplibregl-popup-close-button]:hidden"
                         >
-                            <div className="p-1 max-w-xs">
-                                <h4 className="font-bold text-xs text-text-main mb-1">{selectedCheckpoint.name}</h4>
+                            <div className="relative min-w-[200px] max-w-xs p-3.5 bg-surface-elevated rounded-xl">
+                                {/* Custom Close Button */}
+                                <button
+                                    type="button"
+                                    onClick={() => setSelectedId(null)}
+                                    className="absolute top-2.5 right-2.5 flex h-5 w-5 items-center justify-center rounded-full text-text-muted hover:bg-vintage-berry-100 hover:text-text-main transition-colors"
+                                >
+                                    <X className="h-3.5 w-3.5" />
+                                </button>
+
+                                <div className="flex items-center gap-2.5 pr-6">
+                                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-vintage-berry-800 text-xs font-bold text-white shadow-xs [&>svg]:h-3.5 [&>svg]:w-3.5">
+                                        {selectedCheckpoint.icon ?? selectedCheckpoint.number ?? '•'}
+                                    </span>
+                                    <h4 className="font-bold text-sm text-text-main leading-tight">
+                                        {selectedCheckpoint.name}
+                                    </h4>
+                                </div>
+
                                 {selectedCheckpoint.description && (
-                                    <p className="text-[11px] text-text-muted mb-1 leading-snug">{selectedCheckpoint.description}</p>
+                                    <p className="mt-2 text-xs text-text-muted leading-relaxed border-t border-border-subtle/50 pt-2">
+                                        {selectedCheckpoint.description}
+                                    </p>
                                 )}
-                                <p className="text-[10px] font-mono text-text-muted">
-                                    Lat: {selectedCheckpoint.latitude.toFixed(5)}, Lng: {selectedCheckpoint.longitude.toFixed(5)}
-                                </p>
+
+                                <div className="mt-2 flex items-center gap-3 text-[10px] font-mono text-text-muted bg-surface-base/80 p-1.5 rounded border border-border-subtle/40">
+                                    <span>Lat: {selectedCheckpoint.latitude.toFixed(5)}</span>
+                                    <span>Lng: {selectedCheckpoint.longitude.toFixed(5)}</span>
+                                </div>
                             </div>
                         </Popup>
                     )}
