@@ -14,6 +14,7 @@ interface VectorMapProps {
     className?: string
     pmtilesUrl?: string
     presetTheme?: Flavor
+    onClick?: (e: maplibregl.MapMouseEvent) => void
     children?: React.ReactNode
 }
 
@@ -21,6 +22,7 @@ export function VectorMap({
     className,
     pmtilesUrl = 'https://fuksiseikkailu-maptiles.s3.fr-par.scw.cloud/helsinki.pmtiles',
     presetTheme = namedFlavor('light'),
+    onClick,
     children,
 }: VectorMapProps) {
     const mapStyle = React.useMemo<maplibregl.StyleSpecification>(() => {
@@ -44,8 +46,9 @@ export function VectorMap({
         <div className={cn('relative h-full w-full overflow-hidden rounded-sm border border-border-subtle', className)}>
             <Map
                 mapLib={maplibregl}
+                onClick={onClick}
                 initialViewState={{
-                    longitude: 24.9384, // Helsinki Center
+                    longitude: 24.9384,
                     latitude: 60.1699,
                     zoom: 13,
                 }}
