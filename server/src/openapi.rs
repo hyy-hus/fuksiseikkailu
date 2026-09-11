@@ -30,6 +30,7 @@ impl Modify for SecurityAddon {
         auth::routes::register,
         auth::routes::request_otp,
         auth::routes::verify_otp,
+        auth::routes::refresh_token,
 
         // Users
         users::routes::list_users,

@@ -116,3 +116,42 @@ async fn issue_token_pair(
         expires_in: state.config.jwt_expiration_seconds,
     })
 }
+
+#[utoipa::path(
+    post,
+    path = "/auth/refresh",
+    tag = "Auth",
+    responses(
+        (status = 200, description = "Token refreshed successfully", body = AuthTokens),
+        (status = 401, description = "Invalid or expired refresh token")
+    )
+)]
+pub async fn refresh_token(
+    State(state): State<AuthState>,
+    headers: axum::http::HeaderMap,
+) -> Result<Json<AuthTokens>, AppError> {
+    // 1. Extract Bearer token from headers
+    let auth_header = headers
+        .get(axum::http::header::AUTHORIZATION)
+        .and_then(|h| h.to_str().ok())
+        .ok_or_else(|| AppError::Unauthorized("Missing authorization header".into()))?;
+
+    let token = auth_header
+        .strip_prefix("Bearer ")
+        .ok_or_else(|| AppError::Unauthorized("Invalid token format".into()))?;
+
+    // 2. Decode and validate claims (allow slight clock skew or grace period for refreshes)
+    let claims = jwt::decode_jwt(token, &state.config.jwt_secret)?;
+
+    // 3. Issue fresh token pair
+    let tokens = issue_token_pair(
+        &state,
+        claims.sub,
+        claims.role,
+        claims.checkpoint_id,
+        claims.team_id,
+    )
+    .await?;
+
+    Ok(Json(tokens))
+}
