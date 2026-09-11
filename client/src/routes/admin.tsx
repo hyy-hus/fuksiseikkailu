@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { CheckpointPlacementAdmin } from '@/components/CheckpointAdmin'
 import type { Checkpoint } from '@/components/CheckpointMap'
 import { Flag, PartyPopper, Beer, Sparkles, Terminal } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export const Route = createFileRoute('/admin')({
     component: RouteComponent,
@@ -87,6 +88,7 @@ const INITIAL_CHECKPOINTS: Checkpoint[] = [
 ]
 
 function RouteComponent() {
+    const { t } = useTranslation()
     const [checkpoints, setCheckpoints] = React.useState<Checkpoint[]>(INITIAL_CHECKPOINTS)
 
     return (
@@ -94,10 +96,10 @@ function RouteComponent() {
             <header className="flex items-center justify-between shrink-0">
                 <div>
                     <h1 className="text-xl font-extrabold uppercase tracking-tight text-black">
-                        Checkpoint Admin Tool
+                        {t('checkpointAdminTool', 'Checkpoint Admin Tool')}
                     </h1>
                     <p className="text-xs font-bold text-black/70">
-                        Drag markers on the map or click "Set Position" to locate unset checkpoints.
+                        {t('dragMarkersOnTheMapOrClickSetPositionToLocateUnsetCheckpoints', 'Drag markers on the map or click "Set Position" to locate unset checkpoints.')}
                     </p>
                 </div>
                 <button
@@ -106,7 +108,7 @@ function RouteComponent() {
                     className="flex items-center gap-1.5 rounded-md border-2 border-black bg-white px-3 py-1.5 text-xs font-extrabold text-black shadow-2xs hover:bg-blush-pop-100 transition-colors cursor-pointer"
                 >
                     <Terminal className="h-3.5 w-3.5" />
-                    Log Active State
+                    {t('logActiveState', 'Log Active State')}
                 </button>
             </header>
 

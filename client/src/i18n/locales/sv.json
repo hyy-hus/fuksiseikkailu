@@ -1,0 +1,197 @@
+{
+    "translation": {
+        "401UnauthorizedYouMustBeLoggedInAsAnAdminToCreateOrEditCheckpoints": "401 Obehörig: Du måste vara inloggad som administratör för att skapa eller redigera kontroller.",
+        "403ForbiddenYouDoNotHavePermissionToPerformThisAction": "403 Förbjudet: Du har inte behörighet att utföra denna åtgärd.",
+        "aDescriptionForCheckpointA": "En beskrivning för kontroll A",
+        "aDescriptionForCheckpointB": "En beskrivning för kontroll B",
+        "allowextra": "tillåtExtra",
+        "anUnexpectedServerErrorOccurredCheckInputsOrNetworkLogs": "Ett oväntat serverfel uppstod. Kontrollera inmatning eller nätverksloggar.",
+        "arraybuffer": "arrayBuffer",
+        "basicVal": "Grundläggande {{val}}",
+        "batchImport": {
+            "dropzoneLabel": "Släpp din CSV- / TSV-fil här eller klicka för att bläddra",
+            "fields": {
+                "category": "Kategori",
+                "contactEmail": "Kontaktpersonens e-post",
+                "contactPerson": "Kontaktperson",
+                "contactPhone": "Kontaktpersonens telefonnummer",
+                "description": "Beskrivning",
+                "lanes": "Banor / Köer",
+                "latitude": "Breddgrad (Latitude)",
+                "locationName": "Platsens namn",
+                "longitude": "Längdgrad (Longitude)",
+                "name": "Kontrollens namn",
+                "number": "Nummer (#)"
+            },
+            "ignoreField": "-- Ignorera / Hoppa över fält --",
+            "meta": {
+                "loading": "Importerar kontroller som batch...",
+                "success_one": "Importerade {{count}} kontroll framgångsrikt!",
+                "success_other": "Importerade {{count}} kontroller framgångsrikt!"
+            },
+            "orSeparator": "ELLER KLISTRA IN RÅ TABELLDATA",
+            "parseButton": "Analysera och matcha kolumner",
+            "submitButton_one": "Importera {{count}} kontroll",
+            "submitButton_other": "Importera {{count}} kontroller",
+            "subtitleStep1": "Ladda upp CSV/TSV-fil eller klistra in tabelldata",
+            "subtitleStep2_one": "Steg 2: Matcha kolumner (identifierade {{count}} rad)",
+            "subtitleStep2_other": "Steg 2: Matcha kolumner (identifierade {{count}} rader)",
+            "textareaPlaceholder": "Namn\tNummer\tKategori\tPlats\nKontroll A\t1\tsubject\tInnergård A\nKontroll B\t2\tnation\tSal B",
+            "title": "Batch-importera kontroller"
+        },
+        "bearerToken": "Bearer {{token}}",
+        "categories": {
+            "hobby": "Klubb / Hobby",
+            "hyy": "HUS",
+            "nation": "Nation",
+            "other": "Övrigt",
+            "subject": "Ämnesförening",
+            "yliopisto": "Universitetet"
+        },
+        "checkpoint1Kaisaniemi": "Kontroll 1: Kaisaniemi",
+        "checkpointA": "Kontroll A",
+        "checkpointAdminTool": "Hanteringsverktyg för kontroller",
+        "checkpointB": "Kontroll B",
+        "checkpointForm": {
+            "categories": {
+                "hobby": "Hobby / Klubb",
+                "hyy": "HUS",
+                "nation": "Nation / Osakunta",
+                "other": "Other / Övrigt",
+                "subject": "Subject / Ämnesförening",
+                "yliopisto": "Universitetet"
+            },
+            "createCheckpoint": "Skapa kontroll",
+            "labels": {
+                "accessible": "Tillgänglig för rullstol",
+                "cancelled": "Markera som inställd",
+                "category": "Kategori",
+                "contactEmail": "Kontaktpersonens e-post",
+                "contactPerson": "Kontaktperson",
+                "contactPhone": "Kontaktpersonens telefonnummer",
+                "description": "Beskrivning och instruktioner",
+                "lanes": "Banor / Köer",
+                "latitude": "Breddgrad (Latitude)",
+                "locationName": "Platsens namn",
+                "longitude": "Längdgrad (Longitude)",
+                "name": "Kontrollens namn *",
+                "number": "Nummer (#)"
+            },
+            "placeholders": {
+                "contactEmail": "arrangor@helsinki.fi",
+                "contactPerson": "Matti Meikäläinen",
+                "contactPhone": "+358 40 1234567",
+                "description": "Korta riktlinjer, krav eller regler för kontrollen...",
+                "latitude": "60.1708",
+                "locationName": "t.ex. Topelia innergård",
+                "longitude": "24.9502",
+                "name": "t.ex. OIH Räp-Räp",
+                "number": "t.ex. 12"
+            },
+            "saveChanges": "Spara ändringar",
+            "submissionFailed": "Inskickandet misslyckades",
+            "subtitleCreate": "Lägg till en ny kontroll i eventdatabasen.",
+            "subtitleEdit": "Uppdatera operativ information, kontaktuppgifter eller koordinater.",
+            "titleCreate": "Skapa ny kontroll",
+            "titleEdit": "Redigera kontroll: {{name}}",
+            "validation": {
+                "nameRequired": "Namn krävs"
+            }
+        },
+        "checkpointMap": {
+            "searchPlaceholder": "Sök kontroller..."
+        },
+        "checkpoints": {
+            "accessibleBadge": "Tillgänglig",
+            "adjustFiltersHint": "Prova att ändra din sökning eller kategorifilter.",
+            "batchImport": "Batch-import",
+            "cancelledBadge": "Inställd",
+            "clickMapInstruction": "Klicka var som helst på kartan för att placera kontrollen \"{{name}}\"",
+            "clickMapToPlace": "Klicka på kartan för att placera...",
+            "editButton": "Redigera kontroll",
+            "lanesCount": "Banor: {{lanes}}",
+            "listSubtitle": "Bläddra bland eventkontroller, kartkoordinater och placeringsdetaljer.",
+            "listTitle_one": "Kontroller ({{count}})",
+            "listTitle_other": "Kontroller ({{count}})",
+            "loadErrorMessage": "Den begärda kontrollen kunde inte hittas eller hämtas.",
+            "loadErrorTitle": "Kunde inte ladda kontroller",
+            "loading": "Laddar kontroller...",
+            "locationsSubtitle": "Välj en kontroll för att visa detaljer, eller klicka på kartan för att ställa in/flytta dess position.",
+            "locationsTitle": "Kontrollernas platser",
+            "managementSubtitle": "Skapa, redigera eller importera eventkontroller.",
+            "managementTitle": "Hantering av kontroller",
+            "newCheckpoint": "Ny kontroll",
+            "noCheckpointsFound": "Inga kontroller hittades",
+            "noDescription": "Ingen beskrivning angiven.",
+            "reposition": "Omplacera",
+            "returnToList": "Tillbaka till kontrollistan",
+            "setPosition": "Ställ in position"
+        },
+        "common": {
+            "allCategories": "Alla kategorier",
+            "back": "Tillbaka",
+            "backToCheckpoints": "Tillbaka till kontroller",
+            "cancel": "Avbryt",
+            "placed": "Placerad",
+            "refresh": "Uppdatera",
+            "searchPlaceholder": "Sök med namn eller plats...",
+            "unexpectedError": "Ett oväntat serverfel uppstod.",
+            "unset": "Ej inställd"
+        },
+        "deeplynestedArraysobjectsArentSupportedProvideYourOwnQueryserializerToHandleThese": "Djupt nästlade matriser/objekt stöds inte. Ange en egen `querySerializer()` för att hantera dessa.",
+        "doorsOpenAt2100": "Dörrarna öppnas kl. 21:00.",
+        "dragMarkersOnTheMapOrClickSetPositionToLocateUnsetCheckpoints": "Dra markörer på kartan eller klicka på \"Ställ in position\" för att lokalisera ej inställda kontroller.",
+        "fresherAdventure": "Gulisäventyret",
+        "fuksiseikkailu": "Fuksiseikkailu",
+        "fuksiseikkailuDashboard": "Gulisäventyrets instrumentpanel",
+        "gulisventyret": "Gulisäventyret",
+        "joinedvalues": ".{{joinedValues}}",
+        "kumpulaCampus": "Gumtäkt campus",
+        "lat": "Lat:",
+        "lng": "Lng:",
+        "logActiveState": "Logga aktivt tillstånd",
+        "login": {
+            "authenticatedSubtitle": "Din sessions-token är sparad i lokal lagring (localStorage).",
+            "authenticatedTitle": "Autentiserad",
+            "buttons": {
+                "sendCode": "Skicka inloggningskod",
+                "verify": "Verifiera och logga in"
+            },
+            "error": {
+                "noToken": "Autentiseringen lyckades men ingen åtkomst-token returnerades från servern."
+            },
+            "headerRequestSubtitle": "Ange din e-postadress som arrangör för att få en inloggningskod.",
+            "headerRequestTitle": "Eventinloggning",
+            "headerVerifySubtitle": "Koden har skickats till {{email}}",
+            "headerVerifyTitle": "Ange verifieringskod",
+            "labels": {
+                "code": "6-siffrig verifieringskod",
+                "email": "E-postadress"
+            },
+            "logoutButton": "Logga ut / Rensa token",
+            "meta": {
+                "requestLoading": "Skickar kod...",
+                "requestSuccess": "Koden har skickats till din e-post!",
+                "verifyLoading": "Verifierar kod...",
+                "verifySuccess": "Autentiseringen lyckades!"
+            },
+            "placeholders": {
+                "code": "123456",
+                "email": "arrangor@helsinki.fi"
+            },
+            "validation": {
+                "invalidEmail": "Ange en giltig e-postadress"
+            }
+        },
+        "namejoinedvalues": ";{{name}}={{joinedValues}}",
+        "officialAfterpartyTavastia": "Officiell efterfest (Tavastia)",
+        "operationCompletedSuccessfully": "Åtgärden slutfördes framgångsrikt!",
+        "prakennusMainBuilding": "Huvudbyggnaden",
+        "processingRequest": "Behandlar begäran...",
+        "registrationKickoffBriefingAt1600": "Registrering och kickoff-briefing kl. 16:00.",
+        "scienceStudentChallenges": "Naturvetarnas utmaningar.",
+        "startingAreaSenaatintori": "Startområde (Senatstorget)",
+        "triviaStation": "Frågesportsstation.",
+        "welcomeOrientationAndCheckinStation": "Välkomstorientering och incheckningsstation."
+    }
+}

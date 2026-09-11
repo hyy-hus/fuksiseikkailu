@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Map, NavigationControl } from '@vis.gl/react-maplibre'
 import * as maplibregl from 'maplibre-gl'
 import { Protocol } from 'pmtiles'
@@ -25,13 +26,16 @@ export function VectorMap({
     onClick,
     children,
 }: VectorMapProps) {
+    const { i18n } = useTranslation()
+
     const mapStyle = React.useMemo<maplibregl.StyleSpecification>(() => {
-        const baseLayers = layers('protomaps', presetTheme, { lang: 'en' })
+        // Automatically align Protomaps map tile text language with i18n active locale
+        const mapLanguage = i18n.language.slice(0, 2)
+        const baseLayers = i18n.changeLanguage(mapLanguage); layers('protomaps', presetTheme, { lang: mapLanguage })
 
         return {
             version: 8,
             glyphs: 'https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf',
-            // MapLibre appends .json and .png (or @2x.png) to this base URL automatically
             sprite: 'https://protomaps.github.io/basemaps-assets/sprites/v4/light',
             sources: {
                 protomaps: {
@@ -42,7 +46,7 @@ export function VectorMap({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             layers: baseLayers as any,
         }
-    }, [pmtilesUrl, presetTheme])
+    }, [pmtilesUrl, presetTheme, i18n.language])
 
     return (
         <div className={cn('relative h-full w-full overflow-hidden', className)}>

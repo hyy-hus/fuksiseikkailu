@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import './i18n/config'
 import {
     MutationCache,
     QueryClient,
@@ -13,6 +14,7 @@ import './api/client'
 import { routeTree } from './routeTree.gen'
 import { getApiErrorMessage } from './lib/errors'
 import { AuthProvider } from './auth/AuthContext'
+import i18next from 'i18next'
 
 // Module augmentation for custom mutation toast metadata
 declare module '@tanstack/react-query' {
@@ -37,7 +39,7 @@ const queryClient = new QueryClient({
             if (mutation.meta?.silent) return
 
             const loadingMsg =
-                mutation.meta?.loadingMessage || 'Processing request...'
+                mutation.meta?.loadingMessage || i18next.t('processingRequest', 'Processing request...')
             const toastId = toast.loading(loadingMsg)
             activeToasts.set(mutation.mutationId, toastId)
         },
@@ -48,7 +50,7 @@ const queryClient = new QueryClient({
             const successMsg =
                 typeof mutation.meta?.successMessage === 'function'
                     ? mutation.meta.successMessage(data)
-                    : mutation.meta?.successMessage || 'Operation completed successfully!'
+                    : mutation.meta?.successMessage || i18next.t('operationCompletedSuccessfully', 'Operation completed successfully!')
 
             if (toastId) {
                 toast.success(successMsg, { id: toastId })

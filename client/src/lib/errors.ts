@@ -1,3 +1,4 @@
+import i18next from 'i18next'
 /**
  * Safely extracts human-readable error messages from Hey-API / TanStack Query error objects.
  */
@@ -11,11 +12,11 @@ export function getApiErrorMessage(error: unknown): string {
         const status = err.status ?? err.statusCode ?? err.response?.status
 
         if (status === 401) {
-            return '401 Unauthorized: You must be logged in as an Admin to create or edit checkpoints.'
+            return i18next.t('401UnauthorizedYouMustBeLoggedInAsAnAdminToCreateOrEditCheckpoints', '401 Unauthorized: You must be logged in as an Admin to create or edit checkpoints.')
         }
 
         if (status === 403) {
-            return '403 Forbidden: You do not have permission to perform this action.'
+            return i18next.t('403ForbiddenYouDoNotHavePermissionToPerformThisAction', '403 Forbidden: You do not have permission to perform this action.')
         }
 
         // 2. Hey-API stores the parsed response JSON body under `err.error`
@@ -34,5 +35,5 @@ export function getApiErrorMessage(error: unknown): string {
         }
     }
 
-    return 'An unexpected server error occurred. Check inputs or network logs.'
+    return i18next.t('anUnexpectedServerErrorOccurredCheckInputsOrNetworkLogs', 'An unexpected server error occurred. Check inputs or network logs.')
 }
