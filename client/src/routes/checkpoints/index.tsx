@@ -22,7 +22,6 @@ function RouteComponent() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    {/* Import Checkpoints Link */}
                     <Link
                         to="/checkpoints/import"
                         className="flex items-center gap-1.5 rounded-md border-2 border-black bg-white px-3 py-1.5 text-xs font-extrabold text-black shadow-2xs hover:bg-black/5 transition-colors"
@@ -31,7 +30,6 @@ function RouteComponent() {
                         <span className="hidden sm:inline">Batch Import</span>
                     </Link>
 
-                    {/* Create Checkpoint Link */}
                     <Link
                         to="/checkpoints/create"
                         className="flex items-center gap-1.5 rounded-md border-2 border-black bg-amber-400 px-3 py-1.5 text-xs font-black text-black shadow-2xs hover:bg-amber-300 transition-colors"
@@ -42,8 +40,10 @@ function RouteComponent() {
                 </div>
             </div>
 
-            {/* Main Filterable Checkpoint List */}
-            <CheckpointList />
+            {/* Main Content Container */}
+            <div className="w-full max-w-2xl">
+                <CheckpointList />
+            </div>
         </div>
     )
 }

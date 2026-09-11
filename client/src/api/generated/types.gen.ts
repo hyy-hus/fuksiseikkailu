@@ -525,6 +525,29 @@ export type VerifyOtpResponses = {
 
 export type VerifyOtpResponse = VerifyOtpResponses[keyof VerifyOtpResponses];
 
+export type RefreshTokenData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/auth/refresh';
+};
+
+export type RefreshTokenErrors = {
+    /**
+     * Invalid or expired refresh token
+     */
+    401: unknown;
+};
+
+export type RefreshTokenResponses = {
+    /**
+     * Token refreshed successfully
+     */
+    200: AuthTokens;
+};
+
+export type RefreshTokenResponse = RefreshTokenResponses[keyof RefreshTokenResponses];
+
 export type RegisterData = {
     body: RegisterPayload;
     path?: never;

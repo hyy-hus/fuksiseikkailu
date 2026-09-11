@@ -15,9 +15,9 @@ function RouteComponent() {
     }
 
     return (
-        <div className={cn('flex flex-col gap-4 p-4')}>
-            {/* Navigation Header */}
-            <div>
+        <div className={cn('flex h-full w-full flex-col items-center gap-4 overflow-y-auto p-4')}>
+            {/* Top Header Bar */}
+            <div className="flex w-full max-w-2xl items-center justify-between">
                 <button
                     type="button"
                     onClick={handleNavigateBack}
@@ -28,11 +28,13 @@ function RouteComponent() {
                 </button>
             </div>
 
-            {/* Batch Import Container */}
-            <CheckpointBatchImport
-                onSuccess={handleNavigateBack}
-                onCancel={handleNavigateBack}
-            />
+            {/* Main Content Container */}
+            <div className="w-full max-w-2xl">
+                <CheckpointBatchImport
+                    onSuccess={handleNavigateBack}
+                    onCancel={handleNavigateBack}
+                />
+            </div>
         </div>
     )
 }
