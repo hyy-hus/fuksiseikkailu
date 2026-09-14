@@ -1,8 +1,11 @@
+import * as React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-
-import { CheckpointMap, type Checkpoint } from '@/components/CheckpointMap';
-import { Flag, PartyPopper } from 'lucide-react';
+import { AlertCircle, RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+
+import { CheckpointMap, type Checkpoint } from '@/components/CheckpointMap'
+import { useCheckpoints } from '@/hooks/useCheckpoints'
+import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/')({
     component: RouteComponent,
@@ -10,76 +13,55 @@ export const Route = createFileRoute('/')({
 
 function RouteComponent() {
     const { t } = useTranslation()
-    const sampleCheckpoints: Checkpoint[] = [
-        {
-            id: '1',
-            number: 1,
-            name: t('prakennusMainBuilding', 'Päärakennus (Main Building)'),
-            description: t('welcomeOrientationAndCheckinStation', 'Welcome orientation and check-in station.'),
-            latitude: 60.1699,
-            longitude: 24.9484,
-            category: 'academic',
-        },
-        {
-            id: '2',
-            number: 2,
-            name: t('kumpulaCampus', 'Kumpula Campus'),
-            description: t('scienceStudentChallenges', 'Science student challenges.'),
-            latitude: 60.2045,
-            longitude: 24.962,
-            category: 'sports',
-        },
-        {
-            id: '3',
-            number: 3,
-            name: t('checkpointA', 'Checkpoint A'),
-            description: t('aDescriptionForCheckpointA', 'A description for checkpoint A'),
-            latitude: 60.1772,
-            longitude: 24.9317,
-            category: 'academic',
-        },
-        {
-            id: '3',
-            number: 3,
-            name: t('checkpointB', 'Checkpoint B'),
-            description: t('aDescriptionForCheckpointB', 'A description for checkpoint B'),
-            latitude: 60.1771,
-            longitude: 24.9319,
-            category: 'academic',
-        },
-        {
-            id: 'start-area',
-            name: t('startingAreaSenaatintori', 'Starting Area (Senaatintori)'),
-            description: t('registrationKickoffBriefingAt1600', 'Registration & Kickoff briefing at 16:00.'),
-            latitude: 60.1695,
-            longitude: 24.9525,
-            icon: <Flag />,
-            category: 'start',
-        },
-        {
-            id: 'cp-1',
-            number: 4,
-            name: t('checkpoint1Kaisaniemi', 'Checkpoint 1: Kaisaniemi'),
-            description: t('triviaStation', 'Trivia station.'),
-            latitude: 60.174,
-            longitude: 24.946,
-            category: 'academic',
-        },
-        {
-            id: 'afterparty-venue',
-            name: t('officialAfterpartyTavastia', 'Official Afterparty (Tavastia)'),
-            description: t('doorsOpenAt2100', 'Doors open at 21:00.'),
-            latitude: 60.169,
-            longitude: 24.933,
-            icon: <PartyPopper />,
-            category: 'afterparty',
-        },
-    ]
+    const { data: checkpoints = [], isLoading, isError, error } = useCheckpoints()
+
+    // Map backend Checkpoint API response objects to CheckpointMap interface
+    const mapCheckpoints = React.useMemo<Checkpoint[]>(() => {
+        return checkpoints.map((cp) => ({
+            id: cp.id,
+            number: cp.number ?? undefined,
+            name: cp.name,
+            description: typeof cp.checkpoint_description === 'string'
+                ? cp.checkpoint_description
+                : cp.checkpoint_description
+                    ? JSON.stringify(cp.checkpoint_description)
+                    : undefined,
+            latitude: cp.latitude ?? 0,
+            longitude: cp.longitude ?? 0,
+            category: cp.category ?? undefined,
+        }))
+    }, [checkpoints])
+
+    if (isLoading) {
+        return (
+            <div className={cn('flex h-[calc(100vh-4rem)] w-full items-center justify-center bg-white p-4 text-center')}>
+                <div className={cn('flex flex-col items-center gap-2')}>
+                    <RefreshCw className={cn('h-8 w-8 animate-spin text-black')} />
+                    <p className={cn('text-sm font-bold uppercase text-black')}>
+                        {t('checkpoints.loading', 'Loading Checkpoints...')}
+                    </p>
+                </div>
+            </div>
+        )
+    }
+
+    if (isError) {
+        return (
+            <div className={cn('flex h-[calc(100vh-4rem)] w-full items-center justify-center bg-white p-4 text-center')}>
+                <div className={cn('flex items-center gap-3 rounded-md border-2 border-black bg-rose-100 p-4 text-xs font-bold text-black shadow-2xs max-w-md')}>
+                    <AlertCircle className={cn('h-5 w-5 shrink-0 text-rose-600 stroke-[2.5]')} />
+                    <div className={cn('text-left')}>
+                        <p className={cn('font-extrabold uppercase')}>{t('checkpoints.loadErrorTitle', 'Failed to load checkpoints')}</p>
+                        <p className={cn('mt-0.5 text-black/70')}>{error?.message || t('common.unexpectedError', 'An unexpected server error occurred.')}</p>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="h-[calc(100vh-4rem)] w-full p-1">
-            <CheckpointMap checkpoints={sampleCheckpoints} />
+            <CheckpointMap checkpoints={mapCheckpoints} />
         </div>
     )
 }
-
