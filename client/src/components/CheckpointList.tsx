@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 
 import { useCheckpoints } from '@/hooks/useCheckpoints'
+import { getLocalizedText } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -26,7 +27,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 }
 
 export function CheckpointList() {
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
     const [selectedId, setSelectedId] = React.useState<string | null>(null)
     const [searchQuery, setSearchQuery] = React.useState('')
     const [categoryFilter, setCategoryFilter] = React.useState<string>('all')
@@ -59,12 +60,8 @@ export function CheckpointList() {
                 : false
             const categoryMatch = cp.category ? cp.category.toLowerCase().includes(q) : false
 
-            const descriptionMatch = cp.checkpoint_description
-                ? (typeof cp.checkpoint_description === 'string'
-                    ? cp.checkpoint_description
-                    : JSON.stringify(cp.checkpoint_description)
-                ).toLowerCase().includes(q)
-                : false
+            const localizedDesc = getLocalizedText(cp.checkpoint_description, i18n.language)
+            const descriptionMatch = localizedDesc.toLowerCase().includes(q)
 
             return (
                 nameMatch ||
@@ -74,7 +71,7 @@ export function CheckpointList() {
                 descriptionMatch
             )
         })
-    }, [checkpoints, searchQuery, categoryFilter])
+    }, [checkpoints, searchQuery, categoryFilter, i18n.language])
 
     return (
         <div className={cn('flex h-full w-full max-w-2xl flex-col overflow-hidden rounded-xl border-2 border-black bg-white shadow-xl isolate')}>
@@ -174,6 +171,10 @@ export function CheckpointList() {
                                 ? cp.category
                                 : 'default'
                         const badgeColorClass = CATEGORY_COLORS[categoryKey]
+                        const localizedDescription = getLocalizedText(
+                            cp.checkpoint_description,
+                            i18n.language
+                        )
 
                         return (
                             <React.Fragment key={cp.id}>
@@ -243,9 +244,9 @@ export function CheckpointList() {
                                                 </div>
                                             )}
 
-                                            {cp.checkpoint_description ? (
+                                            {localizedDescription ? (
                                                 <p className={cn('text-black/80 font-medium leading-relaxed whitespace-pre-line')}>
-                                                    {String(cp.checkpoint_description)}
+                                                    {localizedDescription}
                                                 </p>
                                             ) : (
                                                 <p className={cn('text-black/40 italic text-[11px]')}>

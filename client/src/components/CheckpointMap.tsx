@@ -3,8 +3,10 @@ import { useTranslation } from 'react-i18next'
 import { Marker, Popup, useMap } from '@vis.gl/react-maplibre'
 import Supercluster from 'supercluster'
 import type { PointFeature } from 'supercluster'
-import { Search, X } from 'lucide-react'
+import { Layers, Search, X } from 'lucide-react'
+
 import { VectorMap } from './Map'
+import { getLocalizedText } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
 type BBox = [number, number, number, number]
@@ -12,7 +14,7 @@ type BBox = [number, number, number, number]
 export interface Checkpoint {
     id: string
     name: string
-    description?: string
+    description?: unknown
     latitude: number
     longitude: number
     number?: number
@@ -135,7 +137,6 @@ function CheckpointMarker({
     return (
         <Marker longitude={longitude} latitude={latitude} anchor="center" onClick={onClick}>
             <div className={cn('relative group flex flex-col items-center cursor-pointer')}>
-                {/* Circle Pin - Center Anchored */}
                 <div
                     className={cn(
                         'flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold shadow-md transition-transform hover:scale-110 border-2 border-black',
@@ -152,7 +153,6 @@ function CheckpointMarker({
                     )}
                 </div>
 
-                {/* Text Label */}
                 {showNameLabel && (
                     <span className={cn('absolute top-full mt-1 left-1/2 -translate-x-1/2 pointer-events-none whitespace-nowrap bg-surface-elevated px-1.5 py-0.5 text-[11px] font-semibold text-text-main shadow-sm backdrop-blur-sm border-2 border-black')}>
                         {checkpoint.name}
@@ -170,6 +170,7 @@ function ClusteredCheckpointMarkers({
     checkpoints: Checkpoint[]
     onCheckpointClick?: (checkpoint: Checkpoint) => void
 }) {
+    const { t, i18n } = useTranslation()
     const { current: map } = useMap()
     const [bounds, setBounds] = React.useState<BBox | null>(null)
     const [zoom, setZoom] = React.useState<number>(13)
@@ -236,6 +237,10 @@ function ClusteredCheckpointMarkers({
         onCheckpointClick?.(cp)
     }
 
+    const localizedPopupDescription = selectedCheckpoint
+        ? getLocalizedText(selectedCheckpoint.description, i18n.language)
+        : ''
+
     return (
         <>
             <CheckpointSearch checkpoints={checkpoints} onSelect={handleSelectCheckpoint} />
@@ -248,12 +253,20 @@ function ClusteredCheckpointMarkers({
                     const clusterId = cluster.id as number
                     const pointCount = properties.point_count
 
+                    const sizeClass =
+                        pointCount > 20
+                            ? 'h-12 w-12 text-sm'
+                            : pointCount > 10
+                                ? 'h-11 w-11 text-xs'
+                                : 'h-10 w-10 text-xs'
+
                     return (
                         <Marker
                             key={`cluster-${clusterId}`}
                             longitude={longitude}
                             latitude={latitude}
                             anchor="center"
+                            style={{ zIndex: 30 }}
                             onClick={(e) => {
                                 e.originalEvent.stopPropagation()
                                 const expansionZoom = Math.min(
@@ -267,8 +280,16 @@ function ClusteredCheckpointMarkers({
                                 })
                             }}
                         >
-                            <div className={cn('flex h-9 w-9 items-center justify-center rounded-full border-2 border-black bg-blush-pop-400 font-bold text-black shadow-lg transition-transform hover:scale-110 cursor-pointer')}>
-                                {pointCount}
+                            <div
+                                className={cn(
+                                    'relative flex items-center justify-center rounded-2xl border-2 border-black bg-amber-300 font-black text-black shadow-xl transition-all hover:scale-115 cursor-pointer ring-2 ring-white/80',
+                                    sizeClass
+                                )}
+                            >
+                                <div className="flex flex-col items-center justify-center leading-none">
+                                    <Layers className="h-3 w-3 stroke-[3] mb-0.5 text-black/80" />
+                                    <span>{pointCount}</span>
+                                </div>
                             </div>
                         </Marker>
                     )
@@ -322,9 +343,13 @@ function ClusteredCheckpointMarkers({
                             </h4>
                         </div>
 
-                        {selectedCheckpoint.description && (
+                        {localizedPopupDescription ? (
                             <p className={cn('mt-2 text-xs text-text-muted leading-relaxed border-t border-black/20 pt-2')}>
-                                {selectedCheckpoint.description}
+                                {localizedPopupDescription}
+                            </p>
+                        ) : (
+                            <p className={cn('mt-2 text-[11px] italic text-text-muted border-t border-black/20 pt-2')}>
+                                {t('checkpoints.noDescription', 'No description provided.')}
                             </p>
                         )}
                     </div>
