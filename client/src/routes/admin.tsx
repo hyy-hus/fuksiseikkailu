@@ -1,11 +1,10 @@
 import * as React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { AlertCircle, RefreshCw, Terminal } from 'lucide-react'
+import { AlertCircle, Loader2, RefreshCw, Route as RouteIcon, Terminal } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-import { CheckpointPlacementAdmin } from '@/components/CheckpointAdmin'
-import type { Checkpoint } from '@/components/CheckpointMap'
-import { useCheckpoints, useUpdateCheckpoint } from '@/hooks/useCheckpoints'
+import { CheckpointPlacementAdmin, type AdminCheckpoint } from '@/components/CheckpointAdmin'
+import { useCheckpoints, useSequenceRenumberCheckpoints, useUpdateCheckpoint } from '@/hooks/useCheckpoints'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/admin')({
@@ -16,26 +15,24 @@ function RouteComponent() {
     const { t } = useTranslation()
     const { data: rawCheckpoints = [], isLoading, isError, error } = useCheckpoints()
     const updateCheckpointMutation = useUpdateCheckpoint()
+    const sequenceMutation = useSequenceRenumberCheckpoints()
 
-    // Local optimistic state for immediate UI responsiveness
+    const [selectedId, setSelectedId] = React.useState<string | null>(null)
     const [optimisticOverrides, setOptimisticOverrides] = React.useState<
         Record<string, { latitude: number; longitude: number }>
     >({})
 
-    // Merge server data with local optimistic position overrides
-    const checkpoints = React.useMemo<Checkpoint[]>(() => {
+    // Map backend Checkpoint response objects to UI AdminCheckpoint interface
+    const checkpoints = React.useMemo<AdminCheckpoint[]>(() => {
         return rawCheckpoints.map((cp) => {
             const override = optimisticOverrides[cp.id]
             return {
                 id: cp.id,
                 number: cp.number ?? undefined,
                 name: cp.name,
-                description:
-                    typeof cp.checkpoint_description === 'string'
-                        ? cp.checkpoint_description
-                        : cp.checkpoint_description
-                            ? JSON.stringify(cp.checkpoint_description)
-                            : undefined,
+                description: cp.checkpoint_description ?? undefined,
+                requirements: cp.requirements ?? undefined,
+                execution: cp.execution ?? undefined,
                 latitude: override ? override.latitude : (cp.latitude ?? 0),
                 longitude: override ? override.longitude : (cp.longitude ?? 0),
                 category: cp.category ?? undefined,
@@ -44,8 +41,7 @@ function RouteComponent() {
     }, [rawCheckpoints, optimisticOverrides])
 
     const handleUpdateCheckpoints = React.useCallback(
-        async (updatedList: Checkpoint[]) => {
-            // Find which checkpoint moved
+        async (updatedList: AdminCheckpoint[]) => {
             const modified = updatedList.find((updatedCp) => {
                 const current = checkpoints.find((cp) => cp.id === updatedCp.id)
                 if (!current) return false
@@ -57,7 +53,6 @@ function RouteComponent() {
 
             if (!modified) return
 
-            // 1. Instantly apply optimistic position to local state
             setOptimisticOverrides((prev) => ({
                 ...prev,
                 [modified.id]: {
@@ -70,7 +65,6 @@ function RouteComponent() {
             if (!originalBackendItem) return
 
             try {
-                // 2. Perform background API update
                 await updateCheckpointMutation.mutateAsync({
                     path: { id: modified.id },
                     body: {
@@ -80,7 +74,6 @@ function RouteComponent() {
                     },
                 })
             } catch (err) {
-                // Revert optimistic update if API call fails
                 setOptimisticOverrides((prev) => {
                     const next = { ...prev }
                     delete next[modified.id]
@@ -91,6 +84,14 @@ function RouteComponent() {
         },
         [checkpoints, rawCheckpoints, updateCheckpointMutation]
     )
+
+    const handleAutoSequence = async () => {
+        await sequenceMutation.mutateAsync({
+            body: {
+                start_id: selectedId ?? undefined,
+            },
+        })
+    }
 
     if (isLoading) {
         return (
@@ -130,19 +131,39 @@ function RouteComponent() {
                         {t('dragMarkersOnTheMapOrClickSetPositionToLocateUnsetCheckpoints', 'Drag markers on the map or click "Set Position" to locate unset checkpoints.')}
                     </p>
                 </div>
-                <button
-                    type="button"
-                    onClick={() => console.log('Current Checkpoints:', checkpoints)}
-                    className="flex items-center gap-1.5 rounded-md border-2 border-black bg-white px-3 py-1.5 text-xs font-extrabold text-black shadow-2xs hover:bg-blush-pop-100 transition-colors cursor-pointer"
-                >
-                    <Terminal className="h-3.5 w-3.5" />
-                    {t('logActiveState', 'Log Active State')}
-                </button>
+
+                <div className="flex items-center gap-2">
+                    <button
+                        type="button"
+                        onClick={handleAutoSequence}
+                        disabled={sequenceMutation.isPending}
+                        title={t('checkpoints.autoSequenceHint', 'Sequentially renumber checkpoints by nearest distance')}
+                        className="flex items-center gap-1.5 rounded-md border-2 border-black bg-amber-400 px-3 py-1.5 text-xs font-extrabold text-black shadow-2xs hover:bg-amber-300 transition-colors disabled:opacity-50 cursor-pointer"
+                    >
+                        {sequenceMutation.isPending ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin text-black" />
+                        ) : (
+                            <RouteIcon className="h-3.5 w-3.5 text-black" />
+                        )}
+                        {t('checkpoints.autoSequence', 'Auto-Sequence')}
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => console.log('Current Checkpoints:', checkpoints)}
+                        className="flex items-center gap-1.5 rounded-md border-2 border-black bg-white px-3 py-1.5 text-xs font-extrabold text-black shadow-2xs hover:bg-blush-pop-100 transition-colors cursor-pointer"
+                    >
+                        <Terminal className="h-3.5 w-3.5" />
+                        {t('logActiveState', 'Log Active State')}
+                    </button>
+                </div>
             </header>
 
             <CheckpointPlacementAdmin
                 checkpoints={checkpoints}
                 onUpdateCheckpoints={handleUpdateCheckpoints}
+                selectedId={selectedId}
+                onSelectId={setSelectedId}
             />
         </div>
     )

@@ -5,9 +5,9 @@ import {
     batchImportMutation,
     createCheckpointMutation,
     listCheckpointsOptions,
+    sequenceRenumberMutation,
     updateCheckpointMutation,
 } from '@/api/generated/@tanstack/react-query.gen'
-// import type { CreateCheckpoint, UpdateCheckpoint } from '@/api/generated/types.gen'
 
 export const CHECKPOINTS_QUERY_KEY = ['checkpoints']
 
@@ -66,6 +66,27 @@ export function useBatchImportCheckpoints(onSuccess?: () => void) {
                 t('batchImport.meta.success', 'Successfully imported {{count}} checkpoints!', {
                     count: Array.isArray(data) ? data.length : '',
                 }),
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: CHECKPOINTS_QUERY_KEY })
+            onSuccess?.()
+        },
+    })
+}
+
+/**
+ * Hook for automatically renumbering checkpoints by nearest-neighbor distance sequence
+ */
+export function useSequenceRenumberCheckpoints(onSuccess?: () => void) {
+    const { t } = useTranslation()
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        ...sequenceRenumberMutation(),
+        mutationKey: ['checkpoints', 'sequenceRenumber'],
+        meta: {
+            loadingMessage: t('sequence.meta.loading', 'Calculating nearest-neighbor sequence...'),
+            successMessage: t('sequence.meta.success', 'Checkpoints renumbered sequentially!'),
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: CHECKPOINTS_QUERY_KEY })
