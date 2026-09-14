@@ -19,7 +19,7 @@ pub enum CheckpointCategory {
 }
 
 /// Publicly exposed checkpoint payload (excludes sensitive private admin fields)
-#[derive(Debug, Serialize, Deserialize, sqlx::FromRow, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, sqlx::FromRow, ToSchema, Clone)]
 pub struct PublicCheckpoint {
     pub id: Uuid,
     pub area_id: Option<Uuid>,
@@ -32,6 +32,7 @@ pub struct PublicCheckpoint {
     pub accessible: bool,
     pub lanes: i32,
     pub checkpoint_description: Option<serde_json::Value>,
+    pub org_description: Option<serde_json::Value>,
     pub url: Option<String>,
     pub cancelled: bool,
     pub created_at: DateTime<Utc>,

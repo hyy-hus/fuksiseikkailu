@@ -13,7 +13,7 @@ pub async fn list_public_checkpoints(pool: &PgPool) -> Result<Vec<PublicCheckpoi
         SELECT 
             id, area_id, number, name, category AS "category: CheckpointCategory", 
             location_name, latitude, longitude, accessible, lanes, 
-            checkpoint_description, url, cancelled, created_at, updated_at
+            checkpoint_description, org_description, url, cancelled, created_at, updated_at
         FROM checkpoints
         WHERE deleted_at IS NULL
         ORDER BY number ASC NULLS LAST, name ASC
@@ -206,6 +206,23 @@ pub async fn batch_import_checkpoints(
     items: &[CreateCheckpoint],
 ) -> Result<Vec<Checkpoint>, AppError> {
     let mut tx = pool.begin().await?;
+
+    // 1. Fetch all active areas to map area names to their UUIDs
+    let area_rows = sqlx::query!(
+        r#"
+        SELECT id, name
+        FROM areas
+        WHERE deleted_at IS NULL
+        "#
+    )
+    .fetch_all(&mut *tx)
+    .await?;
+
+    let area_map: std::collections::HashMap<String, Uuid> = area_rows
+        .into_iter()
+        .map(|r| (r.name.trim().to_lowercase(), r.id))
+        .collect();
+
     let mut imported = Vec::with_capacity(items.len());
 
     for payload in items {
@@ -214,6 +231,15 @@ pub async fn batch_import_checkpoints(
         let longitude = payload.longitude.unwrap_or(0.0);
         let accessible = payload.accessible.unwrap_or(true);
         let lanes = payload.lanes.unwrap_or(1);
+
+        // 2. Resolve area_id: Use provided payload.area_id, or match by area name if provided
+        let resolved_area_id = payload.area_id.or_else(|| {
+            payload
+                .location_name
+                .as_ref()
+                .map(|name| name.trim().to_lowercase())
+                .and_then(|name| area_map.get(&name).copied())
+        });
 
         let checkpoint = sqlx::query_as!(
             Checkpoint,
@@ -224,6 +250,25 @@ pub async fn batch_import_checkpoints(
                 requirements, execution, url, contact_person, contact_email, contact_phone
             )
             VALUES ($1, $2, $3, $4::checkpoint_category, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+            ON CONFLICT (name) WHERE deleted_at IS NULL
+            DO UPDATE SET
+                area_id = COALESCE(EXCLUDED.area_id, checkpoints.area_id),
+                number = COALESCE(EXCLUDED.number, checkpoints.number),
+                category = COALESCE(EXCLUDED.category, checkpoints.category),
+                location_name = COALESCE(EXCLUDED.location_name, checkpoints.location_name),
+                latitude = CASE WHEN EXCLUDED.latitude != 0.0 THEN EXCLUDED.latitude ELSE checkpoints.latitude END,
+                longitude = CASE WHEN EXCLUDED.longitude != 0.0 THEN EXCLUDED.longitude ELSE checkpoints.longitude END,
+                accessible = COALESCE(EXCLUDED.accessible, checkpoints.accessible),
+                lanes = COALESCE(EXCLUDED.lanes, checkpoints.lanes),
+                checkpoint_description = COALESCE(EXCLUDED.checkpoint_description, checkpoints.checkpoint_description),
+                org_description = COALESCE(EXCLUDED.org_description, checkpoints.org_description),
+                requirements = COALESCE(EXCLUDED.requirements, checkpoints.requirements),
+                execution = COALESCE(EXCLUDED.execution, checkpoints.execution),
+                url = COALESCE(EXCLUDED.url, checkpoints.url),
+                contact_person = COALESCE(EXCLUDED.contact_person, checkpoints.contact_person),
+                contact_email = COALESCE(EXCLUDED.contact_email, checkpoints.contact_email),
+                contact_phone = COALESCE(EXCLUDED.contact_phone, checkpoints.contact_phone),
+                updated_at = NOW()
             RETURNING 
                 id, area_id, number, name, category AS "category: CheckpointCategory", 
                 location_name, latitude, longitude, accessible, lanes, 
@@ -231,7 +276,7 @@ pub async fn batch_import_checkpoints(
                 url, contact_person, contact_email, contact_phone, cancelled, 
                 created_at, updated_at
             "#,
-            payload.area_id,
+            resolved_area_id,
             payload.number,
             payload.name,
             category as CheckpointCategory,
