@@ -29,9 +29,9 @@ export function VectorMap({
     const { i18n } = useTranslation()
 
     const mapStyle = React.useMemo<maplibregl.StyleSpecification>(() => {
-        // Automatically align Protomaps map tile text language with i18n active locale
-        const mapLanguage = i18n.language.slice(0, 2)
-        const baseLayers = i18n.changeLanguage(mapLanguage); layers('protomaps', presetTheme, { lang: mapLanguage })
+        // Extract 2-letter language code (e.g. 'fi', 'sv', 'en')
+        const mapLanguage = i18n.language ? i18n.language.slice(0, 2) : 'fi'
+        const baseLayers = layers('protomaps', presetTheme, { lang: mapLanguage })
 
         return {
             version: 8,
