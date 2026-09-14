@@ -1,95 +1,123 @@
 import * as React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { AlertCircle, RefreshCw, Terminal } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+
 import { CheckpointPlacementAdmin } from '@/components/CheckpointAdmin'
 import type { Checkpoint } from '@/components/CheckpointMap'
-import { Flag, PartyPopper, Beer, Sparkles, Terminal } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
+import { useCheckpoints, useUpdateCheckpoint } from '@/hooks/useCheckpoints'
+import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/admin')({
     component: RouteComponent,
 })
 
-// Initial mock checkpoints for Fuksiseikkailu
-const INITIAL_CHECKPOINTS: Checkpoint[] = [
-    {
-        id: 'start-senaatintori',
-        name: 'Starting Area (Senaatintori)',
-        description: 'Registration, event material collection, and official kickoff.',
-        latitude: 60.1695,
-        longitude: 24.9525,
-        icon: <Flag />,
-        category: 'start',
-    },
-    {
-        id: 'cp-1-suomenlinna',
-        number: 1,
-        name: 'Checkpoint 1: Suomenlinna Ferry',
-        description: 'Maritime orientation challenge.',
-        latitude: 60.1675,
-        longitude: 24.9538,
-        category: 'academic',
-    },
-    {
-        id: 'cp-2-päärakennus',
-        number: 2,
-        name: 'Checkpoint 2: Main Building',
-        description: 'University trivia and speed puzzle.',
-        latitude: 60.1699,
-        longitude: 24.9484,
-        category: 'academic',
-    },
-    {
-        id: 'cp-3-kaisaniemi',
-        number: 3,
-        name: 'Checkpoint 3: Kaisaniemi Park',
-        description: 'Outdoor team sports relay.',
-        latitude: 60.1742,
-        longitude: 24.9462,
-        category: 'sports',
-    },
-    {
-        id: 'cp-4-kamppi',
-        number: 4,
-        name: 'Checkpoint 4: Narinkkatori',
-        description: 'Student association dance challenge.',
-        latitude: 60.169,
-        longitude: 24.936,
-        category: 'party',
-    },
-    {
-        id: 'cp-5-kumpula',
-        number: 5,
-        name: 'Checkpoint 5: Kumpula Campus',
-        description: 'Unset location example (needs placement).',
-        latitude: 0, // Unset coordinate
-        longitude: 0,
-        icon: <Sparkles />,
-        category: 'academic',
-    },
-    {
-        id: 'cp-6-alppipuisto',
-        number: 6,
-        name: 'Checkpoint 6: Alppipuisto Park',
-        description: 'Unset location example (needs placement).',
-        latitude: 0, // Unset coordinate
-        longitude: 0,
-        icon: <Beer />,
-        category: 'sports',
-    },
-    {
-        id: 'afterparty-tavastia',
-        name: 'Official Afterparty (Tavastia)',
-        description: 'Nighttime celebration and winner announcement.',
-        latitude: 60.169,
-        longitude: 24.933,
-        icon: <PartyPopper />,
-        category: 'afterparty',
-    },
-]
-
 function RouteComponent() {
     const { t } = useTranslation()
-    const [checkpoints, setCheckpoints] = React.useState<Checkpoint[]>(INITIAL_CHECKPOINTS)
+    const { data: rawCheckpoints = [], isLoading, isError, error } = useCheckpoints()
+    const updateCheckpointMutation = useUpdateCheckpoint()
+
+    // Local optimistic state for immediate UI responsiveness
+    const [optimisticOverrides, setOptimisticOverrides] = React.useState<
+        Record<string, { latitude: number; longitude: number }>
+    >({})
+
+    // Merge server data with local optimistic position overrides
+    const checkpoints = React.useMemo<Checkpoint[]>(() => {
+        return rawCheckpoints.map((cp) => {
+            const override = optimisticOverrides[cp.id]
+            return {
+                id: cp.id,
+                number: cp.number ?? undefined,
+                name: cp.name,
+                description:
+                    typeof cp.checkpoint_description === 'string'
+                        ? cp.checkpoint_description
+                        : cp.checkpoint_description
+                            ? JSON.stringify(cp.checkpoint_description)
+                            : undefined,
+                latitude: override ? override.latitude : (cp.latitude ?? 0),
+                longitude: override ? override.longitude : (cp.longitude ?? 0),
+                category: cp.category ?? undefined,
+            }
+        })
+    }, [rawCheckpoints, optimisticOverrides])
+
+    const handleUpdateCheckpoints = React.useCallback(
+        async (updatedList: Checkpoint[]) => {
+            // Find which checkpoint moved
+            const modified = updatedList.find((updatedCp) => {
+                const current = checkpoints.find((cp) => cp.id === updatedCp.id)
+                if (!current) return false
+                return (
+                    current.latitude !== updatedCp.latitude ||
+                    current.longitude !== updatedCp.longitude
+                )
+            })
+
+            if (!modified) return
+
+            // 1. Instantly apply optimistic position to local state
+            setOptimisticOverrides((prev) => ({
+                ...prev,
+                [modified.id]: {
+                    latitude: modified.latitude,
+                    longitude: modified.longitude,
+                },
+            }))
+
+            const originalBackendItem = rawCheckpoints.find((cp) => cp.id === modified.id)
+            if (!originalBackendItem) return
+
+            try {
+                // 2. Perform background API update
+                await updateCheckpointMutation.mutateAsync({
+                    path: { id: modified.id },
+                    body: {
+                        ...originalBackendItem,
+                        latitude: modified.latitude,
+                        longitude: modified.longitude,
+                    },
+                })
+            } catch (err) {
+                // Revert optimistic update if API call fails
+                setOptimisticOverrides((prev) => {
+                    const next = { ...prev }
+                    delete next[modified.id]
+                    return next
+                })
+                console.error('Failed to update checkpoint position:', err)
+            }
+        },
+        [checkpoints, rawCheckpoints, updateCheckpointMutation]
+    )
+
+    if (isLoading) {
+        return (
+            <div className={cn('flex h-full w-full items-center justify-center bg-white p-4 text-center')}>
+                <div className={cn('flex flex-col items-center gap-2')}>
+                    <RefreshCw className={cn('h-8 w-8 animate-spin text-black')} />
+                    <p className={cn('text-sm font-bold uppercase text-black')}>
+                        {t('checkpoints.loading', 'Loading Checkpoints...')}
+                    </p>
+                </div>
+            </div>
+        )
+    }
+
+    if (isError) {
+        return (
+            <div className={cn('flex h-full w-full items-center justify-center bg-white p-4 text-center')}>
+                <div className={cn('flex items-center gap-3 rounded-md border-2 border-black bg-rose-100 p-4 text-xs font-bold text-black shadow-2xs max-w-md')}>
+                    <AlertCircle className={cn('h-5 w-5 shrink-0 text-rose-600 stroke-[2.5]')} />
+                    <div className={cn('text-left')}>
+                        <p className={cn('font-extrabold uppercase')}>{t('checkpoints.loadErrorTitle', 'Failed to load checkpoints')}</p>
+                        <p className={cn('mt-0.5 text-black/70')}>{error?.message || t('common.unexpectedError', 'An unexpected server error occurred.')}</p>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="flex flex-1 flex-col min-h-0 h-full w-full max-w-7xl mx-auto gap-3">
@@ -114,7 +142,7 @@ function RouteComponent() {
 
             <CheckpointPlacementAdmin
                 checkpoints={checkpoints}
-                onUpdateCheckpoints={setCheckpoints}
+                onUpdateCheckpoints={handleUpdateCheckpoints}
             />
         </div>
     )
