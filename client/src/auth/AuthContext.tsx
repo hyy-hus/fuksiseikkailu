@@ -8,7 +8,6 @@ interface AuthContextType {
 }
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined)
-
 const TOKEN_KEY = 'access_token'
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -24,6 +23,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const logout = React.useCallback(() => {
         localStorage.removeItem(TOKEN_KEY)
         setToken(null)
+        window.location.href = '/login'
+    }, [])
+
+    // Sync logout across tabs if token is cleared elsewhere
+    React.useEffect(() => {
+        const handleStorageChange = (e: StorageEvent) => {
+            if (e.key === TOKEN_KEY) {
+                setToken(e.newValue)
+                if (!e.newValue) {
+                    window.location.href = '/login'
+                }
+            }
+        }
+        window.addEventListener('storage', handleStorageChange)
+        return () => window.removeEventListener('storage', handleStorageChange)
     }, [])
 
     const value = React.useMemo(
