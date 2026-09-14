@@ -241,6 +241,15 @@ export type Score = {
     updated_at: string;
 };
 
+export type SequenceRenumberPayload = {
+    start_id?: string | null;
+};
+
+export type SequenceRenumberResponse = {
+    checkpoints: Array<Checkpoint>;
+    renumbered_count: number;
+};
+
 export type SubmitScorePayload = {
     checkpoint_id: string;
     participants_present?: number | null;
@@ -644,6 +653,33 @@ export type BatchImportResponses = {
 };
 
 export type BatchImportResponse2 = BatchImportResponses[keyof BatchImportResponses];
+
+export type SequenceRenumberData = {
+    body?: null | SequenceRenumberPayload;
+    path?: never;
+    query?: never;
+    url: '/checkpoints/sequence';
+};
+
+export type SequenceRenumberErrors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Forbidden - Admin access required
+     */
+    403: unknown;
+};
+
+export type SequenceRenumberResponses = {
+    /**
+     * Checkpoints renumbered sequentially by proximity
+     */
+    200: SequenceRenumberResponse;
+};
+
+export type SequenceRenumberResponse2 = SequenceRenumberResponses[keyof SequenceRenumberResponses];
 
 export type DeleteCheckpointData = {
     body?: never;

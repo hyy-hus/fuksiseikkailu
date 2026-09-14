@@ -13,7 +13,6 @@ import {
   mergeHeaders,
   setAuthParams,
 } from './utils.gen';
-import i18next from 'i18next'
 
 type ReqInit = Omit<RequestInit, 'body' | 'headers'> & {
   body?: any;
@@ -121,7 +120,7 @@ export const createClient = (config: Config = {}): Client => {
         if (response.status === 204 || response.headers.get('Content-Length') === '0') {
           let emptyData: any;
           switch (parseAs) {
-            case i18next.t('arraybuffer', 'arrayBuffer'):
+            case 'arrayBuffer':
             case 'blob':
             case 'text':
               emptyData = await response[parseAs]();
@@ -147,7 +146,7 @@ export const createClient = (config: Config = {}): Client => {
 
         let data: any;
         switch (parseAs) {
-          case i18next.t('arraybuffer', 'arrayBuffer'):
+          case 'arrayBuffer':
           case 'blob':
           case 'formData':
           case 'text':
