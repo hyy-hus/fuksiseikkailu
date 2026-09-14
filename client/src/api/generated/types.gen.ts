@@ -213,6 +213,7 @@ export type PublicCheckpoint = {
     longitude: number;
     name: string;
     number?: number | null;
+    org_description?: unknown;
     updated_at: string;
     url?: string | null;
 };
