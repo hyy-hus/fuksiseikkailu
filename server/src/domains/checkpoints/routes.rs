@@ -16,7 +16,10 @@ use crate::{
             AuthState,
             extractor::{OptionalAuthUser, RequireAdmin, RequireCheckpointStaff},
         },
-        checkpoints::models::{BatchImportPayload, BatchImportResponse},
+        checkpoints::models::{
+            BatchImportPayload, BatchImportResponse, SequenceRenumberPayload,
+            SequenceRenumberResponse,
+        },
     },
     errors::AppError,
 };
@@ -172,4 +175,32 @@ pub async fn batch_import(
             checkpoints: imported,
         }),
     ))
+}
+
+#[utoipa::path(
+    post,
+    path = "/checkpoints/sequence",
+    tag = "Checkpoints",
+    security(("bearer_auth" = [])),
+    request_body = Option<SequenceRenumberPayload>,
+    responses(
+        (status = 200, description = "Checkpoints renumbered sequentially by proximity", body = SequenceRenumberResponse),
+        (status = 401, description = "Unauthorized"),
+        (status = 403, description = "Forbidden - Admin access required")
+    )
+)]
+pub async fn sequence_renumber(
+    State(state): State<AuthState>,
+    RequireAdmin(_admin): RequireAdmin,
+    payload: Option<Json<SequenceRenumberPayload>>,
+) -> Result<Json<SequenceRenumberResponse>, AppError> {
+    let start_id = payload.and_then(|p| p.start_id);
+
+    let renumbered = db::renumber_checkpoints_nearest_neighbor(&state.pool, start_id).await?;
+    let count = renumbered.len();
+
+    Ok(Json(SequenceRenumberResponse {
+        renumbered_count: count,
+        checkpoints: renumbered,
+    }))
 }

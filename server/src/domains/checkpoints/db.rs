@@ -258,3 +258,95 @@ pub async fn batch_import_checkpoints(
     tx.commit().await?;
     Ok(imported)
 }
+
+pub async fn renumber_checkpoints_nearest_neighbor(
+    pool: &PgPool,
+    start_id: Option<Uuid>,
+) -> Result<Vec<Checkpoint>, AppError> {
+    let mut tx = pool.begin().await?;
+
+    // 1. Fetch all non-deleted checkpoints with valid coordinates
+    let mut unvisited = sqlx::query_as!(
+        Checkpoint,
+        r#"
+        SELECT 
+            id, area_id, number, name, category AS "category: CheckpointCategory", 
+            location_name, latitude, longitude, accessible, lanes, 
+            checkpoint_description, org_description, requirements, execution, 
+            url, contact_person, contact_email, contact_phone, cancelled, 
+            created_at, updated_at
+        FROM checkpoints
+        WHERE deleted_at IS NULL AND latitude != 0 AND longitude != 0
+        "#
+    )
+    .fetch_all(&mut *tx)
+    .await?;
+
+    if unvisited.is_empty() {
+        return Ok(Vec::new());
+    }
+
+    // Helper: squared Euclidean distance for local graph traversal
+    let distance_sq = |a: &Checkpoint, b: &Checkpoint| -> f64 {
+        let d_lat = a.latitude - b.latitude;
+        let d_lng = a.longitude - b.longitude;
+        d_lat * d_lat + d_lng * d_lng
+    };
+
+    // 2. Determine starting checkpoint
+    let mut current_idx = if let Some(id) = start_id {
+        unvisited.iter().position(|cp| cp.id == id).unwrap_or(0)
+    } else {
+        0
+    };
+
+    let mut current_number = 1;
+    let mut updated_checkpoints = Vec::with_capacity(unvisited.len());
+
+    // 3. Traversal loop
+    while !unvisited.is_empty() {
+        let mut current = unvisited.remove(current_idx);
+        current.number = Some(current_number);
+
+        // Update database record
+        sqlx::query!(
+            r#"
+            UPDATE checkpoints
+            SET number = $1, updated_at = NOW()
+            WHERE id = $2
+            "#,
+            current_number,
+            current.id
+        )
+        .execute(&mut *tx)
+        .await?;
+
+        updated_checkpoints.push(current.clone());
+        current_number += 1;
+
+        if unvisited.is_empty() {
+            break;
+        }
+
+        // 4. Find nearest unvisited neighbor
+        let mut nearest_idx = 0;
+        let mut min_dist = f64::MAX;
+
+        for (i, candidate) in unvisited.iter().enumerate() {
+            let dist = distance_sq(&current, candidate);
+            if dist < min_dist {
+                min_dist = dist;
+                nearest_idx = i;
+            }
+        }
+
+        current_idx = nearest_idx;
+    }
+
+    tx.commit().await?;
+
+    // Sort final result by assigned number
+    updated_checkpoints.sort_by_key(|cp| cp.number);
+
+    Ok(updated_checkpoints)
+}

@@ -54,6 +54,7 @@ impl Modify for SecurityAddon {
         checkpoints::routes::get_checkpoint,
         checkpoints::routes::create_checkpoint,
         checkpoints::routes::batch_import,
+        checkpoints::routes::sequence_renumber,
         checkpoints::routes::update_checkpoint,
         checkpoints::routes::delete_checkpoint,
 
@@ -122,6 +123,8 @@ impl Modify for SecurityAddon {
             checkpoints::models::UpdateCheckpoint,
             checkpoints::models::BatchImportPayload,
             checkpoints::models::BatchImportResponse,
+            checkpoints::models::SequenceRenumberPayload,
+            checkpoints::models::SequenceRenumberResponse,
             checkpoints::models::CheckpointCategory,
 
             teams::models::Team,

@@ -39,7 +39,7 @@ pub struct PublicCheckpoint {
 }
 
 /// Admin checkpoint model (includes internal operational details)
-#[derive(Debug, Serialize, Deserialize, sqlx::FromRow, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, sqlx::FromRow, ToSchema, Clone)]
 pub struct Checkpoint {
     pub id: Uuid,
     pub area_id: Option<Uuid>,
@@ -156,5 +156,16 @@ pub struct BatchImportPayload {
 #[derive(Debug, Serialize, ToSchema)]
 pub struct BatchImportResponse {
     pub imported_count: usize,
+    pub checkpoints: Vec<Checkpoint>,
+}
+
+#[derive(Debug, Deserialize, ToSchema)]
+pub struct SequenceRenumberPayload {
+    pub start_id: Option<Uuid>,
+}
+
+#[derive(Debug, Serialize, ToSchema)]
+pub struct SequenceRenumberResponse {
+    pub renumbered_count: usize,
     pub checkpoints: Vec<Checkpoint>,
 }

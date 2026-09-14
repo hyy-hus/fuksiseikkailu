@@ -16,6 +16,7 @@ pub fn router(state: AuthState) -> Router {
             get(routes::list_checkpoints).post(routes::create_checkpoint),
         )
         .route("/batch", post(routes::batch_import))
+        .route("/sequence", post(routes::sequence_renumber))
         .route(
             "/{id}",
             get(routes::get_checkpoint)
