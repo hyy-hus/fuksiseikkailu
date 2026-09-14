@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { AlertCircle, RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-import { CheckpointMap, type Checkpoint } from '@/components/CheckpointMap'
+import { CheckpointMap } from '@/components/CheckpointMap'
 import { useCheckpoints } from '@/hooks/useCheckpoints'
 import { cn } from '@/lib/utils'
 
@@ -14,23 +14,6 @@ export const Route = createFileRoute('/')({
 function RouteComponent() {
     const { t } = useTranslation()
     const { data: checkpoints = [], isLoading, isError, error } = useCheckpoints()
-
-    // Map backend Checkpoint API response objects to CheckpointMap interface
-    const mapCheckpoints = React.useMemo<Checkpoint[]>(() => {
-        return checkpoints.map((cp) => ({
-            id: cp.id,
-            number: cp.number ?? undefined,
-            name: cp.name,
-            description: typeof cp.checkpoint_description === 'string'
-                ? cp.checkpoint_description
-                : cp.checkpoint_description
-                    ? JSON.stringify(cp.checkpoint_description)
-                    : undefined,
-            latitude: cp.latitude ?? 0,
-            longitude: cp.longitude ?? 0,
-            category: cp.category ?? undefined,
-        }))
-    }, [checkpoints])
 
     if (isLoading) {
         return (
@@ -61,7 +44,7 @@ function RouteComponent() {
 
     return (
         <div className="h-[calc(100vh-4rem)] w-full p-1">
-            <CheckpointMap checkpoints={mapCheckpoints} />
+            <CheckpointMap checkpoints={checkpoints} />
         </div>
     )
 }

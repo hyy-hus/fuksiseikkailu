@@ -22,20 +22,14 @@ function RouteComponent() {
         Record<string, { latitude: number; longitude: number }>
     >({})
 
-    // Map backend Checkpoint response objects to UI AdminCheckpoint interface
+    // Map backend response directly into AdminCheckpoint while applying position overrides
     const checkpoints = React.useMemo<AdminCheckpoint[]>(() => {
         return rawCheckpoints.map((cp) => {
             const override = optimisticOverrides[cp.id]
             return {
-                id: cp.id,
-                number: cp.number ?? undefined,
-                name: cp.name,
-                description: cp.checkpoint_description ?? undefined,
-                requirements: cp.requirements ?? undefined,
-                execution: cp.execution ?? undefined,
+                ...cp,
                 latitude: override ? override.latitude : (cp.latitude ?? 0),
                 longitude: override ? override.longitude : (cp.longitude ?? 0),
-                category: cp.category ?? undefined,
             }
         })
     }, [rawCheckpoints, optimisticOverrides])
