@@ -1,29 +1,21 @@
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useForm } from '@tanstack/react-form'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AlertCircle, Loader2, Save, X } from 'lucide-react'
 
-import {
-    createCheckpointMutation,
-    updateCheckpointMutation,
-} from '@/api/generated/@tanstack/react-query.gen'
 import type { Checkpoint, CheckpointCategory, CreateCheckpoint, UpdateCheckpoint } from '@/api/generated/types.gen'
+import { useCreateCheckpoint, useUpdateCheckpoint } from '@/hooks/useCheckpoints'
 import { cn } from '@/lib/utils'
 import { getApiErrorMessage } from '@/lib/errors'
 
 interface CheckpointFormProps {
-    /** If provided, form operates in "Update" mode; otherwise "Create" mode */
     initialData?: Checkpoint | null
-    /** Callback fired after successful submission */
     onSuccess?: () => void
-    /** Callback fired when user cancels form editing */
     onCancel?: () => void
 }
 
 export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointFormProps) {
     const { t } = useTranslation()
-    const queryClient = useQueryClient()
     const isEditing = Boolean(initialData)
 
     const CATEGORY_OPTIONS: { label: string; value: CheckpointCategory }[] = React.useMemo(
@@ -38,30 +30,13 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
         [t]
     )
 
-    // 1. TanStack Query Mutations with explicit mutationKey
-    const createMutation = useMutation({
-        ...createCheckpointMutation(),
-        mutationKey: ['checkpoints', 'create'],
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['checkpoints'] })
-            onSuccess?.()
-        },
-    })
-
-    const updateMutation = useMutation({
-        ...updateCheckpointMutation(),
-        mutationKey: ['checkpoints', 'update', initialData?.id],
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['checkpoints'] })
-            onSuccess?.()
-        },
-    })
+    const createMutation = useCreateCheckpoint(onSuccess)
+    const updateMutation = useUpdateCheckpoint(initialData?.id, onSuccess)
 
     const isSubmitting = createMutation.isPending || updateMutation.isPending
     const activeError = createMutation.error || updateMutation.error
     const errorMessage = getApiErrorMessage(activeError)
 
-    // 2. TanStack Form Hook
     const form = useForm({
         defaultValues: {
             name: initialData?.name ?? '',
@@ -116,7 +91,6 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
 
     return (
         <div className={cn('flex w-full max-w-xl flex-col overflow-hidden rounded-xl border-2 border-black bg-white shadow-xl isolate')}>
-            {/* Form Header */}
             <div className={cn('flex items-center justify-between border-b-2 border-black p-4 bg-white shrink-0')}>
                 <div>
                     <h3 className={cn('text-base font-extrabold uppercase tracking-tight text-black')}>
@@ -142,7 +116,6 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
                 )}
             </div>
 
-            {/* Error Alert */}
             {activeError && (
                 <div className={cn('m-4 flex items-start gap-3 rounded-md border-2 border-black bg-rose-100 p-3 text-xs font-bold text-black shadow-2xs')}>
                     <AlertCircle className={cn('h-5 w-5 shrink-0 text-rose-600 stroke-[2.5]')} />
@@ -157,7 +130,6 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
                 </div>
             )}
 
-            {/* Form Body */}
             <form
                 onSubmit={(e) => {
                     e.preventDefault()
@@ -166,7 +138,6 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
                 }}
                 className={cn('flex flex-col gap-4 p-4 text-xs font-bold text-black')}
             >
-                {/* Row 1: Name & Number */}
                 <div className={cn('grid grid-cols-1 sm:grid-cols-3 gap-3')}>
                     <form.Field
                         name="name"
@@ -221,7 +192,6 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
                     </form.Field>
                 </div>
 
-                {/* Row 2: Category & Location Name */}
                 <div className={cn('grid grid-cols-1 sm:grid-cols-2 gap-3')}>
                     <form.Field name="category">
                         {(field) => (
@@ -266,7 +236,6 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
                     </form.Field>
                 </div>
 
-                {/* Row 3: Latitude, Longitude, Lanes */}
                 <div className={cn('grid grid-cols-3 gap-3')}>
                     <form.Field name="latitude">
                         {(field) => (
@@ -331,7 +300,6 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
                     </form.Field>
                 </div>
 
-                {/* Description */}
                 <form.Field name="checkpoint_description">
                     {(field) => (
                         <div className={cn('flex flex-col gap-1')}>
@@ -352,7 +320,6 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
                     )}
                 </form.Field>
 
-                {/* Organizer Contacts */}
                 <div className={cn('grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-black/10')}>
                     <form.Field name="contact_person">
                         {(field) => (
@@ -413,7 +380,6 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
                     </form.Field>
                 </div>
 
-                {/* Switches: Accessible & Cancelled */}
                 <div className={cn('flex items-center justify-between gap-4 pt-2 border-t border-black/10')}>
                     <form.Field name="accessible">
                         {(field) => (
@@ -448,7 +414,6 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
                     </form.Field>
                 </div>
 
-                {/* Submit / Cancel Buttons */}
                 <div className={cn('flex items-center justify-end gap-2 pt-3 border-t-2 border-black')}>
                     {onCancel && (
                         <button

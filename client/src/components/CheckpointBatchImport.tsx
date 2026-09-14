@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
     ArrowLeft,
     ArrowRight,
@@ -11,8 +10,8 @@ import {
 } from 'lucide-react'
 import Papa from 'papaparse'
 
-import { batchImportMutation } from '@/api/generated/@tanstack/react-query.gen'
 import type { CheckpointCategory, CreateCheckpoint } from '@/api/generated/types.gen'
+import { useBatchImportCheckpoints } from '@/hooks/useCheckpoints'
 import { cn } from '@/lib/utils'
 
 interface CheckpointBatchImportProps {
@@ -22,7 +21,6 @@ interface CheckpointBatchImportProps {
 
 export function CheckpointBatchImport({ onSuccess, onCancel }: CheckpointBatchImportProps) {
     const { t } = useTranslation()
-    const queryClient = useQueryClient()
     const [step, setStep] = React.useState<1 | 2>(1)
     const [rawText, setRawText] = React.useState('')
     const [parsedHeaders, setParsedHeaders] = React.useState<string[]>([])
@@ -47,21 +45,7 @@ export function CheckpointBatchImport({ onSuccess, onCancel }: CheckpointBatchIm
         [t]
     )
 
-    const batchMutation = useMutation({
-        ...batchImportMutation(),
-        mutationKey: ['checkpoints', 'batchCreate'],
-        meta: {
-            loadingMessage: t('batchImport.meta.loading', 'Importing checkpoints batch...'),
-            successMessage: (data: any) =>
-                t('batchImport.meta.success', 'Successfully imported {{count}} checkpoints!', {
-                    count: Array.isArray(data) ? data.length : '',
-                }),
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['checkpoints'] })
-            onSuccess?.()
-        },
-    })
+    const batchMutation = useBatchImportCheckpoints(onSuccess)
 
     const parseRawInput = (content: string) => {
         if (!content.trim()) return
@@ -146,7 +130,6 @@ export function CheckpointBatchImport({ onSuccess, onCancel }: CheckpointBatchIm
 
     return (
         <div className={cn('flex w-full max-w-2xl flex-col overflow-hidden rounded-xl border-2 border-black bg-white shadow-xl isolate')}>
-            {/* Header */}
             <div className={cn('flex items-center justify-between border-b-2 border-black bg-white p-4')}>
                 <div className={cn('flex items-center gap-2')}>
                     <FileSpreadsheet className={cn('h-5 w-5 text-black')} />
@@ -175,7 +158,6 @@ export function CheckpointBatchImport({ onSuccess, onCancel }: CheckpointBatchIm
                 )}
             </div>
 
-            {/* STEP 1: Upload / Paste */}
             {step === 1 && (
                 <div className={cn('flex flex-col gap-4 p-4 text-xs font-bold text-black')}>
                     <label className={cn('flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-black bg-amber-50/50 p-6 cursor-pointer hover:bg-amber-100/50 transition-colors')}>
@@ -221,7 +203,6 @@ export function CheckpointBatchImport({ onSuccess, onCancel }: CheckpointBatchIm
                 </div>
             )}
 
-            {/* STEP 2: Column Mapping */}
             {step === 2 && (
                 <div className={cn('flex flex-col gap-4 p-4 text-xs font-bold text-black')}>
                     <div className={cn('grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[350px] overflow-y-auto pr-1')}>
