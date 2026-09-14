@@ -19,6 +19,15 @@ interface CheckpointBatchImportProps {
     onCancel?: () => void
 }
 
+type ExtendedFieldKey =
+    | keyof CreateCheckpoint
+    | 'description_fi'
+    | 'description_sv'
+    | 'description_en'
+    | 'org_description_fi'
+    | 'org_description_sv'
+    | 'org_description_en'
+
 export function CheckpointBatchImport({ onSuccess, onCancel }: CheckpointBatchImportProps) {
     const { t } = useTranslation()
     const [step, setStep] = React.useState<1 | 2>(1)
@@ -28,7 +37,7 @@ export function CheckpointBatchImport({ onSuccess, onCancel }: CheckpointBatchIm
 
     const [columnMapping, setColumnMapping] = React.useState<Record<string, string>>({})
 
-    const CHECKPOINT_FIELDS: { key: keyof CreateCheckpoint; label: string; required?: boolean }[] = React.useMemo(
+    const CHECKPOINT_FIELDS: { key: ExtendedFieldKey; label: string; required?: boolean }[] = React.useMemo(
         () => [
             { key: 'name', label: t('batchImport.fields.name', 'Checkpoint Name'), required: true },
             { key: 'number', label: t('batchImport.fields.number', 'Number (#)') },
@@ -37,7 +46,23 @@ export function CheckpointBatchImport({ onSuccess, onCancel }: CheckpointBatchIm
             { key: 'latitude', label: t('batchImport.fields.latitude', 'Latitude') },
             { key: 'longitude', label: t('batchImport.fields.longitude', 'Longitude') },
             { key: 'lanes', label: t('batchImport.fields.lanes', 'Lanes') },
-            { key: 'checkpoint_description', label: t('batchImport.fields.description', 'Description') },
+            { key: 'url', label: t('batchImport.fields.url', 'URL / Website') },
+            { key: 'requirements', label: t('batchImport.fields.requirements', 'Requirements') },
+            { key: 'execution', label: t('batchImport.fields.execution', 'Execution Guidelines') },
+
+            // Public Description Options
+            { key: 'checkpoint_description', label: t('batchImport.fields.description', 'Public Description (Raw/General)') },
+            { key: 'description_fi', label: t('batchImport.fields.descriptionFi', 'Public Description (FI)') },
+            { key: 'description_sv', label: t('batchImport.fields.descriptionSv', 'Public Description (SV)') },
+            { key: 'description_en', label: t('batchImport.fields.descriptionEn', 'Public Description (EN)') },
+
+            // Organizer Description Options
+            { key: 'org_description', label: t('batchImport.fields.orgDescription', 'Organizer Description (Raw/General)') },
+            { key: 'org_description_fi', label: t('batchImport.fields.orgDescriptionFi', 'Organizer Description (FI)') },
+            { key: 'org_description_sv', label: t('batchImport.fields.orgDescriptionSv', 'Organizer Description (SV)') },
+            { key: 'org_description_en', label: t('batchImport.fields.orgDescriptionEn', 'Organizer Description (EN)') },
+
+            // Contact Info
             { key: 'contact_person', label: t('batchImport.fields.contactPerson', 'Contact Person') },
             { key: 'contact_email', label: t('batchImport.fields.contactEmail', 'Contact Email') },
             { key: 'contact_phone', label: t('batchImport.fields.contactPhone', 'Contact Phone') },
@@ -91,7 +116,7 @@ export function CheckpointBatchImport({ onSuccess, onCancel }: CheckpointBatchIm
 
     const transformedPayload = React.useMemo<CreateCheckpoint[]>(() => {
         return parsedRows.map((row) => {
-            const getValue = (key: keyof CreateCheckpoint) => {
+            const getValue = (key: ExtendedFieldKey) => {
                 const header = columnMapping[key]
                 return header ? row[header] : undefined
             }
@@ -100,6 +125,40 @@ export function CheckpointBatchImport({ onSuccess, onCancel }: CheckpointBatchIm
             const latVal = getValue('latitude')
             const lngVal = getValue('longitude')
             const lanesVal = getValue('lanes')
+
+            // 1. Build JSON object for localized public descriptions
+            const descFi = getValue('description_fi')?.trim()
+            const descSv = getValue('description_sv')?.trim()
+            const descEn = getValue('description_en')?.trim()
+            const descRaw = getValue('checkpoint_description')?.trim()
+
+            let descriptionObj: Record<string, string> | string | null = null
+            if (descFi || descSv || descEn) {
+                const mapObj: Record<string, string> = {}
+                if (descFi) mapObj.fi = descFi
+                if (descSv) mapObj.sv = descSv
+                if (descEn) mapObj.en = descEn
+                descriptionObj = mapObj
+            } else if (descRaw) {
+                descriptionObj = descRaw
+            }
+
+            // 2. Build JSON object for localized organizer descriptions
+            const orgDescFi = getValue('org_description_fi')?.trim()
+            const orgDescSv = getValue('org_description_sv')?.trim()
+            const orgDescEn = getValue('org_description_en')?.trim()
+            const orgDescRaw = getValue('org_description')?.trim()
+
+            let orgDescriptionObj: Record<string, string> | string | null = null
+            if (orgDescFi || orgDescSv || orgDescEn) {
+                const mapObj: Record<string, string> = {}
+                if (orgDescFi) mapObj.fi = orgDescFi
+                if (orgDescSv) mapObj.sv = orgDescSv
+                if (orgDescEn) mapObj.en = orgDescEn
+                orgDescriptionObj = mapObj
+            } else if (orgDescRaw) {
+                orgDescriptionObj = orgDescRaw
+            }
 
             return {
                 name: String(getValue('name') || '').trim(),
@@ -110,11 +169,14 @@ export function CheckpointBatchImport({ onSuccess, onCancel }: CheckpointBatchIm
                 longitude: lngVal ? Number(lngVal) : 0,
                 lanes: lanesVal ? Number(lanesVal) : 1,
                 accessible: true,
-                checkpoint_description: getValue('checkpoint_description')?.trim() || null,
+                checkpoint_description: descriptionObj,
+                org_description: orgDescriptionObj,
+                requirements: getValue('requirements')?.trim() || null,
+                execution: getValue('execution')?.trim() || null,
                 contact_person: getValue('contact_person')?.trim() || null,
                 contact_email: getValue('contact_email')?.trim() || null,
                 contact_phone: getValue('contact_phone')?.trim() || null,
-                url: null,
+                url: getValue('url')?.trim() || null,
                 cancelled: false,
             }
         })
@@ -187,7 +249,7 @@ export function CheckpointBatchImport({ onSuccess, onCancel }: CheckpointBatchIm
                         onChange={(e) => setRawText(e.target.value)}
                         placeholder={t(
                             'batchImport.textareaPlaceholder',
-                            `Name\tNumber\tCategory\tLocation\nCheckpoint A\t1\tsubject\tCourtyard A\nCheckpoint B\t2\tnation\tHall B`
+                            `Name\tNumber\tdescription_fi\trequirements\texecution\nCheckpoint A\t1\tSuomeksi kuvaus\tTarvikkeet\tSuoritusohjeet`
                         )}
                         className={cn('w-full rounded-md border-2 border-black bg-white p-3 font-mono text-xs font-bold text-black placeholder:text-black/30 focus:outline-none focus:ring-2 focus:ring-black/20')}
                     />
