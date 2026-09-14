@@ -4,18 +4,33 @@ import { Marker, Popup, useMap } from '@vis.gl/react-maplibre'
 import type { MapMouseEvent } from 'maplibre-gl'
 import Supercluster from 'supercluster'
 import type { PointFeature } from 'supercluster'
-import { MapPin, Move, Check, AlertCircle, ChevronDown, ChevronUp, X, Layers, ClipboardList, PlayCircle } from 'lucide-react'
+import {
+    Accessibility,
+    AlertCircle,
+    Check,
+    ChevronDown,
+    ChevronUp,
+    ClipboardList,
+    ExternalLink,
+    Globe,
+    Layers,
+    MapPin,
+    Move,
+    PlayCircle,
+    X,
+} from 'lucide-react'
 
+import type { Checkpoint as ApiCheckpoint } from '@/api/generated/types.gen'
 import { getLocalizedText } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
-import type { Checkpoint } from './CheckpointMap'
 import { VectorMap } from './Map'
 
 type BBox = [number, number, number, number]
 
-export interface AdminCheckpoint extends Checkpoint {
-    requirements?: unknown
-    execution?: unknown
+export type AdminCheckpoint = ApiCheckpoint & {
+    color?: string
+    icon?: React.ReactNode
+    area_name?: string | null
 }
 
 interface CheckpointProperties {
@@ -28,15 +43,41 @@ type CheckpointFeature = PointFeature<CheckpointProperties>
 interface CheckpointPlacementAdminProps {
     checkpoints: AdminCheckpoint[]
     onUpdateCheckpoints: (updated: AdminCheckpoint[]) => void
+    selectedId?: string | null
+    onSelectId?: (id: string | null) => void
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-    academic: cn('bg-blue-400 text-black'),
-    party: cn('bg-pink-400 text-black'),
-    sports: cn('bg-emerald-400 text-black'),
-    start: cn('bg-amber-400 text-black'),
-    afterparty: cn('bg-purple-400 text-black'),
-    default: cn('bg-blush-pop-400 text-black'),
+    subject: cn('bg-blue-400 text-black'),
+    nation: cn('bg-pink-400 text-black'),
+    hobby: cn('bg-emerald-400 text-black'),
+    hyy: cn('bg-amber-400 text-black'),
+    yliopisto: cn('bg-purple-400 text-black'),
+    other: cn('bg-blush-pop-400 text-black'),
+    default: cn('bg-zinc-200 text-black'),
+}
+
+function parseAndGetLocalizedText(value: unknown, currentLang: string): string {
+    if (!value) return ''
+
+    if (typeof value === 'object' && value !== null) {
+        return getLocalizedText(value, currentLang)
+    }
+
+    if (typeof value === 'string') {
+        const trimmed = value.trim()
+        if (trimmed.startsWith('{')) {
+            try {
+                const parsed = JSON.parse(trimmed)
+                return getLocalizedText(parsed, currentLang)
+            } catch {
+                return value
+            }
+        }
+        return value
+    }
+
+    return getLocalizedText(value, currentLang)
 }
 
 function AdminClusteredMarkers({
@@ -208,10 +249,21 @@ function AdminClusteredMarkers({
 export function CheckpointPlacementAdmin({
     checkpoints,
     onUpdateCheckpoints,
+    selectedId: externalSelectedId,
+    onSelectId: externalOnSelectId,
 }: CheckpointPlacementAdminProps) {
     const { t, i18n } = useTranslation()
-    const [selectedId, setSelectedId] = React.useState<string | null>(null)
+    const [internalSelectedId, setInternalSelectedId] = React.useState<string | null>(null)
     const [placingId, setPlacingId] = React.useState<string | null>(null)
+
+    const selectedId = externalSelectedId !== undefined ? externalSelectedId : internalSelectedId
+    const setSelectedId = (id: string | null) => {
+        if (externalOnSelectId) {
+            externalOnSelectId(id)
+        } else {
+            setInternalSelectedId(id)
+        }
+    }
 
     const selectedCheckpoint = checkpoints.find((cp) => cp.id === selectedId)
     const placingCheckpoint = checkpoints.find((cp) => cp.id === placingId)
@@ -239,11 +291,29 @@ export function CheckpointPlacementAdmin({
         onUpdateCheckpoints(updated)
     }
 
-    const selectedReqs = selectedCheckpoint
-        ? getLocalizedText(selectedCheckpoint.requirements, i18n.language)
+    const getCategoryLabel = (category?: string | null) => {
+        if (!category) return ''
+        return t(`checkpoints.categories.${category}`, {
+            defaultValue:
+                category === 'subject'
+                    ? 'Subject Organization'
+                    : category === 'nation'
+                        ? 'Student Nation'
+                        : category === 'hobby'
+                            ? 'Hobby Organization'
+                            : category === 'hyy'
+                                ? 'HYY'
+                                : category === 'yliopisto'
+                                    ? 'University'
+                                    : category,
+        })
+    }
+
+    const selectedPublicDesc = selectedCheckpoint
+        ? parseAndGetLocalizedText(selectedCheckpoint.checkpoint_description, i18n.language)
         : ''
-    const selectedExec = selectedCheckpoint
-        ? getLocalizedText(selectedCheckpoint.execution, i18n.language)
+    const selectedOrgDesc = selectedCheckpoint
+        ? parseAndGetLocalizedText(selectedCheckpoint.org_description, i18n.language)
         : ''
 
     return (
@@ -270,8 +340,10 @@ export function CheckpointPlacementAdmin({
                             : 'default'
                         const badgeColorClass = CATEGORY_COLORS[categoryKey]
 
-                        const reqs = getLocalizedText(cp.requirements, i18n.language)
-                        const exec = getLocalizedText(cp.execution, i18n.language)
+                        const publicDesc = parseAndGetLocalizedText(cp.checkpoint_description, i18n.language)
+                        const orgDesc = parseAndGetLocalizedText(cp.org_description, i18n.language)
+                        const reqs = parseAndGetLocalizedText(cp.requirements, i18n.language)
+                        const exec = parseAndGetLocalizedText(cp.execution, i18n.language)
 
                         return (
                             <React.Fragment key={cp.id}>
@@ -303,9 +375,17 @@ export function CheckpointPlacementAdmin({
                                                 <span className={cn('font-bold text-sm text-black leading-tight truncate')}>
                                                     {cp.name}
                                                 </span>
-                                                {cp.category && (
-                                                    <span className={cn('mt-0.5 text-[10px] uppercase tracking-wider font-extrabold text-black/60')}>
-                                                        {cp.category}
+
+                                                {(cp.category || cp.area_name) && (
+                                                    <span className={cn('mt-0.5 text-[11px] italic text-black/60 truncate')}>
+                                                        {[getCategoryLabel(cp.category), cp.area_name].filter(Boolean).join(' • ')}
+                                                    </span>
+                                                )}
+
+                                                {cp.location_name && (
+                                                    <span className="flex items-center gap-1 text-[11px] font-medium text-black/70 mt-0.5 truncate">
+                                                        <MapPin className="h-3 w-3 text-black shrink-0" />
+                                                        <span className="truncate">{cp.location_name}</span>
                                                     </span>
                                                 )}
                                             </div>
@@ -333,9 +413,28 @@ export function CheckpointPlacementAdmin({
 
                                     {isSelected && (
                                         <div className={cn('flex flex-col gap-2 pt-1.5 border-t border-black/10 text-xs')}>
+                                            {/* Public Description */}
+                                            {publicDesc && (
+                                                <p className="text-black/80 font-medium leading-relaxed whitespace-pre-line text-xs">
+                                                    {publicDesc}
+                                                </p>
+                                            )}
+
+                                            {/* Organizer Info */}
+                                            {orgDesc && (
+                                                <div className="flex flex-col gap-0.5">
+                                                    <span className="text-[10px] font-bold uppercase tracking-wider text-black/60">
+                                                        {t('checkpoints.organizerInfo', 'Organizer Info')}
+                                                    </span>
+                                                    <p className="text-black/80 font-medium leading-relaxed whitespace-pre-line italic text-xs">
+                                                        {orgDesc}
+                                                    </p>
+                                                </div>
+                                            )}
+
                                             {/* Requirements */}
                                             {reqs && (
-                                                <div className="flex flex-col gap-0.5">
+                                                <div className="flex flex-col gap-0.5 mt-1">
                                                     <span className="flex items-center gap-1 text-[10px] font-black uppercase text-black/60">
                                                         <ClipboardList className="h-3 w-3 text-black shrink-0" />
                                                         {t('checkpoints.requirements', 'Requirements')}
@@ -346,12 +445,12 @@ export function CheckpointPlacementAdmin({
                                                 </div>
                                             )}
 
-                                            {/* Execution */}
+                                            {/* Execution Guidelines */}
                                             {exec && (
                                                 <div className="flex flex-col gap-0.5 mt-1">
                                                     <span className="flex items-center gap-1 text-[10px] font-black uppercase text-black/60">
                                                         <PlayCircle className="h-3 w-3 text-black shrink-0" />
-                                                        {t('checkpoints.execution', 'Execution')}
+                                                        {t('checkpoints.execution', 'Execution Guidelines')}
                                                     </span>
                                                     <p className={cn('text-black/80 font-medium leading-relaxed whitespace-pre-line pl-4')}>
                                                         {exec}
@@ -359,9 +458,9 @@ export function CheckpointPlacementAdmin({
                                                 </div>
                                             )}
 
-                                            {!reqs && !exec && (
+                                            {!publicDesc && !orgDesc && !reqs && !exec && (
                                                 <p className={cn('text-black/40 italic text-[11px]')}>
-                                                    {t('checkpoints.noAdminDetails', 'No requirements or execution details specified.')}
+                                                    {t('checkpoints.noAdminDetails', 'No details specified.')}
                                                 </p>
                                             )}
 
@@ -437,68 +536,106 @@ export function CheckpointPlacementAdmin({
                             onClose={() => setSelectedId(null)}
                             closeOnClick={true}
                             focusAfterOpen={false}
-                            className={cn('[&_.maplibregl-popup-content]:p-0 [&_.maplibregl-popup-content]:rounded-md [&_.maplibregl-popup-content]:shadow-xl [&_.maplibregl-popup-content]:border-2 [&_.maplibregl-popup-content]:border-black [&_.maplibregl-popup-close-button]:hidden')}
+                            className={cn('[&_.maplibregl-popup-content]:p-0 [&_.maplibregl-popup-content]:rounded-xl [&_.maplibregl-popup-content]:shadow-xl [&_.maplibregl-popup-content]:border-2 [&_.maplibregl-popup-content]:border-black [&_.maplibregl-popup-close-button]:hidden')}
                         >
-                            <div className={cn('relative min-w-[220px] max-w-xs p-3.5 bg-white')}>
+                            <div className={cn('relative min-w-[220px] max-w-xs p-3.5 bg-surface-elevated rounded-xl flex flex-col gap-2')}>
                                 <button
                                     type="button"
                                     onClick={() => setSelectedId(null)}
-                                    className={cn('absolute top-2.5 right-2.5 flex h-5 w-5 items-center justify-center rounded-full text-black/50 hover:bg-blush-pop-100 hover:text-black transition-colors')}
+                                    title={t('common.close', 'Close')}
+                                    className={cn('absolute top-2.5 right-2.5 flex h-5 w-5 items-center justify-center rounded-full text-text-muted hover:bg-black/10 hover:text-text-main transition-colors')}
                                 >
                                     <X className={cn('h-3.5 w-3.5')} />
                                 </button>
 
-                                <div className={cn('flex items-center gap-2.5 pr-6')}>
-                                    <span
-                                        className={cn(
-                                            'flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-black text-xs font-bold shadow-2xs [&>svg]:h-3.5 [&>svg]:w-3.5',
-                                            CATEGORY_COLORS[
-                                            selectedCheckpoint.category && CATEGORY_COLORS[selectedCheckpoint.category]
-                                                ? selectedCheckpoint.category
-                                                : 'default'
-                                            ]
-                                        )}
-                                    >
-                                        {selectedCheckpoint.icon ?? selectedCheckpoint.number ?? '•'}
+                                {/* Title Header: Circle Number + Name */}
+                                <div className={cn('flex items-start gap-2.5 pr-6')}>
+                                    <span className={cn(
+                                        'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold border border-black shadow-xs',
+                                        CATEGORY_COLORS[selectedCheckpoint.category || 'default']
+                                    )}>
+                                        {selectedCheckpoint.number ?? '•'}
                                     </span>
-                                    <h4 className={cn('font-extrabold text-sm text-black leading-tight')}>
-                                        {selectedCheckpoint.name}
-                                    </h4>
+                                    <div className="flex flex-col min-w-0">
+                                        <div className="flex items-center gap-1.5 flex-wrap leading-tight">
+                                            <h4 className={cn('font-bold text-sm text-text-main')}>
+                                                {selectedCheckpoint.name}
+                                            </h4>
+                                            {selectedCheckpoint.cancelled && (
+                                                <span className="text-[9px] font-extrabold uppercase px-1 py-0.2 rounded bg-rose-600 text-white border border-black">
+                                                    {t('checkpoints.cancelled', 'Cancelled')}
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        {/* Subtitle: Category • Area */}
+                                        {(selectedCheckpoint.category || selectedCheckpoint.area_name) && (
+                                            <span className="text-[11px] italic text-text-muted mt-0.5">
+                                                {[getCategoryLabel(selectedCheckpoint.category), selectedCheckpoint.area_name].filter(Boolean).join(' • ')}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
 
-                                {/* Requirements */}
-                                {selectedReqs && (
-                                    <div className="mt-2 border-t border-black/10 pt-2 flex flex-col gap-0.5">
-                                        <span className="flex items-center gap-1 text-[10px] font-black uppercase text-black/60">
-                                            <ClipboardList className="h-3 w-3 text-black shrink-0" />
-                                            {t('checkpoints.requirements', 'Requirements')}
-                                        </span>
-                                        <p className={cn('text-xs font-medium text-black/80 leading-relaxed')}>
-                                            {selectedReqs}
-                                        </p>
+                                {/* Location Name / Address & Accessibility */}
+                                {(selectedCheckpoint.location_name || selectedCheckpoint.accessible !== undefined) && (
+                                    <div className="flex items-center justify-between text-xs font-medium text-text-muted border-t border-black/10 pt-1.5">
+                                        {selectedCheckpoint.location_name ? (
+                                            <div className="flex items-center gap-1 min-w-0 truncate">
+                                                <MapPin className="h-3.5 w-3.5 text-black shrink-0" />
+                                                <span className="truncate">{selectedCheckpoint.location_name}</span>
+                                            </div>
+                                        ) : (
+                                            <div />
+                                        )}
+
+                                        {selectedCheckpoint.accessible && (
+                                            <div className="flex items-center gap-1 text-emerald-700 shrink-0 font-bold text-[10px]" title={t('checkpoints.accessible', 'Wheelchair Accessible')}>
+                                                <Accessibility className="h-3.5 w-3.5 stroke-[2.5]" />
+                                            </div>
+                                        )}
                                     </div>
                                 )}
 
-                                {/* Execution */}
-                                {selectedExec && (
-                                    <div className="mt-1.5 border-t border-black/10 pt-1.5 flex flex-col gap-0.5">
-                                        <span className="flex items-center gap-1 text-[10px] font-black uppercase text-black/60">
-                                            <PlayCircle className="h-3 w-3 text-black shrink-0" />
-                                            {t('checkpoints.execution', 'Execution')}
-                                        </span>
-                                        <p className={cn('text-xs font-medium text-black/80 leading-relaxed')}>
-                                            {selectedExec}
-                                        </p>
-                                    </div>
-                                )}
-
-                                {!selectedReqs && !selectedExec && (
-                                    <p className={cn('mt-2 text-[11px] italic text-black/40 border-t border-black/10 pt-2')}>
-                                        {t('checkpoints.noAdminDetails', 'No requirements or execution details specified.')}
+                                {/* Public Description */}
+                                {selectedPublicDesc ? (
+                                    <p className={cn('text-xs text-text-muted leading-relaxed border-t border-black/10 pt-2 whitespace-pre-line')}>
+                                        {selectedPublicDesc}
+                                    </p>
+                                ) : !selectedOrgDesc && (
+                                    <p className={cn('text-[11px] italic text-text-muted/70 border-t border-black/10 pt-2')}>
+                                        {t('checkpoints.noDescription', 'No description provided.')}
                                     </p>
                                 )}
 
-                                <div className={cn('mt-2 flex items-center gap-3 text-[10px] font-mono font-bold text-black/70 bg-black/5 p-1.5 rounded border border-black/10')}>
+                                {/* Organizer Info */}
+                                {selectedOrgDesc && (
+                                    <div className="border-t border-black/10 pt-1.5 flex flex-col gap-0.5">
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted">
+                                            {t('checkpoints.organizerInfo', 'Organizer Info')}
+                                        </span>
+                                        <p className="text-xs text-text-muted leading-relaxed whitespace-pre-line italic">
+                                            {selectedOrgDesc}
+                                        </p>
+                                    </div>
+                                )}
+
+                                {/* External Link Button */}
+                                {selectedCheckpoint.url && (
+                                    <a
+                                        href={selectedCheckpoint.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="mt-1 flex items-center justify-center gap-1.5 rounded-md border-2 border-black bg-amber-400 py-1.5 text-xs font-black text-black shadow-2xs hover:bg-amber-300 transition-colors"
+                                    >
+                                        <Globe className="h-3.5 w-3.5 text-black" />
+                                        <span>{t('checkpoints.visitWebsite', 'Visit Website')}</span>
+                                        <ExternalLink className="h-3 w-3 text-black/70" />
+                                    </a>
+                                )}
+
+                                {/* Coordinates Footer */}
+                                <div className={cn('mt-1 flex items-center gap-3 text-[10px] font-mono font-bold text-black/70 bg-black/5 p-1.5 rounded border border-black/10')}>
                                     <span>{t('lat', 'Lat:')} {selectedCheckpoint.latitude.toFixed(5)}</span>
                                     <span>{t('lng', 'Lng:')} {selectedCheckpoint.longitude.toFixed(5)}</span>
                                 </div>

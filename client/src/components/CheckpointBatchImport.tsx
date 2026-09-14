@@ -20,7 +20,8 @@ interface CheckpointBatchImportProps {
 }
 
 type ExtendedFieldKey =
-    | keyof CreateCheckpoint
+    | keyof Omit<CreateCheckpoint, 'checkpoint_description' | 'org_description'>
+    | 'area_name'
     | 'description_fi'
     | 'description_sv'
     | 'description_en'
@@ -43,6 +44,7 @@ export function CheckpointBatchImport({ onSuccess, onCancel }: CheckpointBatchIm
             { key: 'number', label: t('batchImport.fields.number', 'Number (#)') },
             { key: 'category', label: t('batchImport.fields.category', 'Category') },
             { key: 'location_name', label: t('batchImport.fields.locationName', 'Location Name') },
+            { key: 'area_name', label: t('batchImport.fields.areaName', 'Area Name') },
             { key: 'latitude', label: t('batchImport.fields.latitude', 'Latitude') },
             { key: 'longitude', label: t('batchImport.fields.longitude', 'Longitude') },
             { key: 'lanes', label: t('batchImport.fields.lanes', 'Lanes') },
@@ -50,14 +52,12 @@ export function CheckpointBatchImport({ onSuccess, onCancel }: CheckpointBatchIm
             { key: 'requirements', label: t('batchImport.fields.requirements', 'Requirements') },
             { key: 'execution', label: t('batchImport.fields.execution', 'Execution Guidelines') },
 
-            // Public Description Options
-            { key: 'checkpoint_description', label: t('batchImport.fields.description', 'Public Description (Raw/General)') },
+            // Public Description (Language Specific Only)
             { key: 'description_fi', label: t('batchImport.fields.descriptionFi', 'Public Description (FI)') },
             { key: 'description_sv', label: t('batchImport.fields.descriptionSv', 'Public Description (SV)') },
             { key: 'description_en', label: t('batchImport.fields.descriptionEn', 'Public Description (EN)') },
 
-            // Organizer Description Options
-            { key: 'org_description', label: t('batchImport.fields.orgDescription', 'Organizer Description (Raw/General)') },
+            // Organizer Description (Language Specific Only)
             { key: 'org_description_fi', label: t('batchImport.fields.orgDescriptionFi', 'Organizer Description (FI)') },
             { key: 'org_description_sv', label: t('batchImport.fields.orgDescriptionSv', 'Organizer Description (SV)') },
             { key: 'org_description_en', label: t('batchImport.fields.orgDescriptionEn', 'Organizer Description (EN)') },
@@ -130,41 +130,40 @@ export function CheckpointBatchImport({ onSuccess, onCancel }: CheckpointBatchIm
             const descFi = getValue('description_fi')?.trim()
             const descSv = getValue('description_sv')?.trim()
             const descEn = getValue('description_en')?.trim()
-            const descRaw = getValue('checkpoint_description')?.trim()
 
-            let descriptionObj: Record<string, string> | string | null = null
+            let descriptionObj: Record<string, string> | null = null
             if (descFi || descSv || descEn) {
                 const mapObj: Record<string, string> = {}
                 if (descFi) mapObj.fi = descFi
                 if (descSv) mapObj.sv = descSv
                 if (descEn) mapObj.en = descEn
                 descriptionObj = mapObj
-            } else if (descRaw) {
-                descriptionObj = descRaw
             }
 
             // 2. Build JSON object for localized organizer descriptions
             const orgDescFi = getValue('org_description_fi')?.trim()
             const orgDescSv = getValue('org_description_sv')?.trim()
             const orgDescEn = getValue('org_description_en')?.trim()
-            const orgDescRaw = getValue('org_description')?.trim()
 
-            let orgDescriptionObj: Record<string, string> | string | null = null
+            let orgDescriptionObj: Record<string, string> | null = null
             if (orgDescFi || orgDescSv || orgDescEn) {
                 const mapObj: Record<string, string> = {}
                 if (orgDescFi) mapObj.fi = orgDescFi
                 if (orgDescSv) mapObj.sv = orgDescSv
                 if (orgDescEn) mapObj.en = orgDescEn
                 orgDescriptionObj = mapObj
-            } else if (orgDescRaw) {
-                orgDescriptionObj = orgDescRaw
             }
+
+            // 3. Resolve location_name / area_name string for backend resolution
+            const rawLocation = getValue('location_name')?.trim()
+            const rawArea = getValue('area_name')?.trim()
+            const locationName = rawLocation || rawArea || null
 
             return {
                 name: String(getValue('name') || '').trim(),
                 number: numVal ? Number(numVal) : null,
                 category: (getValue('category')?.toLowerCase() as CheckpointCategory) || 'subject',
-                location_name: getValue('location_name')?.trim() || null,
+                location_name: locationName,
                 latitude: latVal ? Number(latVal) : 0,
                 longitude: lngVal ? Number(lngVal) : 0,
                 lanes: lanesVal ? Number(lanesVal) : 1,
