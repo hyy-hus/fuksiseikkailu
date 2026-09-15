@@ -94,8 +94,8 @@ declare module '@tanstack/react-router' {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <AuthProvider>
-            <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={queryClient}>
+            <AuthProvider>
                 <RouterProvider router={router} />
                 <Toaster
                     position="bottom-right"
@@ -109,7 +109,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                         },
                     }}
                 />
-            </QueryClientProvider>
-        </AuthProvider>
+            </AuthProvider>
+        </QueryClientProvider>
     </React.StrictMode>,
 )

@@ -199,9 +199,11 @@ function CheckpointMarker({
 
 function ClusteredCheckpointMarkers({
     checkpoints,
+    initialSelectedId,
     onCheckpointClick,
 }: {
     checkpoints: MapCheckpoint[]
+    initialSelectedId?: string
     onCheckpointClick?: (checkpoint: MapCheckpoint) => void
 }) {
     const { t, i18n } = useTranslation()
@@ -209,6 +211,28 @@ function ClusteredCheckpointMarkers({
     const [bounds, setBounds] = React.useState<BBox | null>(null)
     const [zoom, setZoom] = React.useState<number>(13)
     const [selectedId, setSelectedId] = React.useState<string | null>(null)
+
+    // Handle focus from URL parameter on initial load or parameter change
+    React.useEffect(() => {
+        if (!initialSelectedId || checkpoints.length === 0) return
+
+        // Match by exact ID or by checkpoint number
+        const matched = checkpoints.find(
+            (cp) => cp.id === initialSelectedId || String(cp.number) === initialSelectedId
+        )
+
+        if (matched) {
+            setSelectedId(matched.id)
+            if (map && matched.longitude !== 0 && matched.latitude !== 0) {
+                map.flyTo({
+                    center: [matched.longitude, matched.latitude],
+                    zoom: 16,
+                    speed: 1.4,
+                    essential: true,
+                })
+            }
+        }
+    }, [initialSelectedId, checkpoints, map])
 
     const selectedCheckpoint = React.useMemo(() => {
         if (!selectedId) return null
@@ -490,17 +514,23 @@ function ClusteredCheckpointMarkers({
 
 export function CheckpointMap({
     checkpoints,
+    initialSelectedId,
     className,
     onCheckpointClick,
 }: {
     checkpoints: MapCheckpoint[]
+    initialSelectedId?: string
     className?: string
     onCheckpointClick?: (checkpoint: MapCheckpoint) => void
 }) {
     return (
         <div className={cn('border-2 border-black h-full')}>
             <VectorMap className={className}>
-                <ClusteredCheckpointMarkers checkpoints={checkpoints} onCheckpointClick={onCheckpointClick} />
+                <ClusteredCheckpointMarkers
+                    checkpoints={checkpoints}
+                    initialSelectedId={initialSelectedId}
+                    onCheckpointClick={onCheckpointClick}
+                />
             </VectorMap>
         </div>
     )
