@@ -16,6 +16,10 @@ import { Route as CheckpointsIndexRouteImport } from './routes/checkpoints/index
 import { Route as CheckpointsIdRouteImport } from './routes/checkpoints/$id'
 import { Route as CheckpointsCreateRouteImport } from './routes/checkpoints/create'
 import { Route as CheckpointsImportRouteImport } from './routes/checkpoints/import'
+import { Route as TeamsIndexRouteImport } from './routes/teams/index'
+import { Route as TeamsIdRouteImport } from './routes/teams/$id'
+import { Route as TeamsCreateRouteImport } from './routes/teams/create'
+import { Route as TeamsImportRouteImport } from './routes/teams/import'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,6 +56,26 @@ const CheckpointsImportRoute = CheckpointsImportRouteImport.update({
   path: '/checkpoints/import',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TeamsIndexRoute = TeamsIndexRouteImport.update({
+  id: '/teams/',
+  path: '/teams/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamsIdRoute = TeamsIdRouteImport.update({
+  id: '/teams/$id',
+  path: '/teams/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamsCreateRoute = TeamsCreateRouteImport.update({
+  id: '/teams/create',
+  path: '/teams/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamsImportRoute = TeamsImportRouteImport.update({
+  id: '/teams/import',
+  path: '/teams/import',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -60,7 +84,11 @@ export interface FileRoutesByFullPath {
   '/checkpoints/$id': typeof CheckpointsIdRoute
   '/checkpoints/create': typeof CheckpointsCreateRoute
   '/checkpoints/import': typeof CheckpointsImportRoute
+  '/teams/$id': typeof TeamsIdRoute
+  '/teams/create': typeof TeamsCreateRoute
+  '/teams/import': typeof TeamsImportRoute
   '/checkpoints/': typeof CheckpointsIndexRoute
+  '/teams/': typeof TeamsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -69,7 +97,11 @@ export interface FileRoutesByTo {
   '/checkpoints/$id': typeof CheckpointsIdRoute
   '/checkpoints/create': typeof CheckpointsCreateRoute
   '/checkpoints/import': typeof CheckpointsImportRoute
+  '/teams/$id': typeof TeamsIdRoute
+  '/teams/create': typeof TeamsCreateRoute
+  '/teams/import': typeof TeamsImportRoute
   '/checkpoints': typeof CheckpointsIndexRoute
+  '/teams': typeof TeamsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -79,7 +111,11 @@ export interface FileRoutesById {
   '/checkpoints/$id': typeof CheckpointsIdRoute
   '/checkpoints/create': typeof CheckpointsCreateRoute
   '/checkpoints/import': typeof CheckpointsImportRoute
+  '/teams/$id': typeof TeamsIdRoute
+  '/teams/create': typeof TeamsCreateRoute
+  '/teams/import': typeof TeamsImportRoute
   '/checkpoints/': typeof CheckpointsIndexRoute
+  '/teams/': typeof TeamsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -90,7 +126,11 @@ export interface FileRouteTypes {
     | '/checkpoints/$id'
     | '/checkpoints/create'
     | '/checkpoints/import'
+    | '/teams/$id'
+    | '/teams/create'
+    | '/teams/import'
     | '/checkpoints/'
+    | '/teams/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -99,7 +139,11 @@ export interface FileRouteTypes {
     | '/checkpoints/$id'
     | '/checkpoints/create'
     | '/checkpoints/import'
+    | '/teams/$id'
+    | '/teams/create'
+    | '/teams/import'
     | '/checkpoints'
+    | '/teams'
   id:
     | '__root__'
     | '/'
@@ -108,7 +152,11 @@ export interface FileRouteTypes {
     | '/checkpoints/$id'
     | '/checkpoints/create'
     | '/checkpoints/import'
+    | '/teams/$id'
+    | '/teams/create'
+    | '/teams/import'
     | '/checkpoints/'
+    | '/teams/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -118,7 +166,11 @@ export interface RootRouteChildren {
   CheckpointsIdRoute: typeof CheckpointsIdRoute
   CheckpointsCreateRoute: typeof CheckpointsCreateRoute
   CheckpointsImportRoute: typeof CheckpointsImportRoute
+  TeamsIdRoute: typeof TeamsIdRoute
+  TeamsCreateRoute: typeof TeamsCreateRoute
+  TeamsImportRoute: typeof TeamsImportRoute
   CheckpointsIndexRoute: typeof CheckpointsIndexRoute
+  TeamsIndexRoute: typeof TeamsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -172,6 +224,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckpointsImportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/teams/': {
+      id: '/teams/'
+      path: '/teams'
+      fullPath: '/teams/'
+      preLoaderRoute: typeof TeamsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/teams/$id': {
+      id: '/teams/$id'
+      path: '/teams/$id'
+      fullPath: '/teams/$id'
+      preLoaderRoute: typeof TeamsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/teams/create': {
+      id: '/teams/create'
+      path: '/teams/create'
+      fullPath: '/teams/create'
+      preLoaderRoute: typeof TeamsCreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/teams/import': {
+      id: '/teams/import'
+      path: '/teams/import'
+      fullPath: '/teams/import'
+      preLoaderRoute: typeof TeamsImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -182,7 +262,11 @@ const rootRouteChildren: RootRouteChildren = {
   CheckpointsIdRoute: CheckpointsIdRoute,
   CheckpointsCreateRoute: CheckpointsCreateRoute,
   CheckpointsImportRoute: CheckpointsImportRoute,
+  TeamsIdRoute: TeamsIdRoute,
+  TeamsCreateRoute: TeamsCreateRoute,
+  TeamsImportRoute: TeamsImportRoute,
   CheckpointsIndexRoute: CheckpointsIndexRoute,
+  TeamsIndexRoute: TeamsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
