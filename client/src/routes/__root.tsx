@@ -38,7 +38,7 @@ function RootComponent() {
             </main>
 
             <footer className={cn('p-2 text-xs font-bold')}>
-                {t('fuksiseikkailuDashboard', 'Fuksiseikkailu Dashboard')}
+                {/* {t('fuksiseikkailuDashboard', 'Fuksiseikkailu Dashboard')} */}
             </footer>
 
             <TanStackRouterDevtools />

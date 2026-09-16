@@ -1,3 +1,4 @@
+// client/vite.config.ts
 import path from 'path'
 import { fileURLToPath } from 'url'
 import fs from 'fs'
@@ -14,14 +15,20 @@ export default defineConfig({
         react(),
         tailwindcss(),
         {
-            name: 'copy-maplibre-shared-worker',
+            name: 'copy-maplibre-workers',
             closeBundle() {
-                const src = path.resolve(__dirname, 'node_modules/maplibre-gl/dist/maplibre-gl-shared.mjs')
-                const dest = path.resolve(__dirname, 'dist/assets/maplibre-gl-shared.mjs')
-                if (fs.existsSync(src)) {
-                    fs.copyFileSync(src, dest)
-                    console.log('✓ Successfully copied maplibre-gl-shared.mjs directly to dist/assets/')
-                }
+                const srcDir = path.resolve(__dirname, 'node_modules/maplibre-gl/dist')
+                const destDir = path.resolve(__dirname, 'dist/assets')
+                const workerFiles: string[] = ['maplibre-gl-worker.mjs', 'maplibre-gl-shared.mjs']
+
+                workerFiles.forEach((file: string) => {
+                    const src = path.join(srcDir, file)
+                    const dest = path.join(destDir, file)
+                    if (fs.existsSync(src)) {
+                        fs.copyFileSync(src, dest)
+                        console.log(`✓ Successfully copied ${file} directly to dist/assets/`)
+                    }
+                })
             },
         },
     ],
