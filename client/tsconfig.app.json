@@ -25,7 +25,6 @@
         "erasableSyntaxOnly": true,
         "noFallthroughCasesInSwitch": true,
         /* Paths and aliases */
-        "baseUrl": ".",
         "paths": {
             "@/*": [
                 "./src/*"

@@ -5,11 +5,21 @@ import * as maplibregl from 'maplibre-gl'
 import { Protocol } from 'pmtiles'
 import { layers, namedFlavor, type Flavor } from '@protomaps/basemaps'
 
+// Import worker via Vite's native worker bundler
+import MaplibreWorker from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker'
+
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { cn } from '@/lib/utils'
 
+// Register worker class directly via type assertion
+if (typeof window !== 'undefined' && maplibregl.config) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (maplibregl.config as any).WORKER_CLASS = MaplibreWorker
+}
+
+// Register PMTiles protocol handler
 const protocol = new Protocol()
-maplibregl.addProtocol('pmtiles', (request, callback) => protocol.tile(request, callback))
+maplibregl.addProtocol('pmtiles', protocol.tile)
 
 interface VectorMapProps {
     className?: string
@@ -29,8 +39,7 @@ export function VectorMap({
     const { i18n } = useTranslation()
 
     const mapStyle = React.useMemo<maplibregl.StyleSpecification>(() => {
-        // Extract 2-letter language code (e.g. 'fi', 'sv', 'en')
-        const mapLanguage = i18n.language ? i18n.language.slice(0, 2) : 'fi'
+        const mapLanguage = (i18n.language ? i18n.language.slice(0, 2) : 'fi') as 'fi' | 'en' | 'sv'
         const baseLayers = layers('protomaps', presetTheme, { lang: mapLanguage })
 
         return {
