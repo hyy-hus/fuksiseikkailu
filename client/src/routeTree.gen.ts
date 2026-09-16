@@ -16,6 +16,7 @@ import { Route as CheckpointsIndexRouteImport } from './routes/checkpoints/index
 import { Route as CheckpointsIdRouteImport } from './routes/checkpoints/$id'
 import { Route as CheckpointsCreateRouteImport } from './routes/checkpoints/create'
 import { Route as CheckpointsImportRouteImport } from './routes/checkpoints/import'
+import { Route as ScoresCheckpointIdRouteImport } from './routes/scores/$checkpointId'
 import { Route as TeamsIndexRouteImport } from './routes/teams/index'
 import { Route as TeamsIdRouteImport } from './routes/teams/$id'
 import { Route as TeamsCreateRouteImport } from './routes/teams/create'
@@ -56,6 +57,11 @@ const CheckpointsImportRoute = CheckpointsImportRouteImport.update({
   path: '/checkpoints/import',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ScoresCheckpointIdRoute = ScoresCheckpointIdRouteImport.update({
+  id: '/scores/$checkpointId',
+  path: '/scores/$checkpointId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TeamsIndexRoute = TeamsIndexRouteImport.update({
   id: '/teams/',
   path: '/teams/',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/checkpoints/$id': typeof CheckpointsIdRoute
   '/checkpoints/create': typeof CheckpointsCreateRoute
   '/checkpoints/import': typeof CheckpointsImportRoute
+  '/scores/$checkpointId': typeof ScoresCheckpointIdRoute
   '/teams/$id': typeof TeamsIdRoute
   '/teams/create': typeof TeamsCreateRoute
   '/teams/import': typeof TeamsImportRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/checkpoints/$id': typeof CheckpointsIdRoute
   '/checkpoints/create': typeof CheckpointsCreateRoute
   '/checkpoints/import': typeof CheckpointsImportRoute
+  '/scores/$checkpointId': typeof ScoresCheckpointIdRoute
   '/teams/$id': typeof TeamsIdRoute
   '/teams/create': typeof TeamsCreateRoute
   '/teams/import': typeof TeamsImportRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/checkpoints/$id': typeof CheckpointsIdRoute
   '/checkpoints/create': typeof CheckpointsCreateRoute
   '/checkpoints/import': typeof CheckpointsImportRoute
+  '/scores/$checkpointId': typeof ScoresCheckpointIdRoute
   '/teams/$id': typeof TeamsIdRoute
   '/teams/create': typeof TeamsCreateRoute
   '/teams/import': typeof TeamsImportRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/checkpoints/$id'
     | '/checkpoints/create'
     | '/checkpoints/import'
+    | '/scores/$checkpointId'
     | '/teams/$id'
     | '/teams/create'
     | '/teams/import'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/checkpoints/$id'
     | '/checkpoints/create'
     | '/checkpoints/import'
+    | '/scores/$checkpointId'
     | '/teams/$id'
     | '/teams/create'
     | '/teams/import'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/checkpoints/$id'
     | '/checkpoints/create'
     | '/checkpoints/import'
+    | '/scores/$checkpointId'
     | '/teams/$id'
     | '/teams/create'
     | '/teams/import'
@@ -166,6 +178,7 @@ export interface RootRouteChildren {
   CheckpointsIdRoute: typeof CheckpointsIdRoute
   CheckpointsCreateRoute: typeof CheckpointsCreateRoute
   CheckpointsImportRoute: typeof CheckpointsImportRoute
+  ScoresCheckpointIdRoute: typeof ScoresCheckpointIdRoute
   TeamsIdRoute: typeof TeamsIdRoute
   TeamsCreateRoute: typeof TeamsCreateRoute
   TeamsImportRoute: typeof TeamsImportRoute
@@ -224,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckpointsImportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/scores/$checkpointId': {
+      id: '/scores/$checkpointId'
+      path: '/scores/$checkpointId'
+      fullPath: '/scores/$checkpointId'
+      preLoaderRoute: typeof ScoresCheckpointIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/teams/': {
       id: '/teams/'
       path: '/teams'
@@ -262,6 +282,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckpointsIdRoute: CheckpointsIdRoute,
   CheckpointsCreateRoute: CheckpointsCreateRoute,
   CheckpointsImportRoute: CheckpointsImportRoute,
+  ScoresCheckpointIdRoute: ScoresCheckpointIdRoute,
   TeamsIdRoute: TeamsIdRoute,
   TeamsCreateRoute: TeamsCreateRoute,
   TeamsImportRoute: TeamsImportRoute,

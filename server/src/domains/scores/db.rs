@@ -6,12 +6,11 @@ use crate::errors::AppError;
 
 pub async fn submit_or_update_score(
     pool: &PgPool,
-    user_id: Uuid,
     payload: &SubmitScorePayload,
 ) -> Result<Score, AppError> {
     let participants = payload.participants_present.unwrap_or(0);
 
-    // Upsert pattern on unique_team_checkpoint_score constraint
+    // Upsert pattern on unique_team_checkpoint_score constraint without mandatory user tracking
     let score = sqlx::query_as!(
         Score,
         r#"
@@ -28,7 +27,7 @@ pub async fn submit_or_update_score(
         "#,
         payload.team_id,
         payload.checkpoint_id,
-        user_id,
+        Option::<Uuid>::None,
         payload.score,
         participants
     )

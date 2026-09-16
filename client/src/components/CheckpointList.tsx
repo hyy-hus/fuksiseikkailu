@@ -4,9 +4,11 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import {
     Accessibility,
     AlertCircle,
+    Award,
     Check,
     ChevronDown,
     ChevronUp,
+    Copy,
     Edit3,
     ExternalLink,
     Globe,
@@ -62,6 +64,7 @@ export function CheckpointList() {
     const [selectedId, setSelectedId] = React.useState<string | null>(null)
     const [searchQuery, setSearchQuery] = React.useState('')
     const [categoryFilter, setCategoryFilter] = React.useState<string>('all')
+    const [copiedId, setCopiedId] = React.useState<string | null>(null)
 
     const {
         data: checkpoints = [],
@@ -120,6 +123,14 @@ export function CheckpointList() {
                                     ? 'University'
                                     : category,
         })
+    }
+
+    const handleCopyScoringLink = (e: React.MouseEvent, checkpointId: string) => {
+        e.stopPropagation()
+        const scoringUrl = `${window.location.origin}/scores/${checkpointId}`
+        navigator.clipboard.writeText(scoringUrl)
+        setCopiedId(checkpointId)
+        setTimeout(() => setCopiedId(null), 2000)
     }
 
     return (
@@ -374,17 +385,42 @@ export function CheckpointList() {
                                                     </button>
                                                 )}
 
-                                                {/* Admin-only Edit Button */}
+                                                {/* Admin-only Actions */}
                                                 {isAdmin && (
-                                                    <Link
-                                                        to="/checkpoints/$id"
-                                                        params={{ id: cp.id }}
-                                                        onClick={(e) => e.stopPropagation()}
-                                                        className={cn('flex items-center gap-1.5 rounded-md border-2 border-black bg-amber-400 px-3 py-1.5 text-xs font-black text-black shadow-2xs hover:bg-amber-300 transition-colors')}
-                                                    >
-                                                        <Edit3 className={cn('h-3.5 w-3.5')} />
-                                                        {t('checkpoints.editButton', 'Edit Checkpoint')}
-                                                    </Link>
+                                                    <>
+                                                        <Link
+                                                            to="/scores/$checkpointId"
+                                                            params={{ checkpointId: cp.id }}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className={cn('flex items-center gap-1.5 rounded-md border-2 border-black bg-emerald-400 px-3 py-1.5 text-xs font-black text-black shadow-2xs hover:bg-emerald-300 transition-colors')}
+                                                        >
+                                                            <Award className={cn('h-3.5 w-3.5')} />
+                                                            {t('checkpoints.recordScores', 'Record Scores')}
+                                                        </Link>
+
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => handleCopyScoringLink(e, cp.id)}
+                                                            className={cn('flex items-center gap-1.5 rounded-md border-2 border-black bg-white px-3 py-1.5 text-xs font-extrabold text-black shadow-2xs hover:bg-black/5 transition-colors cursor-pointer')}
+                                                        >
+                                                            <Copy className={cn('h-3.5 w-3.5')} />
+                                                            <span>
+                                                                {copiedId === cp.id
+                                                                    ? t('common.copied', 'Copied Link!')
+                                                                    : t('checkpoints.copyScoringLink', 'Copy Link')}
+                                                            </span>
+                                                        </button>
+
+                                                        <Link
+                                                            to="/checkpoints/$id"
+                                                            params={{ id: cp.id }}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className={cn('flex items-center gap-1.5 rounded-md border-2 border-black bg-amber-400 px-3 py-1.5 text-xs font-black text-black shadow-2xs hover:bg-amber-300 transition-colors')}
+                                                        >
+                                                            <Edit3 className={cn('h-3.5 w-3.5')} />
+                                                            {t('checkpoints.editButton', 'Edit Checkpoint')}
+                                                        </Link>
+                                                    </>
                                                 )}
                                             </div>
                                         </div>
