@@ -19,12 +19,13 @@ ENV SQLX_OFFLINE=true
 # Build release binary
 RUN cargo build --release
 
-# Runtime stage
-FROM debian:bookworm-slim
+# Runtime stage (use debian:sid-slim to match the builder's glibc version)
+FROM debian:sid-slim
 WORKDIR /app
 RUN apt-get update && apt-get install -y ca-certificates libssl-dev && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /app/target/release/kuutar /app/server
+# Copy binary & migrations
+COPY --from=builder /app/target/release/server /app/server
 COPY --from=builder /app/migrations /app/migrations
 
 ENV PORT=8080

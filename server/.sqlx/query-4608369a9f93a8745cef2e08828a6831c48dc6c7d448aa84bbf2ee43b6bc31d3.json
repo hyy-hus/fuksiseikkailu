@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT \n            id, area_id, number, name, category AS \"category: CheckpointCategory\", \n            location_name, latitude, longitude, accessible, lanes, \n            checkpoint_description, url, cancelled, created_at, updated_at\n        FROM checkpoints\n        WHERE deleted_at IS NULL\n        ORDER BY number ASC NULLS LAST, name ASC\n        ",
+  "query": "\n        SELECT \n            id, area_id, number, name, category AS \"category: CheckpointCategory\", \n            location_name, latitude, longitude, accessible, lanes, \n            checkpoint_description, org_description, requirements, execution, \n            url, contact_person, contact_email, contact_phone, cancelled, \n            created_at, updated_at\n        FROM checkpoints\n        WHERE deleted_at IS NULL AND latitude != 0 AND longitude != 0\n        ",
   "describe": {
     "columns": [
       {
@@ -140,6 +140,39 @@
       },
       {
         "ordinal": 11,
+        "name": "org_description",
+        "type_info": "Jsonb",
+        "origin": {
+          "Table": {
+            "table": "checkpoints",
+            "name": "org_description"
+          }
+        }
+      },
+      {
+        "ordinal": 12,
+        "name": "requirements",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "checkpoints",
+            "name": "requirements"
+          }
+        }
+      },
+      {
+        "ordinal": 13,
+        "name": "execution",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "checkpoints",
+            "name": "execution"
+          }
+        }
+      },
+      {
+        "ordinal": 14,
         "name": "url",
         "type_info": "Text",
         "origin": {
@@ -150,7 +183,40 @@
         }
       },
       {
-        "ordinal": 12,
+        "ordinal": 15,
+        "name": "contact_person",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "checkpoints",
+            "name": "contact_person"
+          }
+        }
+      },
+      {
+        "ordinal": 16,
+        "name": "contact_email",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "checkpoints",
+            "name": "contact_email"
+          }
+        }
+      },
+      {
+        "ordinal": 17,
+        "name": "contact_phone",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "checkpoints",
+            "name": "contact_phone"
+          }
+        }
+      },
+      {
+        "ordinal": 18,
         "name": "cancelled",
         "type_info": "Bool",
         "origin": {
@@ -161,7 +227,7 @@
         }
       },
       {
-        "ordinal": 13,
+        "ordinal": 19,
         "name": "created_at",
         "type_info": "Timestamptz",
         "origin": {
@@ -172,7 +238,7 @@
         }
       },
       {
-        "ordinal": 14,
+        "ordinal": 20,
         "name": "updated_at",
         "type_info": "Timestamptz",
         "origin": {
@@ -199,10 +265,16 @@
       false,
       true,
       true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
       false,
       false,
       false
     ]
   },
-  "hash": "f0537aa0a22b364f8025e8609903f029755bf5fa975309a937664a4540f3bc9f"
+  "hash": "4608369a9f93a8745cef2e08828a6831c48dc6c7d448aa84bbf2ee43b6bc31d3"
 }
