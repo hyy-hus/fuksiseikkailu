@@ -1,2 +1,5 @@
 .env*
 placed.json
+env.scw
+output.csv
+cors.json

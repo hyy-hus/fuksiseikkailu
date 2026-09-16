@@ -14,16 +14,18 @@ use domains::{
     checkpoints, news, photos, ratings, reports, scores, teams, users,
 };
 use openapi::ApiDoc;
+use resend_rs::Resend;
 use serde::Serialize;
 use sqlx::PgPool;
 use tower_http::cors::{Any, CorsLayer};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
-pub fn app(pool: PgPool, config: Config) -> Router {
+pub fn app(pool: PgPool, config: Config, resend: Resend) -> Router {
     let auth_state = AuthState {
         pool: pool.clone(),
         config: config.clone(),
+        resend: resend.clone(),
     };
 
     let swagger_router: Router = SwaggerUi::new("/swagger-ui")

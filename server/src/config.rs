@@ -24,4 +24,14 @@ pub struct Config {
 
     #[arg(long, env = "SEED_ADMIN_PASSWORD", default_value = "Admin")]
     pub seed_admin_password: String,
+
+    #[arg(long, env = "RESEND_API_KEY")]
+    pub resend_api_key: String,
+
+    #[arg(
+        long,
+        env = "FROM_EMAIL",
+        default_value = "Fuksiseikkailu <noreply@fuksiseikkailu.fi>"
+    )]
+    pub from_email: String,
 }

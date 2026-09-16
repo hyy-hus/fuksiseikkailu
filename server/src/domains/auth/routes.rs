@@ -1,4 +1,5 @@
 use axum::{Json, extract::State, http::StatusCode};
+use resend_rs::{Resend, types::CreateEmailBaseOptions};
 use uuid::Uuid;
 use validator::Validate;
 
@@ -12,6 +13,7 @@ use crate::{config::Config, domains::users::models::Role, errors::AppError};
 pub struct AuthState {
     pub pool: sqlx::PgPool,
     pub config: Config,
+    pub resend: Resend,
 }
 
 #[utoipa::path(
@@ -55,8 +57,34 @@ pub async fn request_otp(
 
     if let Some(ref email) = payload.email {
         if let Some(code) = db::create_and_store_otp(&state.pool, email).await? {
-            // For local development, output the code directly to terminal logs
             tracing::info!("[DEV OTP] Code generated for {}: {}", email, code);
+
+            // Construct email with resend-rs
+            let body_html = format!(
+                "<h2>Your Fuksiseikkailu Login Code</h2>\
+                 <p>Use the following code to complete your login:</p>\
+                 <h1 style=\"letter-spacing: 4px; font-size: 32px; color: #2563eb;\">{}</h1>\
+                 <p>This code will expire in 10 minutes.</p>",
+                code
+            );
+
+            let email_options = CreateEmailBaseOptions::new(
+                &state.config.from_email,
+                [email.as_str()],
+                "Your Fuksiseikkailu Verification Code",
+            )
+            .with_html(&body_html);
+
+            // Send via Resend client
+            match state.resend.emails.send(email_options).await {
+                Ok(response) => {
+                    tracing::info!("✓ Sent OTP email to {} (ID: {})", email, response.id);
+                }
+                Err(err) => {
+                    tracing::error!("Failed to dispatch OTP email to {}: {:?}", email, err);
+                    // Decide whether to fail the request or return 200 silently to prevent user enumeration
+                }
+            }
         } else {
             // Prevent user enumeration: log silently on server if email doesn't exist
             tracing::warn!("OTP requested for non-existent email: {}", email);

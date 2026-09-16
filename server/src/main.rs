@@ -1,6 +1,7 @@
 use anyhow::Context;
 use clap::Parser;
 use dotenvy::dotenv;
+use resend_rs::Resend;
 use sqlx::postgres::PgPoolOptions;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -34,7 +35,10 @@ async fn main() -> anyhow::Result<()> {
 
     seed::seed_admin_user(&db_pool, &config).await?;
 
-    let app = app(db_pool, config.clone());
+    // Initialize Resend client using the API key from config
+    let resend = Resend::new(&config.resend_api_key);
+
+    let app = app(db_pool, config.clone(), resend);
 
     tracing::info!("Server running on http://{}", config.bind_addr);
 
