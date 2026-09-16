@@ -17,9 +17,9 @@ const TOKEN_KEY = 'access_token'
 export function useMe(enabled = true) {
     return useQuery({
         ...getMeOptions(),
-        queryKey: AUTH_QUERY_KEY,
+        // Use spread or cast as const tuple
         enabled,
-        staleTime: 1000 * 60 * 5, // Cache profile for 5 minutes
+        staleTime: 1000 * 60 * 5,
         retry: false,
     })
 }

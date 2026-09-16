@@ -64,7 +64,7 @@ export function useBatchImportCheckpoints(onSuccess?: () => void) {
             loadingMessage: t('batchImport.meta.loading', 'Importing checkpoints batch...'),
             successMessage: (data: unknown) =>
                 t('batchImport.meta.success', 'Successfully imported {{count}} checkpoints!', {
-                    count: Array.isArray(data) ? data.length : '',
+                    count: Array.isArray(data) ? data.length : 0,
                 }),
         },
         onSuccess: () => {
