@@ -16,6 +16,10 @@ import { Route as CheckpointsIndexRouteImport } from './routes/checkpoints/index
 import { Route as CheckpointsIdRouteImport } from './routes/checkpoints/$id'
 import { Route as CheckpointsCreateRouteImport } from './routes/checkpoints/create'
 import { Route as CheckpointsImportRouteImport } from './routes/checkpoints/import'
+import { Route as NewsIndexRouteImport } from './routes/news/index'
+import { Route as NewsIdRouteImport } from './routes/news/$id'
+import { Route as NewsCreateRouteImport } from './routes/news/create'
+import { Route as PhotosIndexRouteImport } from './routes/photos/index'
 import { Route as ScoresCheckpointIdRouteImport } from './routes/scores/$checkpointId'
 import { Route as TeamsIndexRouteImport } from './routes/teams/index'
 import { Route as TeamsIdRouteImport } from './routes/teams/$id'
@@ -57,6 +61,26 @@ const CheckpointsImportRoute = CheckpointsImportRouteImport.update({
   path: '/checkpoints/import',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NewsIndexRoute = NewsIndexRouteImport.update({
+  id: '/news/',
+  path: '/news/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsIdRoute = NewsIdRouteImport.update({
+  id: '/news/$id',
+  path: '/news/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsCreateRoute = NewsCreateRouteImport.update({
+  id: '/news/create',
+  path: '/news/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PhotosIndexRoute = PhotosIndexRouteImport.update({
+  id: '/photos/',
+  path: '/photos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ScoresCheckpointIdRoute = ScoresCheckpointIdRouteImport.update({
   id: '/scores/$checkpointId',
   path: '/scores/$checkpointId',
@@ -90,11 +114,15 @@ export interface FileRoutesByFullPath {
   '/checkpoints/$id': typeof CheckpointsIdRoute
   '/checkpoints/create': typeof CheckpointsCreateRoute
   '/checkpoints/import': typeof CheckpointsImportRoute
+  '/news/$id': typeof NewsIdRoute
+  '/news/create': typeof NewsCreateRoute
   '/scores/$checkpointId': typeof ScoresCheckpointIdRoute
   '/teams/$id': typeof TeamsIdRoute
   '/teams/create': typeof TeamsCreateRoute
   '/teams/import': typeof TeamsImportRoute
   '/checkpoints/': typeof CheckpointsIndexRoute
+  '/news/': typeof NewsIndexRoute
+  '/photos/': typeof PhotosIndexRoute
   '/teams/': typeof TeamsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -104,11 +132,15 @@ export interface FileRoutesByTo {
   '/checkpoints/$id': typeof CheckpointsIdRoute
   '/checkpoints/create': typeof CheckpointsCreateRoute
   '/checkpoints/import': typeof CheckpointsImportRoute
+  '/news/$id': typeof NewsIdRoute
+  '/news/create': typeof NewsCreateRoute
   '/scores/$checkpointId': typeof ScoresCheckpointIdRoute
   '/teams/$id': typeof TeamsIdRoute
   '/teams/create': typeof TeamsCreateRoute
   '/teams/import': typeof TeamsImportRoute
   '/checkpoints': typeof CheckpointsIndexRoute
+  '/news': typeof NewsIndexRoute
+  '/photos': typeof PhotosIndexRoute
   '/teams': typeof TeamsIndexRoute
 }
 export interface FileRoutesById {
@@ -119,11 +151,15 @@ export interface FileRoutesById {
   '/checkpoints/$id': typeof CheckpointsIdRoute
   '/checkpoints/create': typeof CheckpointsCreateRoute
   '/checkpoints/import': typeof CheckpointsImportRoute
+  '/news/$id': typeof NewsIdRoute
+  '/news/create': typeof NewsCreateRoute
   '/scores/$checkpointId': typeof ScoresCheckpointIdRoute
   '/teams/$id': typeof TeamsIdRoute
   '/teams/create': typeof TeamsCreateRoute
   '/teams/import': typeof TeamsImportRoute
   '/checkpoints/': typeof CheckpointsIndexRoute
+  '/news/': typeof NewsIndexRoute
+  '/photos/': typeof PhotosIndexRoute
   '/teams/': typeof TeamsIndexRoute
 }
 export interface FileRouteTypes {
@@ -135,11 +171,15 @@ export interface FileRouteTypes {
     | '/checkpoints/$id'
     | '/checkpoints/create'
     | '/checkpoints/import'
+    | '/news/$id'
+    | '/news/create'
     | '/scores/$checkpointId'
     | '/teams/$id'
     | '/teams/create'
     | '/teams/import'
     | '/checkpoints/'
+    | '/news/'
+    | '/photos/'
     | '/teams/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -149,11 +189,15 @@ export interface FileRouteTypes {
     | '/checkpoints/$id'
     | '/checkpoints/create'
     | '/checkpoints/import'
+    | '/news/$id'
+    | '/news/create'
     | '/scores/$checkpointId'
     | '/teams/$id'
     | '/teams/create'
     | '/teams/import'
     | '/checkpoints'
+    | '/news'
+    | '/photos'
     | '/teams'
   id:
     | '__root__'
@@ -163,11 +207,15 @@ export interface FileRouteTypes {
     | '/checkpoints/$id'
     | '/checkpoints/create'
     | '/checkpoints/import'
+    | '/news/$id'
+    | '/news/create'
     | '/scores/$checkpointId'
     | '/teams/$id'
     | '/teams/create'
     | '/teams/import'
     | '/checkpoints/'
+    | '/news/'
+    | '/photos/'
     | '/teams/'
   fileRoutesById: FileRoutesById
 }
@@ -178,11 +226,15 @@ export interface RootRouteChildren {
   CheckpointsIdRoute: typeof CheckpointsIdRoute
   CheckpointsCreateRoute: typeof CheckpointsCreateRoute
   CheckpointsImportRoute: typeof CheckpointsImportRoute
+  NewsIdRoute: typeof NewsIdRoute
+  NewsCreateRoute: typeof NewsCreateRoute
   ScoresCheckpointIdRoute: typeof ScoresCheckpointIdRoute
   TeamsIdRoute: typeof TeamsIdRoute
   TeamsCreateRoute: typeof TeamsCreateRoute
   TeamsImportRoute: typeof TeamsImportRoute
   CheckpointsIndexRoute: typeof CheckpointsIndexRoute
+  NewsIndexRoute: typeof NewsIndexRoute
+  PhotosIndexRoute: typeof PhotosIndexRoute
   TeamsIndexRoute: typeof TeamsIndexRoute
 }
 
@@ -237,6 +289,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckpointsImportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/news/': {
+      id: '/news/'
+      path: '/news'
+      fullPath: '/news/'
+      preLoaderRoute: typeof NewsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/news/$id': {
+      id: '/news/$id'
+      path: '/news/$id'
+      fullPath: '/news/$id'
+      preLoaderRoute: typeof NewsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/news/create': {
+      id: '/news/create'
+      path: '/news/create'
+      fullPath: '/news/create'
+      preLoaderRoute: typeof NewsCreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/photos/': {
+      id: '/photos/'
+      path: '/photos'
+      fullPath: '/photos/'
+      preLoaderRoute: typeof PhotosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/scores/$checkpointId': {
       id: '/scores/$checkpointId'
       path: '/scores/$checkpointId'
@@ -282,11 +362,15 @@ const rootRouteChildren: RootRouteChildren = {
   CheckpointsIdRoute: CheckpointsIdRoute,
   CheckpointsCreateRoute: CheckpointsCreateRoute,
   CheckpointsImportRoute: CheckpointsImportRoute,
+  NewsIdRoute: NewsIdRoute,
+  NewsCreateRoute: NewsCreateRoute,
   ScoresCheckpointIdRoute: ScoresCheckpointIdRoute,
   TeamsIdRoute: TeamsIdRoute,
   TeamsCreateRoute: TeamsCreateRoute,
   TeamsImportRoute: TeamsImportRoute,
   CheckpointsIndexRoute: CheckpointsIndexRoute,
+  NewsIndexRoute: NewsIndexRoute,
+  PhotosIndexRoute: PhotosIndexRoute,
   TeamsIndexRoute: TeamsIndexRoute,
 }
 export const routeTree = rootRouteImport
