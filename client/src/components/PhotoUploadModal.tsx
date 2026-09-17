@@ -18,6 +18,8 @@ interface PhotoUploadModalProps {
     onClose: () => void
 }
 
+const CONCURRENCY_LIMIT = 3 // Max parallel S3 stream connections
+
 export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
     const { t } = useTranslation()
     const [files, setFiles] = React.useState<FileItem[]>([])
@@ -41,45 +43,54 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
         setFiles((prev) => prev.filter((item) => item.id !== id))
     }
 
+    const updateItemState = (id: string, update: Partial<FileItem>) => {
+        setFiles((prev) => prev.map((item) => (item.id === id ? { ...item, ...update } : item)))
+    }
+
+    const processSingleUpload = async (item: FileItem) => {
+        updateItemState(item.id, { status: 'uploading', progress: 5 })
+
+        try {
+            // 1. Direct S3 binary stream upload
+            const { key } = await uploadPhotoToS3(item.file, (pct) => {
+                updateItemState(item.id, { progress: Math.min(pct, 90) })
+            })
+
+            // 2. Metadata database entry in Rust server
+            await createPhoto.mutateAsync({
+                body: {
+                    s3_key: key,
+                    published: true,
+                },
+            })
+
+            updateItemState(item.id, { status: 'done', progress: 100 })
+        } catch (err: unknown) {
+            const errorMsg = err instanceof Error ? err.message : 'Upload failed'
+            updateItemState(item.id, { status: 'error', error: errorMsg })
+        }
+    }
+
     const handleStartUpload = async () => {
         setIsUploading(true)
+        const pending = files.filter((f) => f.status !== 'done')
 
-        for (const item of files) {
-            if (item.status === 'done') continue
-
-            setFiles((prev) =>
-                prev.map((f) => (f.id === item.id ? { ...f, status: 'uploading', progress: 20 } : f))
-            )
-
-            try {
-                // 1. Direct S3 upload
-                const { key } = await uploadPhotoToS3(item.file, (pct) => {
-                    setFiles((prev) =>
-                        prev.map((f) => (f.id === item.id ? { ...f, progress: Math.min(pct, 90) } : f))
-                    )
-                })
-
-                // 2. Database metadata payload strictly matching CreatePhotoPayload
-                await createPhoto.mutateAsync({
-                    body: {
-                        s3_key: key,
-                        published: true,
-                    },
-                })
-
-                setFiles((prev) =>
-                    prev.map((f) => (f.id === item.id ? { ...f, status: 'done', progress: 100 } : f))
-                )
-            } catch (err: unknown) {
-                const errorMsg = err instanceof Error ? err.message : 'Upload failed'
-                setFiles((prev) =>
-                    prev.map((f) => (f.id === item.id ? { ...f, status: 'error', error: errorMsg } : f))
-                )
+        // Queue processing with concurrency limits
+        const queue = [...pending]
+        const workers = Array.from({ length: Math.min(CONCURRENCY_LIMIT, queue.length) }, async () => {
+            while (queue.length > 0) {
+                const nextItem = queue.shift()
+                if (nextItem) {
+                    await processSingleUpload(nextItem)
+                }
             }
-        }
+        })
 
+        await Promise.all(workers)
         setIsUploading(false)
     }
+
+    const completedCount = files.filter((f) => f.status === 'done').length
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
@@ -88,7 +99,7 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
                 <div className="flex items-center justify-between border-b-2 border-black bg-amber-400 p-4">
                     <h3 className="text-base font-extrabold uppercase tracking-tight text-black flex items-center gap-2">
                         <UploadCloud className="h-5 w-5" />
-                        {t('photos.uploadTitle', 'Batch Upload Photos')}
+                        {t('photos.uploadTitle', 'Batch Upload Photos')} ({completedCount}/{files.length})
                     </h3>
                     <button
                         type="button"
@@ -126,9 +137,16 @@ export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
                                 <div key={item.id} className="flex items-center justify-between gap-3 pt-2">
                                     <div className="flex flex-col min-w-0 flex-1">
                                         <span className="text-xs font-bold text-black truncate">{item.file.name}</span>
-                                        <span className="text-[10px] text-black/50 font-medium">
-                                            {(item.file.size / (1024 * 1024)).toFixed(2)} MB
-                                        </span>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[10px] text-black/50 font-medium">
+                                                {(item.file.size / (1024 * 1024)).toFixed(2)} MB
+                                            </span>
+                                            {item.status === 'uploading' && (
+                                                <span className="text-[10px] font-bold text-amber-600">
+                                                    {item.progress}%
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
 
                                     <div className="flex items-center gap-2">

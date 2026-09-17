@@ -34,4 +34,31 @@ pub struct Config {
         default_value = "Fuksiseikkailu <noreply@fuksiseikkailu.fi>"
     )]
     pub from_email: String,
+
+    // S3 Storage Settings
+    #[arg(long, env = "AWS_ACCESS_KEY_ID", default_value = "")]
+    pub aws_access_key_id: String,
+
+    #[arg(long, env = "AWS_SECRET_ACCESS_KEY", default_value = "")]
+    pub aws_secret_access_key: String,
+
+    #[arg(long, env = "S3_BUCKET_NAME", default_value = "fuksi-photos")]
+    pub s3_bucket_name: String,
+
+    #[arg(long, env = "S3_REGION", default_value = "fr-par")]
+    pub s3_region: String,
+
+    #[arg(
+        long,
+        env = "S3_ENDPOINT",
+        default_value = "https://s3.fr-par.scw.cloud"
+    )]
+    pub s3_endpoint: String,
+
+    #[arg(
+        long,
+        env = "S3_PUBLIC_BASE_URL",
+        default_value = "https://fuksi-photos.s3.fr-par.scw.cloud"
+    )]
+    pub s3_public_base_url: String,
 }

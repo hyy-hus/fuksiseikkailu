@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import {
     createPhotoMutation,
     deletePhotoMutation,
+    generateUploadUrlMutation,
     listPhotosOptions,
     listSuggestionsOptions,
     suggestTeamMutation,
@@ -24,6 +25,10 @@ export function usePhotoSuggestions(photoId?: string) {
     })
 }
 
+export function useGenerateUploadUrl() {
+    return useMutation(generateUploadUrlMutation())
+}
+
 export function useCreatePhoto() {
     const queryClient = useQueryClient()
     return useMutation({
@@ -41,6 +46,9 @@ export function useUpdatePhoto(photoId?: string) {
         mutationKey: ['photos', 'update', photoId],
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: PHOTOS_QUERY_KEY })
+            if (photoId) {
+                queryClient.invalidateQueries(listSuggestionsOptions({ path: { id: photoId } }))
+            }
         },
     })
 }
@@ -73,7 +81,7 @@ export function useVotePhoto() {
     })
 }
 
-export function useSuggestTeam(_photoId: string) {
+export function useSuggestTeam(photoId?: string) {
     const { t } = useTranslation()
     const queryClient = useQueryClient()
     return useMutation({
@@ -84,6 +92,9 @@ export function useSuggestTeam(_photoId: string) {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: PHOTOS_QUERY_KEY })
+            if (photoId) {
+                queryClient.invalidateQueries(listSuggestionsOptions({ path: { id: photoId } }))
+            }
         },
     })
 }

@@ -1,17 +1,26 @@
+use aws_config::BehaviorVersion;
+use aws_sdk_s3::{
+    Client as S3Client,
+    config::{Credentials, Region},
+    presigning::PresigningConfig,
+    types::ObjectCannedAcl,
+};
 use axum::{
     Json,
     extract::{ConnectInfo, Path, State},
     http::{HeaderMap, StatusCode, header},
 };
+use chrono::Utc;
 use sha2::{Digest, Sha256};
-use std::net::SocketAddr;
+use std::{net::SocketAddr, time::Duration};
 use uuid::Uuid;
 use validator::Validate;
 
 use super::{
     db,
     models::{
-        CreatePhotoPayload, Photo, PhotoTeamSuggestion, SubmitSuggestionPayload, UpdatePhotoPayload,
+        CreatePhotoPayload, Photo, PhotoTeamSuggestion, PresignedUrlPayload, PresignedUrlResponse,
+        SubmitSuggestionPayload, UpdatePhotoPayload,
     },
 };
 use crate::{
@@ -58,6 +67,66 @@ pub async fn list_photos(
 
 #[utoipa::path(
     post,
+    path = "/photos/presigned-url",
+    tag = "Photos",
+    security(("bearer_auth" = [])),
+    request_body = PresignedUrlPayload,
+    responses((status = 200, description = "Generated S3 presigned upload URL", body = PresignedUrlResponse))
+)]
+pub async fn generate_upload_url(
+    State(state): State<AuthState>,
+    _admin: RequireAdmin,
+    Json(payload): Json<PresignedUrlPayload>,
+) -> Result<Json<PresignedUrlResponse>, AppError> {
+    payload.validate()?;
+
+    let credentials = Credentials::new(
+        &state.config.aws_access_key_id,
+        &state.config.aws_secret_access_key,
+        None,
+        None,
+        "custom",
+    );
+
+    let s3_config = aws_sdk_s3::config::Builder::new()
+        .behavior_version(BehaviorVersion::latest())
+        .credentials_provider(credentials)
+        .region(Region::new(state.config.s3_region.clone()))
+        .endpoint_url(&state.config.s3_endpoint)
+        .force_path_style(true)
+        .build();
+
+    let s3_client = S3Client::from_conf(s3_config);
+
+    let file_ext = payload.filename.split('.').last().unwrap_or("jpg");
+    let s3_key = format!(
+        "uploads/{}-{}.{}",
+        Utc::now().timestamp_millis(),
+        Uuid::new_v4().simple(),
+        file_ext
+    );
+
+    let presigning_config = PresigningConfig::expires_in(Duration::from_secs(900))
+        .map_err(|e| AppError::InternalServerError(e.to_string()))?;
+
+    let presigned_req = s3_client
+        .put_object()
+        .bucket(&state.config.s3_bucket_name)
+        .key(&s3_key)
+        .content_type(&payload.content_type)
+        .acl(ObjectCannedAcl::PublicRead) // Guarantees the uploaded file has public read access
+        .presigned(presigning_config)
+        .await
+        .map_err(|e| AppError::InternalServerError(e.to_string()))?;
+
+    Ok(Json(PresignedUrlResponse {
+        upload_url: presigned_req.uri().to_string(),
+        s3_key,
+    }))
+}
+
+#[utoipa::path(
+    post,
     path = "/photos",
     tag = "Photos",
     security(("bearer_auth" = [])),
@@ -70,7 +139,7 @@ pub async fn create_photo(
     Json(payload): Json<CreatePhotoPayload>,
 ) -> Result<(StatusCode, Json<Photo>), AppError> {
     payload.validate()?;
-    let photo = db::create_photo(&state.pool, &payload).await?;
+    let photo = db::create_photo(&state.pool, &payload, &state.config.s3_public_base_url).await?;
     Ok((StatusCode::CREATED, Json(photo)))
 }
 

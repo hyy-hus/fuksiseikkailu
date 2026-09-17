@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { BatchImport2Data, BatchImport2Errors, BatchImport2Responses, BatchImportData, BatchImportErrors, BatchImportResponses, CreateAreaData, CreateAreaErrors, CreateAreaResponses, CreateCheckpointData, CreateCheckpointErrors, CreateCheckpointReportData, CreateCheckpointReportResponses, CreateCheckpointResponses, CreateNewsArticleData, CreateNewsArticleResponses, CreatePhotoData, CreatePhotoResponses, CreateTeamData, CreateTeamErrors, CreateTeamReportData, CreateTeamReportResponses, CreateTeamResponses, CreateUserData, CreateUserErrors, CreateUserResponses, DeleteAreaData, DeleteAreaErrors, DeleteAreaResponses, DeleteCheckpointData, DeleteCheckpointErrors, DeleteCheckpointResponses, DeleteMeData, DeleteMeResponses, DeleteNewsArticleData, DeleteNewsArticleResponses, DeletePhotoData, DeletePhotoResponses, DeleteTeamData, DeleteTeamErrors, DeleteTeamResponses, DeleteUserData, DeleteUserErrors, DeleteUserResponses, GetAreaData, GetAreaErrors, GetAreaResponses, GetCheckpointData, GetCheckpointErrors, GetCheckpointRatingsData, GetCheckpointRatingsResponses, GetCheckpointResponses, GetLeaderboardData, GetLeaderboardResponses, GetMeData, GetMeErrors, GetMeResponses, GetNewsArticleData, GetNewsArticleErrors, GetNewsArticleResponses, GetTeamData, GetTeamErrors, GetTeamRatingsData, GetTeamRatingsResponses, GetTeamResponses, GetUserData, GetUserErrors, GetUserResponses, ListAreasData, ListAreasResponses, ListByCheckpointData, ListByCheckpointResponses, ListByTeamData, ListByTeamResponses, ListCheckpointReportsData, ListCheckpointReportsResponses, ListCheckpointsData, ListCheckpointsResponses, ListNewsData, ListNewsResponses, ListPhotosData, ListPhotosResponses, ListSuggestionsData, ListSuggestionsResponses, ListTeamReportsData, ListTeamReportsResponses, ListTeamsData, ListTeamsResponses, ListUsersData, ListUsersResponses, RateCheckpointData, RateCheckpointResponses, RateTeamData, RateTeamResponses, RefreshTokenData, RefreshTokenErrors, RefreshTokenResponses, RegisterData, RegisterErrors, RegisterResponses, RequestOtpData, RequestOtpResponses, SequenceRenumberData, SequenceRenumberErrors, SequenceRenumberResponses, SubmitScoreData, SubmitScoreErrors, SubmitScoreResponses, SuggestTeamData, SuggestTeamResponses, UpdateAreaData, UpdateAreaErrors, UpdateAreaResponses, UpdateCheckpointData, UpdateCheckpointErrors, UpdateCheckpointResponses, UpdateMeData, UpdateMeErrors, UpdateMeResponses, UpdateNewsArticleData, UpdateNewsArticleResponses, UpdatePhotoData, UpdatePhotoResponses, UpdateScoreData, UpdateScoreResponses, UpdateTeamData, UpdateTeamErrors, UpdateTeamResponses, UpdateUserData, UpdateUserErrors, UpdateUserResponses, VerifyOtpData, VerifyOtpErrors, VerifyOtpResponses, VotePhotoData, VotePhotoErrors, VotePhotoResponses } from './types.gen';
+import type { BatchImport2Data, BatchImport2Errors, BatchImport2Responses, BatchImportData, BatchImportErrors, BatchImportResponses, CreateAreaData, CreateAreaErrors, CreateAreaResponses, CreateCheckpointData, CreateCheckpointErrors, CreateCheckpointReportData, CreateCheckpointReportResponses, CreateCheckpointResponses, CreateNewsArticleData, CreateNewsArticleResponses, CreatePhotoData, CreatePhotoResponses, CreateTeamData, CreateTeamErrors, CreateTeamReportData, CreateTeamReportResponses, CreateTeamResponses, CreateUserData, CreateUserErrors, CreateUserResponses, DeleteAreaData, DeleteAreaErrors, DeleteAreaResponses, DeleteCheckpointData, DeleteCheckpointErrors, DeleteCheckpointResponses, DeleteMeData, DeleteMeResponses, DeleteNewsArticleData, DeleteNewsArticleResponses, DeletePhotoData, DeletePhotoResponses, DeleteTeamData, DeleteTeamErrors, DeleteTeamResponses, DeleteUserData, DeleteUserErrors, DeleteUserResponses, GenerateUploadUrlData, GenerateUploadUrlResponses, GetAreaData, GetAreaErrors, GetAreaResponses, GetCheckpointData, GetCheckpointErrors, GetCheckpointRatingsData, GetCheckpointRatingsResponses, GetCheckpointResponses, GetLeaderboardData, GetLeaderboardResponses, GetMeData, GetMeErrors, GetMeResponses, GetNewsArticleData, GetNewsArticleErrors, GetNewsArticleResponses, GetTeamData, GetTeamErrors, GetTeamRatingsData, GetTeamRatingsResponses, GetTeamResponses, GetUserData, GetUserErrors, GetUserResponses, ListAreasData, ListAreasResponses, ListByCheckpointData, ListByCheckpointResponses, ListByTeamData, ListByTeamResponses, ListCheckpointReportsData, ListCheckpointReportsResponses, ListCheckpointsData, ListCheckpointsResponses, ListNewsData, ListNewsResponses, ListPhotosData, ListPhotosResponses, ListSuggestionsData, ListSuggestionsResponses, ListTeamReportsData, ListTeamReportsResponses, ListTeamsData, ListTeamsResponses, ListUsersData, ListUsersResponses, RateCheckpointData, RateCheckpointResponses, RateTeamData, RateTeamResponses, RefreshTokenData, RefreshTokenErrors, RefreshTokenResponses, RegisterData, RegisterErrors, RegisterResponses, RequestOtpData, RequestOtpResponses, SequenceRenumberData, SequenceRenumberErrors, SequenceRenumberResponses, SubmitScoreData, SubmitScoreResponses, SuggestTeamData, SuggestTeamResponses, UpdateAreaData, UpdateAreaErrors, UpdateAreaResponses, UpdateCheckpointData, UpdateCheckpointErrors, UpdateCheckpointResponses, UpdateMeData, UpdateMeErrors, UpdateMeResponses, UpdateNewsArticleData, UpdateNewsArticleResponses, UpdatePhotoData, UpdatePhotoResponses, UpdateScoreData, UpdateScoreResponses, UpdateTeamData, UpdateTeamErrors, UpdateTeamResponses, UpdateUserData, UpdateUserErrors, UpdateUserResponses, VerifyOtpData, VerifyOtpErrors, VerifyOtpResponses, VotePhotoData, VotePhotoErrors, VotePhotoResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -169,6 +169,16 @@ export const createPhoto = <ThrowOnError extends boolean = false>(options: Optio
     }
 });
 
+export const generateUploadUrl = <ThrowOnError extends boolean = false>(options: Options<GenerateUploadUrlData, ThrowOnError>): RequestResult<GenerateUploadUrlResponses, unknown, ThrowOnError> => (options.client ?? client).post<GenerateUploadUrlResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/photos/presigned-url',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
 export const deletePhoto = <ThrowOnError extends boolean = false>(options: Options<DeletePhotoData, ThrowOnError>): RequestResult<DeletePhotoResponses, unknown, ThrowOnError> => (options.client ?? client).delete<DeletePhotoResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/photos/{id}',
@@ -265,8 +275,7 @@ export const createTeamReport = <ThrowOnError extends boolean = false>(options: 
     }
 });
 
-export const submitScore = <ThrowOnError extends boolean = false>(options: Options<SubmitScoreData, ThrowOnError>): RequestResult<SubmitScoreResponses, SubmitScoreErrors, ThrowOnError> => (options.client ?? client).post<SubmitScoreResponses, SubmitScoreErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
+export const submitScore = <ThrowOnError extends boolean = false>(options: Options<SubmitScoreData, ThrowOnError>): RequestResult<SubmitScoreResponses, unknown, ThrowOnError> => (options.client ?? client).post<SubmitScoreResponses, unknown, ThrowOnError>({
     url: '/scores',
     ...options,
     headers: {
@@ -275,18 +284,13 @@ export const submitScore = <ThrowOnError extends boolean = false>(options: Optio
     }
 });
 
-export const listByCheckpoint = <ThrowOnError extends boolean = false>(options: Options<ListByCheckpointData, ThrowOnError>): RequestResult<ListByCheckpointResponses, unknown, ThrowOnError> => (options.client ?? client).get<ListByCheckpointResponses, unknown, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/scores/checkpoint/{checkpoint_id}',
-    ...options
-});
+export const listByCheckpoint = <ThrowOnError extends boolean = false>(options: Options<ListByCheckpointData, ThrowOnError>): RequestResult<ListByCheckpointResponses, unknown, ThrowOnError> => (options.client ?? client).get<ListByCheckpointResponses, unknown, ThrowOnError>({ url: '/scores/checkpoint/{checkpoint_id}', ...options });
 
 export const getLeaderboard = <ThrowOnError extends boolean = false>(options?: Options<GetLeaderboardData, ThrowOnError>): RequestResult<GetLeaderboardResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetLeaderboardResponses, unknown, ThrowOnError>({ url: '/scores/leaderboard', ...options });
 
 export const listByTeam = <ThrowOnError extends boolean = false>(options: Options<ListByTeamData, ThrowOnError>): RequestResult<ListByTeamResponses, unknown, ThrowOnError> => (options.client ?? client).get<ListByTeamResponses, unknown, ThrowOnError>({ url: '/scores/team/{team_id}', ...options });
 
 export const updateScore = <ThrowOnError extends boolean = false>(options: Options<UpdateScoreData, ThrowOnError>): RequestResult<UpdateScoreResponses, unknown, ThrowOnError> => (options.client ?? client).patch<UpdateScoreResponses, unknown, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
     url: '/scores/{id}',
     ...options,
     headers: {

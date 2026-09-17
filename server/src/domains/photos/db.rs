@@ -1,14 +1,18 @@
 use sqlx::PgPool;
+use tracing::instrument;
 use uuid::Uuid;
 
 use super::models::{CreatePhotoPayload, Photo, PhotoTeamSuggestion, UpdatePhotoPayload};
 use crate::errors::AppError;
 
 /// Formats public S3 URL from key (adjust CDN prefix as necessary)
-fn build_s3_url(s3_key: &str) -> String {
-    format!("https://s3.amazonaws.com/{s3_key}")
+pub fn build_s3_url(s3_key: &str, public_base_url: &str) -> String {
+    let base = public_base_url.trim_end_matches('/');
+    let key = s3_key.trim_start_matches('/');
+    format!("{base}/{key}")
 }
 
+#[instrument(skip(pool))]
 pub async fn list_published_photos(pool: &PgPool) -> Result<Vec<Photo>, AppError> {
     let photos = sqlx::query_as!(
         Photo,
@@ -30,6 +34,7 @@ pub async fn list_published_photos(pool: &PgPool) -> Result<Vec<Photo>, AppError
     Ok(photos)
 }
 
+#[instrument(skip(pool))]
 pub async fn list_all_photos(pool: &PgPool) -> Result<Vec<Photo>, AppError> {
     let photos = sqlx::query_as!(
         Photo,
@@ -51,6 +56,7 @@ pub async fn list_all_photos(pool: &PgPool) -> Result<Vec<Photo>, AppError> {
     Ok(photos)
 }
 
+#[instrument(skip(pool), fields(photo_id = %id))]
 pub async fn get_photo(pool: &PgPool, id: Uuid) -> Result<Photo, AppError> {
     let photo = sqlx::query_as!(
         Photo,
@@ -73,8 +79,13 @@ pub async fn get_photo(pool: &PgPool, id: Uuid) -> Result<Photo, AppError> {
     Ok(photo)
 }
 
-pub async fn create_photo(pool: &PgPool, payload: &CreatePhotoPayload) -> Result<Photo, AppError> {
-    let url = build_s3_url(&payload.s3_key);
+#[instrument(skip(pool, payload))]
+pub async fn create_photo(
+    pool: &PgPool,
+    payload: &CreatePhotoPayload,
+    public_base_url: &str,
+) -> Result<Photo, AppError> {
+    let url = build_s3_url(&payload.s3_key, public_base_url);
     let published = payload.published.unwrap_or(false);
 
     let photo = sqlx::query_as!(
@@ -99,6 +110,7 @@ pub async fn create_photo(pool: &PgPool, payload: &CreatePhotoPayload) -> Result
     Ok(photo)
 }
 
+#[instrument(skip(pool, payload), fields(photo_id = %id))]
 pub async fn update_photo(
     pool: &PgPool,
     id: Uuid,
@@ -131,6 +143,7 @@ pub async fn update_photo(
     Ok(photo)
 }
 
+#[instrument(skip(pool), fields(photo_id = %id))]
 pub async fn delete_photo(pool: &PgPool, id: Uuid) -> Result<(), AppError> {
     let result = sqlx::query!(
         r#"
@@ -150,6 +163,7 @@ pub async fn delete_photo(pool: &PgPool, id: Uuid) -> Result<(), AppError> {
     Ok(())
 }
 
+#[instrument(skip(pool, voter_hash), fields(photo_id = %photo_id))]
 pub async fn cast_vote(pool: &PgPool, photo_id: Uuid, voter_hash: &str) -> Result<(), AppError> {
     sqlx::query!(
         r#"
@@ -165,6 +179,7 @@ pub async fn cast_vote(pool: &PgPool, photo_id: Uuid, voter_hash: &str) -> Resul
     Ok(())
 }
 
+#[instrument(skip(pool, voter_hash), fields(photo_id = %photo_id, team_number = team_number))]
 pub async fn submit_suggestion(
     pool: &PgPool,
     photo_id: Uuid,
@@ -188,6 +203,7 @@ pub async fn submit_suggestion(
     Ok(suggestion)
 }
 
+#[instrument(skip(pool), fields(photo_id = %photo_id))]
 pub async fn list_suggestions(
     pool: &PgPool,
     photo_id: Uuid,

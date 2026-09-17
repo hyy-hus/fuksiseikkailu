@@ -75,6 +75,7 @@ impl Modify for SecurityAddon {
 
         // Photos
         photos::routes::list_photos,
+        photos::routes::generate_upload_url,
         photos::routes::create_photo,
         photos::routes::update_photo,
         photos::routes::delete_photo,
@@ -139,6 +140,8 @@ impl Modify for SecurityAddon {
             scores::models::TeamLeaderboardEntry,
 
             photos::models::Photo,
+            photos::models::PresignedUrlPayload,
+            photos::models::PresignedUrlResponse,
             photos::models::CreatePhotoPayload,
             photos::models::UpdatePhotoPayload,
             photos::models::SubmitSuggestionPayload,

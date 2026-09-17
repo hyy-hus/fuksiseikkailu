@@ -196,6 +196,16 @@ export type PhotoTeamSuggestion = {
     voter_hash?: string | null;
 };
 
+export type PresignedUrlPayload = {
+    content_type: string;
+    filename: string;
+};
+
+export type PresignedUrlResponse = {
+    s3_key: string;
+    upload_url: string;
+};
+
 /**
  * Publicly exposed checkpoint payload (excludes sensitive private admin fields)
  */
@@ -733,7 +743,7 @@ export type GetCheckpointResponses = {
     /**
      * Checkpoint details
      */
-    200: Checkpoint;
+    200: PublicCheckpoint;
 };
 
 export type GetCheckpointResponse = GetCheckpointResponses[keyof GetCheckpointResponses];
@@ -899,6 +909,22 @@ export type CreatePhotoResponses = {
 };
 
 export type CreatePhotoResponse = CreatePhotoResponses[keyof CreatePhotoResponses];
+
+export type GenerateUploadUrlData = {
+    body: PresignedUrlPayload;
+    path?: never;
+    query?: never;
+    url: '/photos/presigned-url';
+};
+
+export type GenerateUploadUrlResponses = {
+    /**
+     * Generated S3 presigned upload URL
+     */
+    200: PresignedUrlResponse;
+};
+
+export type GenerateUploadUrlResponse = GenerateUploadUrlResponses[keyof GenerateUploadUrlResponses];
 
 export type DeletePhotoData = {
     body?: never;
@@ -1153,17 +1179,6 @@ export type SubmitScoreData = {
     path?: never;
     query?: never;
     url: '/scores';
-};
-
-export type SubmitScoreErrors = {
-    /**
-     * Unauthorized
-     */
-    401: unknown;
-    /**
-     * Forbidden - Checkpoint staff or Admin required
-     */
-    403: unknown;
 };
 
 export type SubmitScoreResponses = {

@@ -50,3 +50,20 @@ pub struct PhotoTeamSuggestion {
     pub voter_hash: Option<String>,
     pub created_at: DateTime<Utc>,
 }
+
+#[derive(Debug, Deserialize, Validate, ToSchema)]
+pub struct PresignedUrlPayload {
+    #[serde(deserialize_with = "deserialize_trimmed_string")]
+    #[validate(length(min = 1, message = "filename cannot be empty"))]
+    pub filename: String,
+
+    #[serde(deserialize_with = "deserialize_trimmed_string")]
+    #[validate(length(min = 1, message = "content_type cannot be empty"))]
+    pub content_type: String,
+}
+
+#[derive(Debug, Serialize, ToSchema)]
+pub struct PresignedUrlResponse {
+    pub upload_url: String,
+    pub s3_key: String,
+}
