@@ -166,6 +166,11 @@ export type CreateUser = {
     team_id?: string | null;
 };
 
+export type EventSettings = {
+    leaderboard_public: boolean;
+    scores_enabled: boolean;
+};
+
 export type NewsArticle = {
     content: unknown;
     created_at: string;
@@ -348,6 +353,10 @@ export type UpdatePhotoPayload = {
 export type UpdateScorePayload = {
     participants_present?: number | null;
     score?: number | null;
+};
+
+export type UpdateSettingPayload = {
+    enabled: boolean;
 };
 
 export type UpdateTeam = {
@@ -1268,6 +1277,70 @@ export type UpdateScoreResponses = {
 };
 
 export type UpdateScoreResponse = UpdateScoreResponses[keyof UpdateScoreResponses];
+
+export type GetSettingsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/settings';
+};
+
+export type GetSettingsResponses = {
+    /**
+     * Get current event configuration settings
+     */
+    200: EventSettings;
+};
+
+export type GetSettingsResponse = GetSettingsResponses[keyof GetSettingsResponses];
+
+export type ToggleLeaderboardData = {
+    body: UpdateSettingPayload;
+    path?: never;
+    query?: never;
+    url: '/settings/leaderboard';
+};
+
+export type ToggleLeaderboardResponses = {
+    /**
+     * Toggled public leaderboard visibility
+     */
+    204: void;
+};
+
+export type ToggleLeaderboardResponse = ToggleLeaderboardResponses[keyof ToggleLeaderboardResponses];
+
+export type ToggleScoresData = {
+    body: UpdateSettingPayload;
+    path?: never;
+    query?: never;
+    url: '/settings/scores';
+};
+
+export type ToggleScoresResponses = {
+    /**
+     * Toggled score submissions
+     */
+    204: void;
+};
+
+export type ToggleScoresResponse = ToggleScoresResponses[keyof ToggleScoresResponses];
+
+export type ResetScoresData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/settings/scores/reset';
+};
+
+export type ResetScoresResponses = {
+    /**
+     * Reset all recorded scores
+     */
+    204: void;
+};
+
+export type ResetScoresResponse = ResetScoresResponses[keyof ResetScoresResponses];
 
 export type ListTeamsData = {
     body?: never;

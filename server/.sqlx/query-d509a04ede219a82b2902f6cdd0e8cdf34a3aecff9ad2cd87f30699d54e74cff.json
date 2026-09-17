@@ -1,0 +1,12 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "TRUNCATE TABLE scores RESTART IDENTITY CASCADE;",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": []
+  },
+  "hash": "d509a04ede219a82b2902f6cdd0e8cdf34a3aecff9ad2cd87f30699d54e74cff"
+}

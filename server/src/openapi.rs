@@ -2,7 +2,7 @@ use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
 use utoipa::{Modify, OpenApi};
 
 use crate::domains::{
-    areas, auth, checkpoints, news, photos, ratings, reports, scores, teams, users,
+    areas, auth, checkpoints, news, photos, ratings, reports, scores, settings, teams, users,
 };
 
 pub struct SecurityAddon;
@@ -73,6 +73,12 @@ impl Modify for SecurityAddon {
         scores::routes::list_by_team,
         scores::routes::update_score,
 
+        // Settings
+        settings::routes::get_settings,
+        settings::routes::toggle_scores,
+        settings::routes::toggle_leaderboard,
+        settings::routes::reset_scores,
+
         // Photos
         photos::routes::list_photos,
         photos::routes::generate_upload_url,
@@ -139,6 +145,9 @@ impl Modify for SecurityAddon {
             scores::models::UpdateScorePayload,
             scores::models::TeamLeaderboardEntry,
 
+            settings::models::EventSettings,
+            settings::models::UpdateSettingPayload,
+
             photos::models::Photo,
             photos::models::PresignedUrlPayload,
             photos::models::PresignedUrlResponse,
@@ -169,6 +178,7 @@ impl Modify for SecurityAddon {
         (name = "Checkpoints", description = "Checkpoint configuration, location, and metadata endpoints"),
         (name = "Teams", description = "Participant team administration endpoints"),
         (name = "Scores", description = "Real-time scoring and leaderboard calculation endpoints"),
+        (name = "Settings", description = "Admin event configuration and feature flags"),
         (name = "Photos", description = "Photo media uploads, public voting, and team tag suggestions"),
         (name = "Ratings", description = "Participant checkpoint feedback and organizer team spirit ratings"),
         (name = "Reports", description = "Checkpoint operational feedback and team incident reporting"),

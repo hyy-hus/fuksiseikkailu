@@ -16,6 +16,7 @@ import { Route as CheckpointsIndexRouteImport } from './routes/checkpoints/index
 import { Route as CheckpointsIdRouteImport } from './routes/checkpoints/$id'
 import { Route as CheckpointsCreateRouteImport } from './routes/checkpoints/create'
 import { Route as CheckpointsImportRouteImport } from './routes/checkpoints/import'
+import { Route as LeaderboardIndexRouteImport } from './routes/leaderboard/index'
 import { Route as NewsIndexRouteImport } from './routes/news/index'
 import { Route as NewsIdRouteImport } from './routes/news/$id'
 import { Route as NewsCreateRouteImport } from './routes/news/create'
@@ -59,6 +60,11 @@ const CheckpointsCreateRoute = CheckpointsCreateRouteImport.update({
 const CheckpointsImportRoute = CheckpointsImportRouteImport.update({
   id: '/checkpoints/import',
   path: '/checkpoints/import',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeaderboardIndexRoute = LeaderboardIndexRouteImport.update({
+  id: '/leaderboard/',
+  path: '/leaderboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewsIndexRoute = NewsIndexRouteImport.update({
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/teams/create': typeof TeamsCreateRoute
   '/teams/import': typeof TeamsImportRoute
   '/checkpoints/': typeof CheckpointsIndexRoute
+  '/leaderboard/': typeof LeaderboardIndexRoute
   '/news/': typeof NewsIndexRoute
   '/photos/': typeof PhotosIndexRoute
   '/teams/': typeof TeamsIndexRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByTo {
   '/teams/create': typeof TeamsCreateRoute
   '/teams/import': typeof TeamsImportRoute
   '/checkpoints': typeof CheckpointsIndexRoute
+  '/leaderboard': typeof LeaderboardIndexRoute
   '/news': typeof NewsIndexRoute
   '/photos': typeof PhotosIndexRoute
   '/teams': typeof TeamsIndexRoute
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/teams/create': typeof TeamsCreateRoute
   '/teams/import': typeof TeamsImportRoute
   '/checkpoints/': typeof CheckpointsIndexRoute
+  '/leaderboard/': typeof LeaderboardIndexRoute
   '/news/': typeof NewsIndexRoute
   '/photos/': typeof PhotosIndexRoute
   '/teams/': typeof TeamsIndexRoute
@@ -178,6 +187,7 @@ export interface FileRouteTypes {
     | '/teams/create'
     | '/teams/import'
     | '/checkpoints/'
+    | '/leaderboard/'
     | '/news/'
     | '/photos/'
     | '/teams/'
@@ -196,6 +206,7 @@ export interface FileRouteTypes {
     | '/teams/create'
     | '/teams/import'
     | '/checkpoints'
+    | '/leaderboard'
     | '/news'
     | '/photos'
     | '/teams'
@@ -214,6 +225,7 @@ export interface FileRouteTypes {
     | '/teams/create'
     | '/teams/import'
     | '/checkpoints/'
+    | '/leaderboard/'
     | '/news/'
     | '/photos/'
     | '/teams/'
@@ -233,6 +245,7 @@ export interface RootRouteChildren {
   TeamsCreateRoute: typeof TeamsCreateRoute
   TeamsImportRoute: typeof TeamsImportRoute
   CheckpointsIndexRoute: typeof CheckpointsIndexRoute
+  LeaderboardIndexRoute: typeof LeaderboardIndexRoute
   NewsIndexRoute: typeof NewsIndexRoute
   PhotosIndexRoute: typeof PhotosIndexRoute
   TeamsIndexRoute: typeof TeamsIndexRoute
@@ -287,6 +300,13 @@ declare module '@tanstack/react-router' {
       path: '/checkpoints/import'
       fullPath: '/checkpoints/import'
       preLoaderRoute: typeof CheckpointsImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leaderboard/': {
+      id: '/leaderboard/'
+      path: '/leaderboard'
+      fullPath: '/leaderboard/'
+      preLoaderRoute: typeof LeaderboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/news/': {
@@ -369,6 +389,7 @@ const rootRouteChildren: RootRouteChildren = {
   TeamsCreateRoute: TeamsCreateRoute,
   TeamsImportRoute: TeamsImportRoute,
   CheckpointsIndexRoute: CheckpointsIndexRoute,
+  LeaderboardIndexRoute: LeaderboardIndexRoute,
   NewsIndexRoute: NewsIndexRoute,
   PhotosIndexRoute: PhotosIndexRoute,
   TeamsIndexRoute: TeamsIndexRoute,

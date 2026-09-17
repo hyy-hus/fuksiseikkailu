@@ -10,10 +10,9 @@ use super::{
     db,
     models::{Score, SubmitScorePayload, TeamLeaderboardEntry, UpdateScorePayload},
 };
-use crate::{
-    domains::auth::{AuthState, extractor::RequireAdmin},
-    errors::AppError,
-};
+use crate::{domains::auth::AuthState, errors::AppError};
+
+use crate::domains::settings::db as settings_db;
 
 #[utoipa::path(
     get,
@@ -41,9 +40,14 @@ pub async fn submit_score(
     State(state): State<AuthState>,
     Json(payload): Json<SubmitScorePayload>,
 ) -> Result<(StatusCode, Json<Score>), AppError> {
-    payload.validate()?;
+    let scores_enabled = settings_db::get_setting(&state.pool, "scores_enabled").await?;
+    if !scores_enabled {
+        return Err(AppError::Forbidden(
+            "Score submission is currently disabled".into(),
+        ));
+    }
 
-    // Submit or update score without user auth constraints
+    payload.validate()?;
     let score = db::submit_or_update_score(&state.pool, &payload).await?;
     Ok((StatusCode::OK, Json(score)))
 }

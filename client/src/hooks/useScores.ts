@@ -2,10 +2,26 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 
 import {
+    getLeaderboardOptions,
     listByCheckpointOptions,
+    listByTeamOptions,
     submitScoreMutation,
     updateScoreMutation,
 } from '@/api/generated/@tanstack/react-query.gen'
+
+export function useLeaderboard() {
+    return useQuery({
+        ...getLeaderboardOptions(),
+        refetchInterval: 15000,
+    })
+}
+
+export function useTeamScores(teamId?: string) {
+    return useQuery({
+        ...listByTeamOptions({ path: { team_id: teamId! } }),
+        enabled: Boolean(teamId),
+    })
+}
 
 export function useCheckpointScores(checkpointId: string) {
     return useQuery(listByCheckpointOptions({ path: { checkpoint_id: checkpointId } }))
@@ -23,13 +39,9 @@ export function useSubmitScore(checkpointId: string, onSuccess?: () => void) {
             successMessage: t('scores.meta.success', 'Score recorded successfully!'),
         },
         onSuccess: () => {
-            // Invalidate the exact checkpoint scores query key so the history list refreshes instantly
             const options = listByCheckpointOptions({ path: { checkpoint_id: checkpointId } })
             queryClient.invalidateQueries({ queryKey: options.queryKey })
-
-            // Also invalidate leaderboard queries if active
-            queryClient.invalidateQueries({ queryKey: ['scores'] })
-
+            queryClient.invalidateQueries(getLeaderboardOptions())
             onSuccess?.()
         },
     })
@@ -47,13 +59,9 @@ export function useUpdateScore(checkpointId: string, onSuccess?: () => void) {
             successMessage: t('scores.meta.updateSuccess', 'Score updated successfully!'),
         },
         onSuccess: () => {
-            // Invalidate the exact checkpoint scores query key so the history list refreshes instantly
             const options = listByCheckpointOptions({ path: { checkpoint_id: checkpointId } })
             queryClient.invalidateQueries({ queryKey: options.queryKey })
-
-            // Also invalidate leaderboard queries if active
-            queryClient.invalidateQueries({ queryKey: ['scores'] })
-
+            queryClient.invalidateQueries(getLeaderboardOptions())
             onSuccess?.()
         },
     })

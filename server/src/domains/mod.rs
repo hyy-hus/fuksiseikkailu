@@ -6,5 +6,6 @@ pub mod photos;
 pub mod ratings;
 pub mod reports;
 pub mod scores;
+pub mod settings;
 pub mod teams;
 pub mod users;

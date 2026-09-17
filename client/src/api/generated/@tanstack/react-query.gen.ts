@@ -3,8 +3,8 @@
 import { type DefaultError, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { batchImport, batchImport2, createArea, createCheckpoint, createCheckpointReport, createNewsArticle, createPhoto, createTeam, createTeamReport, createUser, deleteArea, deleteCheckpoint, deleteMe, deleteNewsArticle, deletePhoto, deleteTeam, deleteUser, generateUploadUrl, getArea, getCheckpoint, getCheckpointRatings, getLeaderboard, getMe, getNewsArticle, getTeam, getTeamRatings, getUser, listAreas, listByCheckpoint, listByTeam, listCheckpointReports, listCheckpoints, listNews, listPhotos, listSuggestions, listTeamReports, listTeams, listUsers, type Options, rateCheckpoint, rateTeam, refreshToken, register, requestOtp, sequenceRenumber, submitScore, suggestTeam, updateArea, updateCheckpoint, updateMe, updateNewsArticle, updatePhoto, updateScore, updateTeam, updateUser, verifyOtp, votePhoto } from '../sdk.gen';
-import type { BatchImport2Data, BatchImport2Response, BatchImportData, BatchImportResponse2, CreateAreaData, CreateAreaResponse, CreateCheckpointData, CreateCheckpointReportData, CreateCheckpointReportResponse, CreateCheckpointResponse, CreateNewsArticleData, CreateNewsArticleResponse, CreatePhotoData, CreatePhotoResponse, CreateTeamData, CreateTeamReportData, CreateTeamReportResponse, CreateTeamResponse, CreateUserData, CreateUserResponse, DeleteAreaData, DeleteAreaResponse, DeleteCheckpointData, DeleteCheckpointResponse, DeleteMeData, DeleteMeResponse, DeleteNewsArticleData, DeleteNewsArticleResponse, DeletePhotoData, DeletePhotoResponse, DeleteTeamData, DeleteTeamResponse, DeleteUserData, DeleteUserResponse, GenerateUploadUrlData, GenerateUploadUrlResponse, GetAreaData, GetAreaResponse, GetCheckpointData, GetCheckpointRatingsData, GetCheckpointRatingsResponse, GetCheckpointResponse, GetLeaderboardData, GetLeaderboardResponse, GetMeData, GetMeResponse, GetNewsArticleData, GetNewsArticleResponse, GetTeamData, GetTeamRatingsData, GetTeamRatingsResponse, GetTeamResponse, GetUserData, GetUserResponse, ListAreasData, ListAreasResponse, ListByCheckpointData, ListByCheckpointResponse, ListByTeamData, ListByTeamResponse, ListCheckpointReportsData, ListCheckpointReportsResponse, ListCheckpointsData, ListCheckpointsResponse, ListNewsData, ListNewsResponse, ListPhotosData, ListPhotosResponse, ListSuggestionsData, ListSuggestionsResponse, ListTeamReportsData, ListTeamReportsResponse, ListTeamsData, ListTeamsResponse, ListUsersData, ListUsersResponse, RateCheckpointData, RateCheckpointResponse, RateTeamData, RateTeamResponse, RefreshTokenData, RefreshTokenResponse, RegisterData, RegisterResponse, RequestOtpData, SequenceRenumberData, SequenceRenumberResponse2, SubmitScoreData, SubmitScoreResponse, SuggestTeamData, SuggestTeamResponse, UpdateAreaData, UpdateAreaResponse, UpdateCheckpointData, UpdateCheckpointResponse, UpdateMeData, UpdateMeResponse, UpdateNewsArticleData, UpdateNewsArticleResponse, UpdatePhotoData, UpdatePhotoResponse, UpdateScoreData, UpdateScoreResponse, UpdateTeamData, UpdateTeamResponse, UpdateUserData, UpdateUserResponse, VerifyOtpData, VerifyOtpResponse, VotePhotoData } from '../types.gen';
+import { batchImport, batchImport2, createArea, createCheckpoint, createCheckpointReport, createNewsArticle, createPhoto, createTeam, createTeamReport, createUser, deleteArea, deleteCheckpoint, deleteMe, deleteNewsArticle, deletePhoto, deleteTeam, deleteUser, generateUploadUrl, getArea, getCheckpoint, getCheckpointRatings, getLeaderboard, getMe, getNewsArticle, getSettings, getTeam, getTeamRatings, getUser, listAreas, listByCheckpoint, listByTeam, listCheckpointReports, listCheckpoints, listNews, listPhotos, listSuggestions, listTeamReports, listTeams, listUsers, type Options, rateCheckpoint, rateTeam, refreshToken, register, requestOtp, resetScores, sequenceRenumber, submitScore, suggestTeam, toggleLeaderboard, toggleScores, updateArea, updateCheckpoint, updateMe, updateNewsArticle, updatePhoto, updateScore, updateTeam, updateUser, verifyOtp, votePhoto } from '../sdk.gen';
+import type { BatchImport2Data, BatchImport2Response, BatchImportData, BatchImportResponse2, CreateAreaData, CreateAreaResponse, CreateCheckpointData, CreateCheckpointReportData, CreateCheckpointReportResponse, CreateCheckpointResponse, CreateNewsArticleData, CreateNewsArticleResponse, CreatePhotoData, CreatePhotoResponse, CreateTeamData, CreateTeamReportData, CreateTeamReportResponse, CreateTeamResponse, CreateUserData, CreateUserResponse, DeleteAreaData, DeleteAreaResponse, DeleteCheckpointData, DeleteCheckpointResponse, DeleteMeData, DeleteMeResponse, DeleteNewsArticleData, DeleteNewsArticleResponse, DeletePhotoData, DeletePhotoResponse, DeleteTeamData, DeleteTeamResponse, DeleteUserData, DeleteUserResponse, GenerateUploadUrlData, GenerateUploadUrlResponse, GetAreaData, GetAreaResponse, GetCheckpointData, GetCheckpointRatingsData, GetCheckpointRatingsResponse, GetCheckpointResponse, GetLeaderboardData, GetLeaderboardResponse, GetMeData, GetMeResponse, GetNewsArticleData, GetNewsArticleResponse, GetSettingsData, GetSettingsResponse, GetTeamData, GetTeamRatingsData, GetTeamRatingsResponse, GetTeamResponse, GetUserData, GetUserResponse, ListAreasData, ListAreasResponse, ListByCheckpointData, ListByCheckpointResponse, ListByTeamData, ListByTeamResponse, ListCheckpointReportsData, ListCheckpointReportsResponse, ListCheckpointsData, ListCheckpointsResponse, ListNewsData, ListNewsResponse, ListPhotosData, ListPhotosResponse, ListSuggestionsData, ListSuggestionsResponse, ListTeamReportsData, ListTeamReportsResponse, ListTeamsData, ListTeamsResponse, ListUsersData, ListUsersResponse, RateCheckpointData, RateCheckpointResponse, RateTeamData, RateTeamResponse, RefreshTokenData, RefreshTokenResponse, RegisterData, RegisterResponse, RequestOtpData, ResetScoresData, ResetScoresResponse, SequenceRenumberData, SequenceRenumberResponse2, SubmitScoreData, SubmitScoreResponse, SuggestTeamData, SuggestTeamResponse, ToggleLeaderboardData, ToggleLeaderboardResponse, ToggleScoresData, ToggleScoresResponse, UpdateAreaData, UpdateAreaResponse, UpdateCheckpointData, UpdateCheckpointResponse, UpdateMeData, UpdateMeResponse, UpdateNewsArticleData, UpdateNewsArticleResponse, UpdatePhotoData, UpdatePhotoResponse, UpdateScoreData, UpdateScoreResponse, UpdateTeamData, UpdateTeamResponse, UpdateUserData, UpdateUserResponse, VerifyOtpData, VerifyOtpResponse, VotePhotoData } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -632,6 +632,63 @@ export const updateScoreMutation = (options?: Partial<Options<UpdateScoreData>>)
     const mutationOptions: UseMutationOptions<UpdateScoreResponse, DefaultError, Options<UpdateScoreData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await updateScore({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const getSettingsQueryKey = (options?: Options<GetSettingsData>) => createQueryKey('getSettings', options);
+
+export const getSettingsOptions = (options?: Options<GetSettingsData>) => queryOptions<GetSettingsResponse, DefaultError, GetSettingsResponse, ReturnType<typeof getSettingsQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getSettings({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getSettingsQueryKey(options)
+});
+
+export const toggleLeaderboardMutation = (options?: Partial<Options<ToggleLeaderboardData>>): UseMutationOptions<ToggleLeaderboardResponse, DefaultError, Options<ToggleLeaderboardData>> => {
+    const mutationOptions: UseMutationOptions<ToggleLeaderboardResponse, DefaultError, Options<ToggleLeaderboardData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await toggleLeaderboard({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const toggleScoresMutation = (options?: Partial<Options<ToggleScoresData>>): UseMutationOptions<ToggleScoresResponse, DefaultError, Options<ToggleScoresData>> => {
+    const mutationOptions: UseMutationOptions<ToggleScoresResponse, DefaultError, Options<ToggleScoresData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await toggleScores({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const resetScoresMutation = (options?: Partial<Options<ResetScoresData>>): UseMutationOptions<ResetScoresResponse, DefaultError, Options<ResetScoresData>> => {
+    const mutationOptions: UseMutationOptions<ResetScoresResponse, DefaultError, Options<ResetScoresData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await resetScores({
                 ...options,
                 ...fnOptions,
                 throwOnError: true

@@ -11,7 +11,7 @@ use config::Config;
 use domains::{
     areas,
     auth::{self, AuthState},
-    checkpoints, news, photos, ratings, reports, scores, teams, users,
+    checkpoints, news, photos, ratings, reports, scores, settings, teams, users,
 };
 use openapi::ApiDoc;
 use resend_rs::Resend;
@@ -54,6 +54,7 @@ pub fn app(pool: PgPool, config: Config, resend: Resend) -> Router {
         .nest("/teams", teams::router(auth_state.clone()))
         .nest("/photos", photos::router(auth_state.clone()))
         .nest("/scores", scores::router(auth_state.clone()))
+        .nest("/settings", settings::router(auth_state.clone()))
         .nest("/reports", reports::router(auth_state.clone()))
         .nest("/ratings", ratings::router(auth_state.clone()))
         .nest("/news", news::router(auth_state))
