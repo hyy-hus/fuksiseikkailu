@@ -3,3 +3,7 @@ placed.json
 env.scw
 output.csv
 cors.json
+
+# Local deployment scripts containing secrets
+deploy_client.sh
+deploy_server.sh
