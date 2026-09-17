@@ -20,20 +20,27 @@ export function NewsList() {
         const q = searchQuery.trim().toLowerCase()
         const now = new Date()
 
-        return articles.filter((item) => {
-            // Non-admin check: filter out scheduled/unpublished articles on the client
-            if (!isAdmin) {
-                if (!item.published_at) return false
-                if (new Date(item.published_at) > now) return false
-            }
+        return articles
+            .filter((item) => {
+                // Non-admin check: filter out scheduled/unpublished articles on the client
+                if (!isAdmin) {
+                    if (!item.published_at) return false
+                    if (new Date(item.published_at) > now) return false
+                }
 
-            if (!q) return true
+                if (!q) return true
 
-            const titleMatch = item.title.toLowerCase().includes(q)
-            const textContent = getLocalizedText(item.content, i18n.language)
-            const contentMatch = textContent.toLowerCase().includes(q)
-            return titleMatch || contentMatch
-        })
+                const titleMatch = item.title.toLowerCase().includes(q)
+                const textContent = getLocalizedText(item.content, i18n.language)
+                const contentMatch = textContent.toLowerCase().includes(q)
+                return titleMatch || contentMatch
+            })
+            .sort((a, b) => {
+                // Sort by published_at (or created_at fallback) descending (newest first)
+                const timeA = new Date(a.published_at || a.created_at).getTime()
+                const timeB = new Date(b.published_at || b.created_at).getTime()
+                return timeB - timeA
+            })
     }, [articles, searchQuery, i18n.language, isAdmin])
 
     return (
