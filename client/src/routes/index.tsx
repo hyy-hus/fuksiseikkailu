@@ -1,5 +1,5 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { AlertCircle, ArrowLeft, List, RefreshCw } from 'lucide-react'
+import { createFileRoute } from '@tanstack/react-router'
+import { AlertCircle, RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 
@@ -48,30 +48,8 @@ function RouteComponent() {
         )
     }
 
-    const isComingFromList = Boolean(initialCheckpointParam)
-
     return (
         <div className="relative h-[calc(100vh-4rem)] w-full p-1">
-            {/* Always-on Navigation Button to Checkpoint Directory */}
-            <Link
-                to="/checkpoints"
-                className={cn(
-                    'absolute top-4 right-16 z-10 flex items-center gap-1.5 rounded-md border-2 border-black bg-white px-3 py-1.5 text-xs font-extrabold text-black shadow-md hover:bg-blush-pop-100 transition-colors'
-                )}
-            >
-                {isComingFromList ? (
-                    <>
-                        <ArrowLeft className="h-4 w-4 stroke-[2.5]" />
-                        <span>{t('checkpoints.backToList', 'Back to Checkpoints')}</span>
-                    </>
-                ) : (
-                    <>
-                        <List className="h-4 w-4 stroke-[2.5]" />
-                        <span>{t('checkpoints.viewList', 'View Checkpoints List')}</span>
-                    </>
-                )}
-            </Link>
-
             <CheckpointMap
                 checkpoints={checkpoints}
                 initialSelectedId={initialCheckpointParam}

@@ -16,43 +16,48 @@ interface CheckpointFormProps {
 
 type LangTab = 'fi' | 'sv' | 'en'
 
+function parseLocalizedField(value: unknown): { fi: string; sv: string; en: string } {
+    if (!value) return { fi: '', sv: '', en: '' }
+
+    if (typeof value === 'object' && value !== null) {
+        const raw = value as Record<string, string>
+        return { fi: raw.fi || '', sv: raw.sv || '', en: raw.en || '' }
+    }
+
+    if (typeof value === 'string') {
+        const trimmed = value.trim()
+        if (trimmed.startsWith('{')) {
+            try {
+                const parsed = JSON.parse(trimmed)
+                return { fi: parsed.fi || '', sv: parsed.sv || '', en: parsed.en || '' }
+            } catch {
+                return { fi: trimmed, sv: '', en: '' }
+            }
+        }
+        return { fi: trimmed, sv: '', en: '' }
+    }
+
+    return { fi: '', sv: '', en: '' }
+}
+
 export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointFormProps) {
     const { t, i18n } = useTranslation()
     const isEditing = Boolean(initialData)
 
-    const [activeLang, setActiveLang] = React.useState<LangTab>(
+    const [descLang, setDescLang] = React.useState<LangTab>(
+        (i18n.language as LangTab) || 'fi'
+    )
+    const [orgLang, setOrgLang] = React.useState<LangTab>(
         (i18n.language as LangTab) || 'fi'
     )
 
-    // Parse localized description state from initial JSON or raw string
-    const [description, setDescription] = React.useState<{ fi: string; sv: string; en: string }>(() => {
-        if (!initialData?.checkpoint_description) return { fi: '', sv: '', en: '' }
-
-        const desc = initialData.checkpoint_description
-        if (typeof desc === 'object' && desc !== null) {
-            const raw = desc as Record<string, string>
-            return { fi: raw.fi || '', sv: raw.sv || '', en: raw.en || '' }
-        }
-
-        if (typeof desc === 'string') {
-            const trimmed = desc.trim()
-            if (trimmed.startsWith('{')) {
-                try {
-                    const parsed = JSON.parse(trimmed)
-                    return {
-                        fi: parsed.fi || '',
-                        sv: parsed.sv || '',
-                        en: parsed.en || '',
-                    }
-                } catch {
-                    return { fi: trimmed, sv: '', en: '' }
-                }
-            }
-            return { fi: trimmed, sv: '', en: '' }
-        }
-
-        return { fi: '', sv: '', en: '' }
-    })
+    // Localized content state
+    const [description, setDescription] = React.useState<{ fi: string; sv: string; en: string }>(() =>
+        parseLocalizedField(initialData?.checkpoint_description)
+    )
+    const [orgDescription, setOrgDescription] = React.useState<{ fi: string; sv: string; en: string }>(() =>
+        parseLocalizedField(initialData?.org_description)
+    )
 
     const CATEGORY_OPTIONS: { label: string; value: CheckpointCategory }[] = React.useMemo(
         () => [
@@ -88,12 +93,16 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
             contact_email: initialData?.contact_email ?? '',
             contact_phone: initialData?.contact_phone ?? '',
             url: initialData?.url ?? '',
+            execution: initialData?.execution ?? '',
+            requirements: initialData?.requirements ?? '',
             cancelled: initialData?.cancelled ?? false,
         },
         onSubmit: async ({ value }) => {
-            // Check if any localized field has content
-            const hasContent = Boolean(description.fi.trim() || description.sv.trim() || description.en.trim())
-            const serializedDescription = hasContent ? JSON.stringify(description) : null
+            const hasDesc = Boolean(description.fi.trim() || description.sv.trim() || description.en.trim())
+            const serializedDescription = hasDesc ? JSON.stringify(description) : null
+
+            const hasOrgDesc = Boolean(orgDescription.fi.trim() || orgDescription.sv.trim() || orgDescription.en.trim())
+            const serializedOrgDescription = hasOrgDesc ? JSON.stringify(orgDescription) : null
 
             const payload: CreateCheckpoint | UpdateCheckpoint = {
                 name: value.name.trim(),
@@ -105,10 +114,13 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
                 lanes: Number(value.lanes) || 1,
                 accessible: value.accessible,
                 checkpoint_description: serializedDescription,
+                org_description: serializedOrgDescription,
                 contact_person: value.contact_person.trim() || null,
                 contact_email: value.contact_email.trim() || null,
                 contact_phone: value.contact_phone.trim() || null,
                 url: value.url.trim() || null,
+                execution: value.execution.trim() || null,
+                requirements: value.requirements.trim() || null,
                 cancelled: value.cancelled,
             }
 
@@ -126,15 +138,15 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
     })
 
     return (
-        <div className={cn('flex w-full max-w-xl flex-col overflow-hidden rounded-xl border-2 border-black bg-white shadow-xl isolate')}>
-            <div className={cn('flex items-center justify-between border-b-2 border-black p-4 bg-white shrink-0')}>
+        <div className={cn('flex w-full max-w-2xl flex-col overflow-hidden rounded-xl border-2 border-black bg-white shadow-xl isolate')}>
+            <div className={cn('flex items-center justify-between border-b-2 border-black p-4 bg-amber-400 shrink-0')}>
                 <div>
                     <h3 className={cn('text-base font-extrabold uppercase tracking-tight text-black')}>
                         {isEditing
                             ? t('checkpointForm.titleEdit', 'Edit Checkpoint: {{name}}', { name: initialData?.name })
                             : t('checkpointForm.titleCreate', 'Create New Checkpoint')}
                     </h3>
-                    <p className={cn('mt-0.5 text-xs font-medium text-black/70')}>
+                    <p className={cn('mt-0.5 text-xs font-medium text-black/80')}>
                         {isEditing
                             ? t('checkpointForm.subtitleEdit', 'Update operational info, contact details, or location coordinates.')
                             : t('checkpointForm.subtitleCreate', 'Add a new checkpoint to the event database.')}
@@ -174,6 +186,7 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
                 }}
                 className={cn('flex flex-col gap-4 p-4 text-xs font-bold text-black')}
             >
+                {/* Basic Info: Name & Number */}
                 <div className={cn('grid grid-cols-1 sm:grid-cols-3 gap-3')}>
                     <form.Field
                         name="name"
@@ -228,6 +241,7 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
                     </form.Field>
                 </div>
 
+                {/* Category & Location Name */}
                 <div className={cn('grid grid-cols-1 sm:grid-cols-2 gap-3')}>
                     <form.Field name="category">
                         {(field) => (
@@ -272,6 +286,7 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
                     </form.Field>
                 </div>
 
+                {/* Coordinates & Lanes */}
                 <div className={cn('grid grid-cols-3 gap-3')}>
                     <form.Field name="latitude">
                         {(field) => (
@@ -336,22 +351,63 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
                     </form.Field>
                 </div>
 
-                {/* Multi-language Checkpoint Description Tabs */}
+                {/* Operational Info: Execution & Requirements */}
+                <div className={cn('grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-black/10')}>
+                    <form.Field name="execution">
+                        {(field) => (
+                            <div className={cn('flex flex-col gap-1')}>
+                                <label htmlFor={field.name} className={cn('uppercase tracking-wider text-[10px] text-black/70')}>
+                                    {t('checkpointForm.labels.execution', 'Execution / Toteutus')}
+                                </label>
+                                <input
+                                    id={field.name}
+                                    name={field.name}
+                                    value={field.state.value}
+                                    onBlur={field.handleBlur}
+                                    onChange={(e) => field.handleChange(e.target.value)}
+                                    placeholder={t('checkpointForm.placeholders.execution', 'e.g. Physical activity / Juoksukilpailu')}
+                                    className={cn('rounded-md border-2 border-black bg-white px-3 py-1.5 text-xs font-bold text-black placeholder:text-black/30 focus:outline-none focus:ring-2 focus:ring-black/20')}
+                                />
+                            </div>
+                        )}
+                    </form.Field>
+
+                    <form.Field name="requirements">
+                        {(field) => (
+                            <div className={cn('flex flex-col gap-1')}>
+                                <label htmlFor={field.name} className={cn('uppercase tracking-wider text-[10px] text-black/70')}>
+                                    {t('checkpointForm.labels.requirements', 'Requirements / Vaatimukset')}
+                                </label>
+                                <input
+                                    id={field.name}
+                                    name={field.name}
+                                    value={field.state.value}
+                                    onBlur={field.handleBlur}
+                                    onChange={(e) => field.handleChange(e.target.value)}
+                                    placeholder={t('checkpointForm.placeholders.requirements', 'e.g. Bring own props / Omat varusteet')}
+                                    className={cn('rounded-md border-2 border-black bg-white px-3 py-1.5 text-xs font-bold text-black placeholder:text-black/30 focus:outline-none focus:ring-2 focus:ring-black/20')}
+                                />
+                            </div>
+                        )}
+                    </form.Field>
+                </div>
+
+                {/* Multi-language Public Description Tabs */}
                 <div className={cn('flex flex-col gap-2 pt-2 border-t-2 border-black/10')}>
                     <div className={cn('flex items-center justify-between')}>
                         <span className={cn('uppercase tracking-wider text-[10px] text-black/70 flex items-center gap-1')}>
                             <Globe className="h-3 w-3" />
-                            {t('checkpointForm.labels.description', 'Description & Instructions')}
+                            {t('checkpointForm.labels.description', 'Public Description & Instructions')}
                         </span>
                         <div className={cn('flex items-center gap-1 rounded-md border-2 border-black bg-black/5 p-0.5')}>
                             {(['fi', 'sv', 'en'] as LangTab[]).map((lang) => (
                                 <button
                                     key={lang}
                                     type="button"
-                                    onClick={() => setActiveLang(lang)}
+                                    onClick={() => setDescLang(lang)}
                                     className={cn(
                                         'rounded px-2.5 py-1 text-[10px] font-black uppercase transition-colors cursor-pointer',
-                                        activeLang === lang
+                                        descLang === lang
                                             ? 'bg-amber-400 text-black border border-black shadow-2xs'
                                             : 'text-black/60 hover:text-black'
                                     )}
@@ -364,19 +420,60 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
 
                     <textarea
                         rows={3}
-                        value={description[activeLang]}
+                        value={description[descLang]}
                         onChange={(e) =>
                             setDescription({
                                 ...description,
-                                [activeLang]: e.target.value,
+                                [descLang]: e.target.value,
                             })
                         }
-                        placeholder={t('checkpointForm.placeholders.description', 'Write checkpoint rules and instructions in {{lang}}...', { lang: activeLang.toUpperCase() })}
+                        placeholder={t('checkpointForm.placeholders.description', 'Write public checkpoint guidelines in {{lang}}...', { lang: descLang.toUpperCase() })}
                         className={cn('w-full rounded-md border-2 border-black bg-white p-3 text-xs font-medium text-black focus:outline-none focus:ring-2 focus:ring-black/20')}
                     />
                 </div>
 
-                <div className={cn('grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-black/10')}>
+                {/* Multi-language Organizer Info Tabs */}
+                <div className={cn('flex flex-col gap-2 pt-2 border-t-2 border-black/10')}>
+                    <div className={cn('flex items-center justify-between')}>
+                        <span className={cn('uppercase tracking-wider text-[10px] text-black/70 flex items-center gap-1')}>
+                            <Globe className="h-3 w-3" />
+                            {t('checkpointForm.labels.orgDescription', 'Organizer Info / Järjestäjän Kuvaus')}
+                        </span>
+                        <div className={cn('flex items-center gap-1 rounded-md border-2 border-black bg-black/5 p-0.5')}>
+                            {(['fi', 'sv', 'en'] as LangTab[]).map((lang) => (
+                                <button
+                                    key={lang}
+                                    type="button"
+                                    onClick={() => setOrgLang(lang)}
+                                    className={cn(
+                                        'rounded px-2.5 py-1 text-[10px] font-black uppercase transition-colors cursor-pointer',
+                                        orgLang === lang
+                                            ? 'bg-amber-400 text-black border border-black shadow-2xs'
+                                            : 'text-black/60 hover:text-black'
+                                    )}
+                                >
+                                    {lang}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <textarea
+                        rows={3}
+                        value={orgDescription[orgLang]}
+                        onChange={(e) =>
+                            setOrgDescription({
+                                ...orgDescription,
+                                [orgLang]: e.target.value,
+                            })
+                        }
+                        placeholder={t('checkpointForm.placeholders.orgDescription', 'Write internal organizer details in {{lang}}...', { lang: orgLang.toUpperCase() })}
+                        className={cn('w-full rounded-md border-2 border-black bg-white p-3 text-xs font-medium text-black focus:outline-none focus:ring-2 focus:ring-black/20')}
+                    />
+                </div>
+
+                {/* Contact Information & URL */}
+                <div className={cn('grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-black/10')}>
                     <form.Field name="contact_person">
                         {(field) => (
                             <div className={cn('flex flex-col gap-1')}>
@@ -434,8 +531,29 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
                             </div>
                         )}
                     </form.Field>
+
+                    <form.Field name="url">
+                        {(field) => (
+                            <div className={cn('flex flex-col gap-1')}>
+                                <label htmlFor={field.name} className={cn('uppercase tracking-wider text-[10px] text-black/70')}>
+                                    {t('checkpointForm.labels.url', 'Website URL')}
+                                </label>
+                                <input
+                                    id={field.name}
+                                    name={field.name}
+                                    type="url"
+                                    value={field.state.value}
+                                    onBlur={field.handleBlur}
+                                    onChange={(e) => field.handleChange(e.target.value)}
+                                    placeholder={t('checkpointForm.placeholders.url', 'https://example.org')}
+                                    className={cn('rounded-md border-2 border-black bg-white px-3 py-1.5 text-xs font-bold text-black placeholder:text-black/30 focus:outline-none focus:ring-2 focus:ring-black/20')}
+                                />
+                            </div>
+                        )}
+                    </form.Field>
                 </div>
 
+                {/* Checkbox Flags */}
                 <div className={cn('flex items-center justify-between gap-4 pt-2 border-t border-black/10')}>
                     <form.Field name="accessible">
                         {(field) => (
@@ -470,6 +588,7 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
                     </form.Field>
                 </div>
 
+                {/* Actions */}
                 <div className={cn('flex items-center justify-end gap-2 pt-3 border-t-2 border-black')}>
                     {onCancel && (
                         <button

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
-import { Map, NavigationControl } from '@vis.gl/react-maplibre'
+import { GeolocateControl, Map, NavigationControl } from '@vis.gl/react-maplibre'
 import * as maplibregl from 'maplibre-gl'
 import { Protocol } from 'pmtiles'
 import { layers, namedFlavor, type Flavor } from '@protomaps/basemaps'
@@ -71,6 +71,12 @@ export function VectorMap({
                 mapStyle={mapStyle}
             >
                 <NavigationControl position="top-right" />
+                <GeolocateControl
+                    position="top-right"
+                    positionOptions={{ enableHighAccuracy: true }}
+                    trackUserLocation={true}
+                    showUserLocation={true}
+                />
                 {children}
             </Map>
         </div>

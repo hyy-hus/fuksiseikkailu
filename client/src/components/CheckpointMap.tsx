@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from '@tanstack/react-router'
 import { Marker, Popup, useMap } from '@vis.gl/react-maplibre'
 import Supercluster from 'supercluster'
 import type { PointFeature } from 'supercluster'
@@ -8,6 +9,7 @@ import {
     ExternalLink,
     Globe,
     Layers,
+    List,
     MapPin,
     Search,
     Star,
@@ -109,11 +111,12 @@ function CheckpointSearch({
 
     return (
         <div
-            className={cn('absolute top-3 left-3 z-10 w-72')}
+            className={cn('absolute top-3 left-3 z-10 flex items-center gap-2 max-w-[calc(100%-4rem)] sm:max-w-xs')}
             onTouchStart={(e) => e.stopPropagation()}
         >
-            <div className={cn('relative flex items-center bg-surface-elevated shadow-md border-black border-2 backdrop-blur-sm')}>
-                <Search className={cn('ml-3 h-4 w-4 text-text-muted shrink-0')} />
+            {/* Search Box */}
+            <div className={cn('relative flex flex-1 items-center bg-surface-elevated shadow-md border-black border-2 backdrop-blur-sm min-w-0')}>
+                <Search className={cn('ml-2.5 h-3.5 w-3.5 text-text-muted shrink-0')} />
                 <input
                     type="text"
                     value={query}
@@ -123,13 +126,23 @@ function CheckpointSearch({
                     }}
                     onFocus={() => setIsOpen(true)}
                     onKeyDown={handleKeyDown}
-                    placeholder={t('checkpointMap.searchPlaceholder', 'Search checkpoints...')}
-                    className={cn('w-full bg-transparent px-3 py-2 text-base md:text-xs font-medium text-text-main placeholder-text-muted outline-none')}
+                    placeholder={t('checkpointMap.searchPlaceholder', 'Etsi rasteja...')}
+                    className={cn('w-full bg-transparent px-2.5 py-1.5 text-xs font-bold text-text-main placeholder-text-muted outline-none min-w-0')}
                 />
             </div>
 
+            {/* Orange Mobile List Shortcut Button */}
+            <Link
+                to="/checkpoints"
+                title={t('checkpoints.listToggle', 'Rastilista')}
+                className={cn('flex h-8 w-8 shrink-0 items-center justify-center rounded-md border-2 border-black bg-amber-400 font-bold text-black shadow-md hover:bg-amber-300 transition-colors cursor-pointer')}
+            >
+                <List className="h-4 w-4 stroke-[2.5]" />
+            </Link>
+
+            {/* Dropdown Results */}
             {isOpen && filtered.length > 0 && (
-                <ul className={cn('max-h-60 overflow-auto bg-surface-elevated p-1 shadow-lg border-2 border-black backdrop-blur-sm border-t-0')}>
+                <ul className={cn('absolute top-full left-0 right-10 mt-1 max-h-60 overflow-auto bg-surface-elevated p-1 shadow-lg border-2 border-black backdrop-blur-sm z-20')}>
                     {filtered.map((cp, idx) => {
                         const isMarker = cp.category === 'marker'
                         return (
@@ -138,7 +151,7 @@ function CheckpointSearch({
                                     type="button"
                                     onClick={() => handleSelect(cp)}
                                     className={cn(
-                                        'flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-xs hover:bg-vintage-berry-100 transition-colors',
+                                        'flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-xs hover:bg-vintage-berry-100 transition-colors cursor-pointer',
                                         idx === 0 && 'bg-black/5 font-bold'
                                     )}
                                 >
@@ -184,7 +197,6 @@ function CheckpointMarker({
         <Marker longitude={longitude} latitude={latitude} anchor="center" onClick={isMarkerCategory ? undefined : onClick}>
             <div className={cn('relative group flex flex-col items-center', !isMarkerCategory && 'cursor-pointer')}>
                 {isMarkerCategory ? (
-                    /* Star bubble marker */
                     <div
                         className={cn(
                             'flex h-8 w-8 items-center justify-center rounded-2xl text-xs font-bold shadow-md border-2 border-black rotate-45 transform transition-transform hover:scale-110 bg-amber-400 text-black',
@@ -194,7 +206,6 @@ function CheckpointMarker({
                         <Star className="h-4 w-4 fill-black text-black -rotate-45" />
                     </div>
                 ) : (
-                    /* Standard round checkpoint marker */
                     <div
                         className={cn(
                             'flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold shadow-md transition-transform hover:scale-110 border-2 border-black',
