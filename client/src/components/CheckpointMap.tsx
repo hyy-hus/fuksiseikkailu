@@ -10,6 +10,7 @@ import {
     Layers,
     MapPin,
     Search,
+    Star,
     X,
 } from 'lucide-react'
 
@@ -35,6 +36,7 @@ const CATEGORY_COLORS: Record<string, string> = {
     hobby: cn('bg-emerald-400 text-black'),
     hyy: cn('bg-amber-400 text-black'),
     yliopisto: cn('bg-purple-400 text-black'),
+    marker: cn('bg-amber-500 text-black'),
     other: cn('bg-blush-pop-400 text-black'),
     default: cn('bg-zinc-200 text-black'),
 }
@@ -128,28 +130,31 @@ function CheckpointSearch({
 
             {isOpen && filtered.length > 0 && (
                 <ul className={cn('max-h-60 overflow-auto bg-surface-elevated p-1 shadow-lg border-2 border-black backdrop-blur-sm border-t-0')}>
-                    {filtered.map((cp, idx) => (
-                        <li key={cp.id}>
-                            <button
-                                type="button"
-                                onClick={() => handleSelect(cp)}
-                                className={cn(
-                                    'flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-xs hover:bg-vintage-berry-100 transition-colors',
-                                    idx === 0 && 'bg-black/5 font-bold'
-                                )}
-                            >
-                                <span className={cn('flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-vintage-berry-800 text-[10px] font-bold text-white')}>
-                                    {cp.number ?? '•'}
-                                </span>
-                                <div className="flex flex-col min-w-0 flex-1">
-                                    <span className={cn('truncate font-medium text-text-main')}>{cp.name}</span>
-                                    {cp.location_name && (
-                                        <span className="truncate text-[10px] text-text-muted">{cp.location_name}</span>
+                    {filtered.map((cp, idx) => {
+                        const isMarker = cp.category === 'marker'
+                        return (
+                            <li key={cp.id}>
+                                <button
+                                    type="button"
+                                    onClick={() => handleSelect(cp)}
+                                    className={cn(
+                                        'flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-xs hover:bg-vintage-berry-100 transition-colors',
+                                        idx === 0 && 'bg-black/5 font-bold'
                                     )}
-                                </div>
-                            </button>
-                        </li>
-                    ))}
+                                >
+                                    <span className={cn('flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-vintage-berry-800 text-[10px] font-bold text-white')}>
+                                        {isMarker ? <Star className="h-3 w-3 fill-amber-300 text-amber-300" /> : (cp.number ?? '•')}
+                                    </span>
+                                    <div className="flex flex-col min-w-0 flex-1">
+                                        <span className={cn('truncate font-medium text-text-main')}>{cp.name}</span>
+                                        {cp.location_name && (
+                                            <span className="truncate text-[10px] text-text-muted">{cp.location_name}</span>
+                                        )}
+                                    </div>
+                                </button>
+                            </li>
+                        )
+                    })}
                 </ul>
             )}
         </div>
@@ -169,23 +174,37 @@ function CheckpointMarker({
     showNameLabel: boolean
     onClick: (e: { originalEvent: MouseEvent }) => void
 }) {
+    const isMarkerCategory = checkpoint.category === 'marker'
     const categoryKey = checkpoint.category && CATEGORY_COLORS[checkpoint.category]
         ? checkpoint.category
         : 'default'
     const colorClass = CATEGORY_COLORS[categoryKey]
 
     return (
-        <Marker longitude={longitude} latitude={latitude} anchor="center" onClick={onClick}>
-            <div className={cn('relative group flex flex-col items-center cursor-pointer')}>
-                <div
-                    className={cn(
-                        'flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold shadow-md transition-transform hover:scale-110 border-2 border-black',
-                        colorClass,
-                        checkpoint.cancelled && 'line-through opacity-70 bg-gray-400'
-                    )}
-                >
-                    {checkpoint.number ?? '•'}
-                </div>
+        <Marker longitude={longitude} latitude={latitude} anchor="center" onClick={isMarkerCategory ? undefined : onClick}>
+            <div className={cn('relative group flex flex-col items-center', !isMarkerCategory && 'cursor-pointer')}>
+                {isMarkerCategory ? (
+                    /* Star bubble marker */
+                    <div
+                        className={cn(
+                            'flex h-8 w-8 items-center justify-center rounded-2xl text-xs font-bold shadow-md border-2 border-black rotate-45 transform transition-transform hover:scale-110 bg-amber-400 text-black',
+                            checkpoint.cancelled && 'opacity-70 bg-gray-400'
+                        )}
+                    >
+                        <Star className="h-4 w-4 fill-black text-black -rotate-45" />
+                    </div>
+                ) : (
+                    /* Standard round checkpoint marker */
+                    <div
+                        className={cn(
+                            'flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold shadow-md transition-transform hover:scale-110 border-2 border-black',
+                            colorClass,
+                            checkpoint.cancelled && 'line-through opacity-70 bg-gray-400'
+                        )}
+                    >
+                        {checkpoint.number ?? '•'}
+                    </div>
+                )}
 
                 {showNameLabel && (
                     <span className={cn('absolute top-full mt-1 left-1/2 -translate-x-1/2 pointer-events-none whitespace-nowrap bg-surface-elevated px-1.5 py-0.5 text-[11px] font-semibold text-text-main shadow-sm backdrop-blur-sm border-2 border-black')}>
@@ -219,7 +238,7 @@ function ClusteredCheckpointMarkers({
             (cp) => cp.id === initialSelectedId || String(cp.number) === initialSelectedId
         )
 
-        if (matched) {
+        if (matched && matched.category !== 'marker') {
             setSelectedId(matched.id)
             if (map && matched.longitude !== 0 && matched.latitude !== 0) {
                 map.flyTo({
@@ -234,7 +253,9 @@ function ClusteredCheckpointMarkers({
 
     const selectedCheckpoint = React.useMemo(() => {
         if (!selectedId) return null
-        return checkpoints.find((cp) => cp.id === selectedId) ?? null
+        const matched = checkpoints.find((cp) => cp.id === selectedId)
+        if (matched?.category === 'marker') return null
+        return matched ?? null
     }, [checkpoints, selectedId])
 
     const supercluster = React.useMemo(() => {
@@ -294,6 +315,7 @@ function ClusteredCheckpointMarkers({
     }, [supercluster, bounds, zoom])
 
     const handleSelectCheckpoint = (cp: MapCheckpoint) => {
+        if (cp.category === 'marker') return
         setSelectedId(cp.id)
         onCheckpointClick?.(cp)
     }
@@ -320,7 +342,9 @@ function ClusteredCheckpointMarkers({
                                 ? 'HYY'
                                 : category === 'yliopisto'
                                     ? 'University'
-                                    : category,
+                                    : category === 'marker'
+                                        ? 'Marker'
+                                        : category,
         })
     }
 

@@ -26,6 +26,7 @@ export function CheckpointForm({ initialData, onSuccess, onCancel }: CheckpointF
             { label: t('checkpointForm.categories.hyy', 'HYY'), value: 'hyy' },
             { label: t('checkpointForm.categories.yliopisto', 'Yliopisto'), value: 'yliopisto' },
             { label: t('checkpointForm.categories.other', 'Other / Muu'), value: 'other' },
+            { label: t('checkpointForm.categories.marker', 'Marker'), value: 'marker' },
         ],
         [t]
     )

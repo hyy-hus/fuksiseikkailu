@@ -15,6 +15,35 @@ interface NewsFormProps {
 
 type LangTab = 'fi' | 'sv' | 'en'
 
+/**
+ * Formats a Date object into local YYYY-MM-DDTHH:mm string for datetime-local input
+ */
+function formatLocalDatetime(date: Date): string {
+    const pad = (num: number) => num.toString().padStart(2, '0')
+    const year = date.getFullYear()
+    const month = pad(date.getMonth() + 1)
+    const day = pad(date.getDate())
+    const hours = pad(date.getHours())
+    const minutes = pad(date.getMinutes())
+    return `${year}-${month}-${day}T${hours}:${minutes}`
+}
+
+/**
+ * Calculates the next even half hour (e.g., 14:05 -> 14:30, 14:35 -> 15:00)
+ */
+function getNextHalfHourDate(): Date {
+    const now = new Date()
+    const minutes = now.getMinutes()
+
+    if (minutes < 30) {
+        now.setMinutes(30, 0, 0)
+    } else {
+        now.setHours(now.getHours() + 1)
+        now.setMinutes(0, 0, 0)
+    }
+    return now
+}
+
 export function NewsForm({ initialData, onSuccess, onCancel }: NewsFormProps) {
     const { t, i18n } = useTranslation()
     const isEditing = Boolean(initialData)
@@ -38,11 +67,12 @@ export function NewsForm({ initialData, onSuccess, onCancel }: NewsFormProps) {
         return { fi: String(initialData.content), sv: '', en: '' }
     })
 
+    // Local datetime initializer: uses existing timestamp when editing, or next even half hour when creating
     const [publishedAt, setPublishedAt] = React.useState<string>(() => {
         if (initialData?.published_at) {
-            return new Date(initialData.published_at).toISOString().slice(0, 16)
+            return formatLocalDatetime(new Date(initialData.published_at))
         }
-        return new Date().toISOString().slice(0, 16)
+        return formatLocalDatetime(getNextHalfHourDate())
     })
 
     const createMutation = useCreateNews(onSuccess)

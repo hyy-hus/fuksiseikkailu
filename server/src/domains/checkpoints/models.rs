@@ -16,6 +16,7 @@ pub enum CheckpointCategory {
     Other,
     Hyy,
     Yliopisto,
+    Marker,
 }
 
 /// Publicly exposed checkpoint payload (excludes sensitive private admin fields)

@@ -62,7 +62,7 @@ export type Checkpoint = {
     url?: string | null;
 };
 
-export type CheckpointCategory = 'subject' | 'nation' | 'hobby' | 'other' | 'hyy' | 'yliopisto';
+export type CheckpointCategory = 'subject' | 'nation' | 'hobby' | 'other' | 'hyy' | 'yliopisto' | 'marker';
 
 export type CheckpointRating = {
     checkpoint_id: string;
