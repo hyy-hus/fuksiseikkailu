@@ -14,7 +14,7 @@ use crate::{
     domains::{
         auth::{
             AuthState,
-            extractor::{OptionalAuthUser, RequireAdmin, RequireCheckpointStaff},
+            extractor::{OptionalAuthUser, RequireAdmin},
         },
         checkpoints::models::{
             BatchImportPayload, BatchImportResponse, SequenceRenumberPayload,
@@ -62,23 +62,48 @@ impl axum::response::IntoResponse for ResponsePayload {
     }
 }
 
+pub enum SingleCheckpointResponsePayload {
+    Public(PublicCheckpoint),
+    Admin(Checkpoint),
+}
+
+impl axum::response::IntoResponse for SingleCheckpointResponsePayload {
+    fn into_response(self) -> axum::response::Response {
+        match self {
+            SingleCheckpointResponsePayload::Public(data) => Json(data).into_response(),
+            SingleCheckpointResponsePayload::Admin(data) => Json(data).into_response(),
+        }
+    }
+}
+
 #[utoipa::path(
     get,
     path = "/checkpoints/{id}",
     tag = "Checkpoints",
     params(("id" = Uuid, Path, description = "Checkpoint ID")),
     responses(
-        (status = 200, description = "Checkpoint details", body = Checkpoint),
+        (status = 200, description = "Checkpoint details", body = PublicCheckpoint),
         (status = 404, description = "Checkpoint not found")
     )
 )]
 pub async fn get_checkpoint(
     State(state): State<AuthState>,
-    _staff: RequireCheckpointStaff,
+    OptionalAuthUser(auth_user): OptionalAuthUser,
     Path(id): Path<Uuid>,
-) -> Result<Json<Checkpoint>, AppError> {
-    let checkpoint = db::get_checkpoint(&state.pool, id).await?;
-    Ok(Json(checkpoint))
+) -> Result<SingleCheckpointResponsePayload, AppError> {
+    // If authenticated as Admin/Staff, return complete operational record
+    if let Some(user) = auth_user {
+        if user.role == crate::domains::users::models::Role::Admin
+            || user.role == crate::domains::users::models::Role::Checkpoint
+        {
+            let checkpoint = db::get_checkpoint(&state.pool, id).await?;
+            return Ok(SingleCheckpointResponsePayload::Admin(checkpoint));
+        }
+    }
+
+    // Otherwise, return sanitized public payload
+    let public_checkpoint = db::get_public_checkpoint(&state.pool, id).await?;
+    Ok(SingleCheckpointResponsePayload::Public(public_checkpoint))
 }
 
 #[utoipa::path(

@@ -212,11 +212,9 @@ function ClusteredCheckpointMarkers({
     const [zoom, setZoom] = React.useState<number>(13)
     const [selectedId, setSelectedId] = React.useState<string | null>(null)
 
-    // Handle focus from URL parameter on initial load or parameter change
     React.useEffect(() => {
         if (!initialSelectedId || checkpoints.length === 0) return
 
-        // Match by exact ID or by checkpoint number
         const matched = checkpoints.find(
             (cp) => cp.id === initialSelectedId || String(cp.number) === initialSelectedId
         )
@@ -420,7 +418,7 @@ function ClusteredCheckpointMarkers({
                             <X className={cn('h-3.5 w-3.5')} />
                         </button>
 
-                        {/* Title Header */}
+                        {/* Header */}
                         <div className={cn('flex items-start gap-2.5 pr-6')}>
                             <span className={cn(
                                 'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold border border-black shadow-xs',
@@ -440,7 +438,6 @@ function ClusteredCheckpointMarkers({
                                     )}
                                 </div>
 
-                                {/* Italic Category Subtitle */}
                                 {selectedCheckpoint.category && (
                                     <span className="text-[11px] italic text-text-muted mt-0.5">
                                         {getCategoryLabel(selectedCheckpoint.category)}
@@ -469,7 +466,7 @@ function ClusteredCheckpointMarkers({
                             </div>
                         )}
 
-                        {/* Public Checkpoint Description */}
+                        {/* Public Description */}
                         {localizedPublicDescription ? (
                             <p className={cn('text-xs text-text-muted leading-relaxed border-t border-black/10 pt-2 whitespace-pre-line')}>
                                 {localizedPublicDescription}
@@ -480,7 +477,7 @@ function ClusteredCheckpointMarkers({
                             </p>
                         )}
 
-                        {/* Clean Organizer Description */}
+                        {/* Organizer Info */}
                         {localizedOrgDescription && (
                             <div className="border-t border-black/10 pt-1.5 flex flex-col gap-0.5">
                                 <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted">
@@ -492,7 +489,7 @@ function ClusteredCheckpointMarkers({
                             </div>
                         )}
 
-                        {/* External Link Button */}
+                        {/* Website Link */}
                         {selectedCheckpoint.url && (
                             <a
                                 href={selectedCheckpoint.url}

@@ -11,7 +11,7 @@ interface AuthContextType {
     isAuthenticated: boolean
     isAdmin: boolean
     isStaff: boolean
-    role: User['role'] | null
+    role: string | null
     login: (token: string) => void
     logout: () => void
 }
@@ -26,6 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return localStorage.getItem(TOKEN_KEY)
     })
 
+    // Fetch user details only if token exists
     const { data: user = null, isLoading: isLoadingUser } = useMe(Boolean(token))
 
     const login = React.useCallback((newToken: string) => {
@@ -37,7 +38,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem(TOKEN_KEY)
         setToken(null)
         queryClient.removeQueries({ queryKey: AUTH_QUERY_KEY })
-        window.location.href = '/login'
     }, [queryClient])
 
     React.useEffect(() => {
@@ -46,7 +46,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 setToken(e.newValue)
                 if (!e.newValue) {
                     queryClient.removeQueries({ queryKey: AUTH_QUERY_KEY })
-                    window.location.href = '/login'
                 }
             }
         }
@@ -54,9 +53,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return () => window.removeEventListener('storage', handleStorageChange)
     }, [queryClient])
 
-    const role = user?.role ?? null
-    const isAdmin = role === 'admin'
-    const isStaff = role === 'admin' || role === 'checkpoint'
+    // Normalize role string comparison to avoid enum casing mismatches
+    const normalizedRole = user?.role ? String(user.role).toLowerCase() : null
+    const isAdmin = normalizedRole === 'admin'
+    const isStaff = normalizedRole === 'admin' || normalizedRole === 'checkpoint'
 
     const value = React.useMemo(
         () => ({
@@ -66,11 +66,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             isAuthenticated: Boolean(token),
             isAdmin,
             isStaff,
-            role,
+            role: normalizedRole,
             login,
             logout,
         }),
-        [token, user, isLoadingUser, isAdmin, isStaff, role, login, logout]
+        [token, user, isLoadingUser, isAdmin, isStaff, normalizedRole, login, logout]
     )
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

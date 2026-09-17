@@ -272,6 +272,14 @@ export function CheckpointList() {
                                                     )}
                                                 </div>
 
+                                                {/* Publicly visible Location Name */}
+                                                {cp.location_name && (
+                                                    <div className="flex items-center gap-1 mt-0.5 text-xs font-semibold text-black/70 truncate">
+                                                        <MapPin className="h-3 w-3 shrink-0 text-black/50" />
+                                                        <span className="truncate">{cp.location_name}</span>
+                                                    </div>
+                                                )}
+
                                                 {cp.category && (
                                                     <span className={cn('mt-0.5 text-[11px] italic text-black/60')}>
                                                         {getCategoryLabel(cp.category)}
@@ -307,7 +315,7 @@ export function CheckpointList() {
                                     {/* Expanded Item Details */}
                                     {isSelected && (
                                         <div className={cn('flex flex-col gap-2.5 pt-2 border-t border-black/10 text-xs')}>
-                                            {/* Location Name & Accessibility Icon */}
+                                            {/* Location Name Header & Accessibility Icon */}
                                             {(cp.location_name || cp.accessible) && (
                                                 <div className={cn('flex items-center justify-between gap-2 font-bold text-black/80')}>
                                                     {cp.location_name ? (

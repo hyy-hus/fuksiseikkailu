@@ -6,6 +6,26 @@ use super::models::{
 };
 use crate::errors::AppError;
 
+pub async fn get_public_checkpoint(pool: &PgPool, id: Uuid) -> Result<PublicCheckpoint, AppError> {
+    let checkpoint = sqlx::query_as!(
+        PublicCheckpoint,
+        r#"
+        SELECT 
+            id, area_id, number, name, category AS "category: CheckpointCategory", 
+            location_name, latitude, longitude, accessible, lanes, 
+            checkpoint_description, org_description, url, cancelled, created_at, updated_at
+        FROM checkpoints
+        WHERE id = $1 AND deleted_at IS NULL
+        "#,
+        id
+    )
+    .fetch_optional(pool)
+    .await?
+    .ok_or(AppError::NotFound)?;
+
+    Ok(checkpoint)
+}
+
 pub async fn list_public_checkpoints(pool: &PgPool) -> Result<Vec<PublicCheckpoint>, AppError> {
     let checkpoints = sqlx::query_as!(
         PublicCheckpoint,
