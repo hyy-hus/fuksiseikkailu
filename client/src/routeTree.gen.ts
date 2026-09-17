@@ -22,6 +22,7 @@ import { Route as NewsIdRouteImport } from './routes/news/$id'
 import { Route as NewsCreateRouteImport } from './routes/news/create'
 import { Route as PhotosIndexRouteImport } from './routes/photos/index'
 import { Route as ScoresCheckpointIdRouteImport } from './routes/scores/$checkpointId'
+import { Route as StatsIndexRouteImport } from './routes/stats/index'
 import { Route as TeamsIndexRouteImport } from './routes/teams/index'
 import { Route as TeamsIdRouteImport } from './routes/teams/$id'
 import { Route as TeamsCreateRouteImport } from './routes/teams/create'
@@ -92,6 +93,11 @@ const ScoresCheckpointIdRoute = ScoresCheckpointIdRouteImport.update({
   path: '/scores/$checkpointId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StatsIndexRoute = StatsIndexRouteImport.update({
+  id: '/stats/',
+  path: '/stats/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TeamsIndexRoute = TeamsIndexRouteImport.update({
   id: '/teams/',
   path: '/teams/',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/leaderboard/': typeof LeaderboardIndexRoute
   '/news/': typeof NewsIndexRoute
   '/photos/': typeof PhotosIndexRoute
+  '/stats/': typeof StatsIndexRoute
   '/teams/': typeof TeamsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -149,6 +156,7 @@ export interface FileRoutesByTo {
   '/leaderboard': typeof LeaderboardIndexRoute
   '/news': typeof NewsIndexRoute
   '/photos': typeof PhotosIndexRoute
+  '/stats': typeof StatsIndexRoute
   '/teams': typeof TeamsIndexRoute
 }
 export interface FileRoutesById {
@@ -169,6 +177,7 @@ export interface FileRoutesById {
   '/leaderboard/': typeof LeaderboardIndexRoute
   '/news/': typeof NewsIndexRoute
   '/photos/': typeof PhotosIndexRoute
+  '/stats/': typeof StatsIndexRoute
   '/teams/': typeof TeamsIndexRoute
 }
 export interface FileRouteTypes {
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
     | '/leaderboard/'
     | '/news/'
     | '/photos/'
+    | '/stats/'
     | '/teams/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/news'
     | '/photos'
+    | '/stats'
     | '/teams'
   id:
     | '__root__'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/leaderboard/'
     | '/news/'
     | '/photos/'
+    | '/stats/'
     | '/teams/'
   fileRoutesById: FileRoutesById
 }
@@ -248,6 +260,7 @@ export interface RootRouteChildren {
   LeaderboardIndexRoute: typeof LeaderboardIndexRoute
   NewsIndexRoute: typeof NewsIndexRoute
   PhotosIndexRoute: typeof PhotosIndexRoute
+  StatsIndexRoute: typeof StatsIndexRoute
   TeamsIndexRoute: typeof TeamsIndexRoute
 }
 
@@ -344,6 +357,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ScoresCheckpointIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stats/': {
+      id: '/stats/'
+      path: '/stats'
+      fullPath: '/stats/'
+      preLoaderRoute: typeof StatsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/teams/': {
       id: '/teams/'
       path: '/teams'
@@ -392,6 +412,7 @@ const rootRouteChildren: RootRouteChildren = {
   LeaderboardIndexRoute: LeaderboardIndexRoute,
   NewsIndexRoute: NewsIndexRoute,
   PhotosIndexRoute: PhotosIndexRoute,
+  StatsIndexRoute: StatsIndexRoute,
   TeamsIndexRoute: TeamsIndexRoute,
 }
 export const routeTree = rootRouteImport

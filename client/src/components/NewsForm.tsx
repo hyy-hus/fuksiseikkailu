@@ -4,6 +4,7 @@ import { AlertCircle, Calendar, Globe, Loader2, Save, Trash2, X } from 'lucide-r
 
 import type { CreateNewsPayload, NewsArticle, UpdateNewsPayload } from '@/api/generated/types.gen'
 import { useCreateNews, useDeleteNews, useUpdateNews } from '@/hooks/useNews'
+import { RichTextEditor } from '@/components/RichTextEditor'
 import { getApiErrorMessage } from '@/lib/errors'
 import { cn } from '@/lib/utils'
 
@@ -15,9 +16,6 @@ interface NewsFormProps {
 
 type LangTab = 'fi' | 'sv' | 'en'
 
-/**
- * Formats a Date object into local YYYY-MM-DDTHH:mm string for datetime-local input
- */
 function formatLocalDatetime(date: Date): string {
     const pad = (num: number) => num.toString().padStart(2, '0')
     const year = date.getFullYear()
@@ -28,9 +26,6 @@ function formatLocalDatetime(date: Date): string {
     return `${year}-${month}-${day}T${hours}:${minutes}`
 }
 
-/**
- * Calculates the next even half hour (e.g., 14:05 -> 14:30, 14:35 -> 15:00)
- */
 function getNextHalfHourDate(): Date {
     const now = new Date()
     const minutes = now.getMinutes()
@@ -67,7 +62,6 @@ export function NewsForm({ initialData, onSuccess, onCancel }: NewsFormProps) {
         return { fi: String(initialData.content), sv: '', en: '' }
     })
 
-    // Local datetime initializer: uses existing timestamp when editing, or next even half hour when creating
     const [publishedAt, setPublishedAt] = React.useState<string>(() => {
         if (initialData?.published_at) {
             return formatLocalDatetime(new Date(initialData.published_at))
@@ -176,7 +170,7 @@ export function NewsForm({ initialData, onSuccess, onCancel }: NewsFormProps) {
                     />
                 </div>
 
-                {/* Multi-language Content Tabs */}
+                {/* Multi-language Content Tabs with TipTap */}
                 <div className={cn('flex flex-col gap-2 pt-2 border-t-2 border-black/10')}>
                     <div className={cn('flex items-center justify-between')}>
                         <span className={cn('uppercase tracking-wider text-[10px] text-black/70 flex items-center gap-1')}>
@@ -202,17 +196,14 @@ export function NewsForm({ initialData, onSuccess, onCancel }: NewsFormProps) {
                         </div>
                     </div>
 
-                    <textarea
-                        rows={6}
+                    <RichTextEditor
                         value={content[activeLang]}
-                        onChange={(e) =>
+                        onChange={(html) =>
                             setContent({
                                 ...content,
-                                [activeLang]: e.target.value,
+                                [activeLang]: html,
                             })
                         }
-                        placeholder={t('news.form.placeholders.content', 'Write announcement text in {{lang}}...', { lang: activeLang.toUpperCase() })}
-                        className={cn('w-full rounded-md border-2 border-black bg-white p-3 text-xs font-medium text-black focus:outline-none focus:ring-2 focus:ring-black/20')}
                     />
                 </div>
 

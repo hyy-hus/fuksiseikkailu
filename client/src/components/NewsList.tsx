@@ -22,7 +22,6 @@ export function NewsList() {
 
         return articles
             .filter((item) => {
-                // Non-admin check: filter out scheduled/unpublished articles on the client
                 if (!isAdmin) {
                     if (!item.published_at) return false
                     if (new Date(item.published_at) > now) return false
@@ -36,7 +35,6 @@ export function NewsList() {
                 return titleMatch || contentMatch
             })
             .sort((a, b) => {
-                // Sort by published_at (or created_at fallback) descending (newest first)
                 const timeA = new Date(a.published_at || a.created_at).getTime()
                 const timeB = new Date(b.published_at || b.created_at).getTime()
                 return timeB - timeA
@@ -178,9 +176,12 @@ export function NewsList() {
                                 </div>
 
                                 {bodyText && (
-                                    <p className={cn('text-xs font-medium text-black/80 leading-relaxed whitespace-pre-line')}>
-                                        {bodyText}
-                                    </p>
+                                    <div
+                                        dangerouslySetInnerHTML={{ __html: bodyText }}
+                                        className={cn(
+                                            'text-xs font-medium text-black/80 leading-relaxed [&_a]:text-amber-600 [&_a]:underline [&_a]:font-bold [&_strong]:font-black'
+                                        )}
+                                    />
                                 )}
                             </div>
                         )
@@ -189,3 +190,4 @@ export function NewsList() {
         </div>
     )
 }
+
