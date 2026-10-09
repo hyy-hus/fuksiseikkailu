@@ -2,7 +2,7 @@ use sqlx::PgPool;
 use uuid::Uuid;
 
 use super::models::{Score, SubmitScorePayload, TeamLeaderboardEntry, UpdateScorePayload};
-use crate::errors::AppError;
+use crate::{domains::scores::models::ScoreTimestamp, errors::AppError};
 
 pub async fn submit_or_update_score(
     pool: &PgPool,
@@ -122,4 +122,20 @@ pub async fn get_leaderboard(pool: &PgPool) -> Result<Vec<TeamLeaderboardEntry>,
     .await?;
 
     Ok(leaderboard)
+}
+
+pub async fn list_all_score_timestamps(pool: &PgPool) -> Result<Vec<ScoreTimestamp>, AppError> {
+    let scores = sqlx::query_as!(
+        ScoreTimestamp,
+        r#"
+        SELECT id, score, created_at
+        FROM scores
+        WHERE deleted_at IS NULL
+        ORDER BY created_at ASC
+        "#
+    )
+    .fetch_all(pool)
+    .await?;
+
+    Ok(scores)
 }

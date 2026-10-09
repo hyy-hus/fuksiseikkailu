@@ -5,6 +5,8 @@ client.setConfig({
     baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:3000',
 })
 
+console.log("base url: ", client.getConfig().baseUrl);
+
 let isRefreshing = false
 let failedQueue: Array<{
     resolve: (token: string) => void

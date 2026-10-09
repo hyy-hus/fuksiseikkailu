@@ -3,7 +3,7 @@ use tracing::instrument;
 use uuid::Uuid;
 
 use super::models::{CreatePhotoPayload, Photo, PhotoTeamSuggestion, UpdatePhotoPayload};
-use crate::errors::AppError;
+use crate::{domains::photos::models::VoteTimestamp, errors::AppError};
 
 /// Formats public S3 URL from key (adjust CDN prefix as necessary)
 pub fn build_s3_url(s3_key: &str, public_base_url: &str) -> String {
@@ -222,4 +222,20 @@ pub async fn list_suggestions(
     .await?;
 
     Ok(suggestions)
+}
+
+#[instrument(skip(pool))]
+pub async fn list_all_vote_timestamps(pool: &PgPool) -> Result<Vec<VoteTimestamp>, AppError> {
+    let votes = sqlx::query_as!(
+        VoteTimestamp,
+        r#"
+        SELECT photo_id, created_at
+        FROM votes
+        ORDER BY created_at ASC
+        "#
+    )
+    .fetch_all(pool)
+    .await?;
+
+    Ok(votes)
 }

@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { Newspaper } from 'lucide-react'
+import { Camera, Newspaper } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { useNewsNotification } from '@/auth/NewsContext'
@@ -21,6 +21,15 @@ export function Navbar() {
                 </Link>
 
                 <div className={cn('flex items-center gap-2.5')}>
+                    {/* Photos Button */}
+                    <Link
+                        to="/photos"
+                        className={cn('flex items-center gap-1.5 rounded-md border-2 border-black bg-amber-400 px-3 py-1.5 text-xs font-black text-black shadow-2xs hover:bg-amber-300 transition-colors')}
+                    >
+                        <Camera className="h-4 w-4" />
+                        <span>{t('navigation.photos', 'Kuvat')}</span>
+                    </Link>
+
                     {/* News Button with Pulsing Unread Badge */}
                     <Link
                         to="/news"

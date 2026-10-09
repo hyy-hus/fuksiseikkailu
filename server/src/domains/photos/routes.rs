@@ -24,9 +24,12 @@ use super::{
     },
 };
 use crate::{
-    domains::auth::{
-        AuthState,
-        extractor::{OptionalAuthUser, RequireAdmin},
+    domains::{
+        auth::{
+            AuthState,
+            extractor::{OptionalAuthUser, RequireAdmin},
+        },
+        photos::models::VoteTimestamp,
     },
     errors::AppError,
 };
@@ -245,4 +248,19 @@ pub async fn list_suggestions(
 ) -> Result<Json<Vec<PhotoTeamSuggestion>>, AppError> {
     let suggestions = db::list_suggestions(&state.pool, id).await?;
     Ok(Json(suggestions))
+}
+
+#[utoipa::path(
+    get,
+    path = "/photos/votes/timeline",
+    tag = "Photos",
+    security(("bearer_auth" = [])),
+    responses((status = 200, description = "Chronological list of all votes cast", body = [VoteTimestamp]))
+)]
+pub async fn list_vote_timeline(
+    State(state): State<AuthState>,
+    _admin: RequireAdmin,
+) -> Result<Json<Vec<VoteTimestamp>>, AppError> {
+    let votes = db::list_all_vote_timestamps(&state.pool).await?;
+    Ok(Json(votes))
 }

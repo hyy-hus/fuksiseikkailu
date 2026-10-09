@@ -10,7 +10,10 @@ use super::{
     db,
     models::{Score, SubmitScorePayload, TeamLeaderboardEntry, UpdateScorePayload},
 };
-use crate::{domains::auth::AuthState, errors::AppError};
+use crate::{
+    domains::{auth::AuthState, scores::models::ScoreTimestamp},
+    errors::AppError,
+};
 
 use crate::domains::settings::db as settings_db;
 
@@ -98,4 +101,17 @@ pub async fn update_score(
     payload.validate()?;
     let score = db::update_score(&state.pool, id, &payload).await?;
     Ok(Json(score))
+}
+
+#[utoipa::path(
+    get,
+    path = "/scores/timeline",
+    tag = "Scores",
+    responses((status = 200, description = "Get chronological timeline of all submitted scores", body = [ScoreTimestamp]))
+)]
+pub async fn list_score_timeline(
+    State(state): State<AuthState>,
+) -> Result<Json<Vec<ScoreTimestamp>>, AppError> {
+    let timeline = db::list_all_score_timestamps(&state.pool).await?;
+    Ok(Json(timeline))
 }

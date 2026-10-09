@@ -45,3 +45,10 @@ pub struct TeamLeaderboardEntry {
     pub total_score: i64,
     pub checkpoints_visited: i64,
 }
+
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct ScoreTimestamp {
+    pub id: Uuid,
+    pub score: i32,
+    pub created_at: DateTime<Utc>,
+}

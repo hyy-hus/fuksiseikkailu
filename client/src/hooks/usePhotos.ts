@@ -7,15 +7,21 @@ import {
     generateUploadUrlMutation,
     listPhotosOptions,
     listSuggestionsOptions,
+    listVoteTimelineOptions,
     suggestTeamMutation,
     updatePhotoMutation,
     votePhotoMutation,
 } from '@/api/generated/@tanstack/react-query.gen'
 
 export const PHOTOS_QUERY_KEY = ['photos']
+export const VOTE_TIMELINE_QUERY_KEY = ['photos', 'voteTimeline']
 
 export function usePhotos() {
     return useQuery(listPhotosOptions())
+}
+
+export function useVoteTimeline() {
+    return useQuery(listVoteTimelineOptions())
 }
 
 export function usePhotoSuggestions(photoId?: string) {
@@ -77,6 +83,7 @@ export function useVotePhoto() {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: PHOTOS_QUERY_KEY })
+            queryClient.invalidateQueries({ queryKey: VOTE_TIMELINE_QUERY_KEY })
         },
     })
 }

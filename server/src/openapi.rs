@@ -72,6 +72,7 @@ impl Modify for SecurityAddon {
         scores::routes::list_by_checkpoint,
         scores::routes::list_by_team,
         scores::routes::update_score,
+        scores::routes::list_score_timeline,
 
         // Settings
         settings::routes::get_settings,
@@ -86,6 +87,7 @@ impl Modify for SecurityAddon {
         photos::routes::update_photo,
         photos::routes::delete_photo,
         photos::routes::vote_photo,
+        photos::routes::list_vote_timeline,
         photos::routes::suggest_team,
         photos::routes::list_suggestions,
 
@@ -144,6 +146,7 @@ impl Modify for SecurityAddon {
             scores::models::SubmitScorePayload,
             scores::models::UpdateScorePayload,
             scores::models::TeamLeaderboardEntry,
+            scores::models::ScoreTimestamp,
 
             settings::models::EventSettings,
             settings::models::UpdateSettingPayload,
@@ -155,6 +158,7 @@ impl Modify for SecurityAddon {
             photos::models::UpdatePhotoPayload,
             photos::models::SubmitSuggestionPayload,
             photos::models::PhotoTeamSuggestion,
+            photos::models::VoteTimestamp,
 
             ratings::models::CheckpointRating,
             ratings::models::TeamRating,

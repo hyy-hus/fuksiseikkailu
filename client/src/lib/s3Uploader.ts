@@ -4,11 +4,14 @@ export async function uploadPhotoToS3(
     file: File,
     onProgress?: (percent: number) => void
 ): Promise<{ url: string; key: string }> {
-    // 1. Get pre-signed URL directly from the generated Hey API SDK helper
+    // 1. Normalize content type explicitly
+    const contentType = file.type?.toLowerCase() || 'image/jpeg'
+
+    // 2. Request pre-signed URL with normalized MIME type
     const response = await generateUploadUrl({
         body: {
             filename: file.name,
-            content_type: file.type || 'image/jpeg',
+            content_type: contentType,
         },
         throwOnError: true,
     })
@@ -19,7 +22,7 @@ export async function uploadPhotoToS3(
 
     const { upload_url, s3_key } = response.data
 
-    // 2. Perform direct S3 upload using XHR to support progress tracking
+    // 3. Perform S3 PUT upload
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest()
 
@@ -36,7 +39,7 @@ export async function uploadPhotoToS3(
             if (xhr.status >= 200 && xhr.status < 300) {
                 resolve({ url: upload_url.split('?')[0], key: s3_key })
             } else {
-                reject(new Error(`S3 upload failed with status ${xhr.status}`))
+                reject(new Error(`S3 upload failed with status ${xhr.status}: ${xhr.responseText}`))
             }
         })
 
@@ -44,8 +47,12 @@ export async function uploadPhotoToS3(
         xhr.addEventListener('abort', () => reject(new Error('S3 upload aborted')))
 
         xhr.open('PUT', upload_url)
-        xhr.setRequestHeader('Content-Type', file.type || 'image/jpeg')
+        // Ensure identical Content-Type used during URL signing
+        xhr.setRequestHeader('Content-Type', contentType)
+
+        // Pass x-amz-acl header required by signature
         xhr.setRequestHeader('x-amz-acl', 'public-read')
+
         xhr.send(file)
     })
 }

@@ -257,6 +257,12 @@ export type Score = {
     updated_at: string;
 };
 
+export type ScoreTimestamp = {
+    created_at: string;
+    id: string;
+    score: number;
+};
+
 export type SequenceRenumberPayload = {
     start_id?: string | null;
 };
@@ -388,6 +394,11 @@ export type User = {
 export type VerifyOtpPayload = {
     code: string;
     email: string;
+};
+
+export type VoteTimestamp = {
+    created_at: string;
+    photo_id: string;
 };
 
 export type ListAreasData = {
@@ -935,6 +946,22 @@ export type GenerateUploadUrlResponses = {
 
 export type GenerateUploadUrlResponse = GenerateUploadUrlResponses[keyof GenerateUploadUrlResponses];
 
+export type ListVoteTimelineData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/photos/votes/timeline';
+};
+
+export type ListVoteTimelineResponses = {
+    /**
+     * Chronological list of all votes cast
+     */
+    200: Array<VoteTimestamp>;
+};
+
+export type ListVoteTimelineResponse = ListVoteTimelineResponses[keyof ListVoteTimelineResponses];
+
 export type DeletePhotoData = {
     body?: never;
     path: {
@@ -1256,6 +1283,22 @@ export type ListByTeamResponses = {
 };
 
 export type ListByTeamResponse = ListByTeamResponses[keyof ListByTeamResponses];
+
+export type ListScoreTimelineData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/scores/timeline';
+};
+
+export type ListScoreTimelineResponses = {
+    /**
+     * Get chronological timeline of all submitted scores
+     */
+    200: Array<ScoreTimestamp>;
+};
+
+export type ListScoreTimelineResponse = ListScoreTimelineResponses[keyof ListScoreTimelineResponses];
 
 export type UpdateScoreData = {
     body: UpdateScorePayload;

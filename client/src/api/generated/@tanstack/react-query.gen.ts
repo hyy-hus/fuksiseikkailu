@@ -3,8 +3,8 @@
 import { type DefaultError, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { batchImport, batchImport2, createArea, createCheckpoint, createCheckpointReport, createNewsArticle, createPhoto, createTeam, createTeamReport, createUser, deleteArea, deleteCheckpoint, deleteMe, deleteNewsArticle, deletePhoto, deleteTeam, deleteUser, generateUploadUrl, getArea, getCheckpoint, getCheckpointRatings, getLeaderboard, getMe, getNewsArticle, getSettings, getTeam, getTeamRatings, getUser, listAreas, listByCheckpoint, listByTeam, listCheckpointReports, listCheckpoints, listNews, listPhotos, listSuggestions, listTeamReports, listTeams, listUsers, type Options, rateCheckpoint, rateTeam, refreshToken, register, requestOtp, resetScores, sequenceRenumber, submitScore, suggestTeam, toggleLeaderboard, toggleScores, updateArea, updateCheckpoint, updateMe, updateNewsArticle, updatePhoto, updateScore, updateTeam, updateUser, verifyOtp, votePhoto } from '../sdk.gen';
-import type { BatchImport2Data, BatchImport2Response, BatchImportData, BatchImportResponse2, CreateAreaData, CreateAreaResponse, CreateCheckpointData, CreateCheckpointReportData, CreateCheckpointReportResponse, CreateCheckpointResponse, CreateNewsArticleData, CreateNewsArticleResponse, CreatePhotoData, CreatePhotoResponse, CreateTeamData, CreateTeamReportData, CreateTeamReportResponse, CreateTeamResponse, CreateUserData, CreateUserResponse, DeleteAreaData, DeleteAreaResponse, DeleteCheckpointData, DeleteCheckpointResponse, DeleteMeData, DeleteMeResponse, DeleteNewsArticleData, DeleteNewsArticleResponse, DeletePhotoData, DeletePhotoResponse, DeleteTeamData, DeleteTeamResponse, DeleteUserData, DeleteUserResponse, GenerateUploadUrlData, GenerateUploadUrlResponse, GetAreaData, GetAreaResponse, GetCheckpointData, GetCheckpointRatingsData, GetCheckpointRatingsResponse, GetCheckpointResponse, GetLeaderboardData, GetLeaderboardResponse, GetMeData, GetMeResponse, GetNewsArticleData, GetNewsArticleResponse, GetSettingsData, GetSettingsResponse, GetTeamData, GetTeamRatingsData, GetTeamRatingsResponse, GetTeamResponse, GetUserData, GetUserResponse, ListAreasData, ListAreasResponse, ListByCheckpointData, ListByCheckpointResponse, ListByTeamData, ListByTeamResponse, ListCheckpointReportsData, ListCheckpointReportsResponse, ListCheckpointsData, ListCheckpointsResponse, ListNewsData, ListNewsResponse, ListPhotosData, ListPhotosResponse, ListSuggestionsData, ListSuggestionsResponse, ListTeamReportsData, ListTeamReportsResponse, ListTeamsData, ListTeamsResponse, ListUsersData, ListUsersResponse, RateCheckpointData, RateCheckpointResponse, RateTeamData, RateTeamResponse, RefreshTokenData, RefreshTokenResponse, RegisterData, RegisterResponse, RequestOtpData, ResetScoresData, ResetScoresResponse, SequenceRenumberData, SequenceRenumberResponse2, SubmitScoreData, SubmitScoreResponse, SuggestTeamData, SuggestTeamResponse, ToggleLeaderboardData, ToggleLeaderboardResponse, ToggleScoresData, ToggleScoresResponse, UpdateAreaData, UpdateAreaResponse, UpdateCheckpointData, UpdateCheckpointResponse, UpdateMeData, UpdateMeResponse, UpdateNewsArticleData, UpdateNewsArticleResponse, UpdatePhotoData, UpdatePhotoResponse, UpdateScoreData, UpdateScoreResponse, UpdateTeamData, UpdateTeamResponse, UpdateUserData, UpdateUserResponse, VerifyOtpData, VerifyOtpResponse, VotePhotoData } from '../types.gen';
+import { batchImport, batchImport2, createArea, createCheckpoint, createCheckpointReport, createNewsArticle, createPhoto, createTeam, createTeamReport, createUser, deleteArea, deleteCheckpoint, deleteMe, deleteNewsArticle, deletePhoto, deleteTeam, deleteUser, generateUploadUrl, getArea, getCheckpoint, getCheckpointRatings, getLeaderboard, getMe, getNewsArticle, getSettings, getTeam, getTeamRatings, getUser, listAreas, listByCheckpoint, listByTeam, listCheckpointReports, listCheckpoints, listNews, listPhotos, listScoreTimeline, listSuggestions, listTeamReports, listTeams, listUsers, listVoteTimeline, type Options, rateCheckpoint, rateTeam, refreshToken, register, requestOtp, resetScores, sequenceRenumber, submitScore, suggestTeam, toggleLeaderboard, toggleScores, updateArea, updateCheckpoint, updateMe, updateNewsArticle, updatePhoto, updateScore, updateTeam, updateUser, verifyOtp, votePhoto } from '../sdk.gen';
+import type { BatchImport2Data, BatchImport2Response, BatchImportData, BatchImportResponse2, CreateAreaData, CreateAreaResponse, CreateCheckpointData, CreateCheckpointReportData, CreateCheckpointReportResponse, CreateCheckpointResponse, CreateNewsArticleData, CreateNewsArticleResponse, CreatePhotoData, CreatePhotoResponse, CreateTeamData, CreateTeamReportData, CreateTeamReportResponse, CreateTeamResponse, CreateUserData, CreateUserResponse, DeleteAreaData, DeleteAreaResponse, DeleteCheckpointData, DeleteCheckpointResponse, DeleteMeData, DeleteMeResponse, DeleteNewsArticleData, DeleteNewsArticleResponse, DeletePhotoData, DeletePhotoResponse, DeleteTeamData, DeleteTeamResponse, DeleteUserData, DeleteUserResponse, GenerateUploadUrlData, GenerateUploadUrlResponse, GetAreaData, GetAreaResponse, GetCheckpointData, GetCheckpointRatingsData, GetCheckpointRatingsResponse, GetCheckpointResponse, GetLeaderboardData, GetLeaderboardResponse, GetMeData, GetMeResponse, GetNewsArticleData, GetNewsArticleResponse, GetSettingsData, GetSettingsResponse, GetTeamData, GetTeamRatingsData, GetTeamRatingsResponse, GetTeamResponse, GetUserData, GetUserResponse, ListAreasData, ListAreasResponse, ListByCheckpointData, ListByCheckpointResponse, ListByTeamData, ListByTeamResponse, ListCheckpointReportsData, ListCheckpointReportsResponse, ListCheckpointsData, ListCheckpointsResponse, ListNewsData, ListNewsResponse, ListPhotosData, ListPhotosResponse, ListScoreTimelineData, ListScoreTimelineResponse, ListSuggestionsData, ListSuggestionsResponse, ListTeamReportsData, ListTeamReportsResponse, ListTeamsData, ListTeamsResponse, ListUsersData, ListUsersResponse, ListVoteTimelineData, ListVoteTimelineResponse, RateCheckpointData, RateCheckpointResponse, RateTeamData, RateTeamResponse, RefreshTokenData, RefreshTokenResponse, RegisterData, RegisterResponse, RequestOtpData, ResetScoresData, ResetScoresResponse, SequenceRenumberData, SequenceRenumberResponse2, SubmitScoreData, SubmitScoreResponse, SuggestTeamData, SuggestTeamResponse, ToggleLeaderboardData, ToggleLeaderboardResponse, ToggleScoresData, ToggleScoresResponse, UpdateAreaData, UpdateAreaResponse, UpdateCheckpointData, UpdateCheckpointResponse, UpdateMeData, UpdateMeResponse, UpdateNewsArticleData, UpdateNewsArticleResponse, UpdatePhotoData, UpdatePhotoResponse, UpdateScoreData, UpdateScoreResponse, UpdateTeamData, UpdateTeamResponse, UpdateUserData, UpdateUserResponse, VerifyOtpData, VerifyOtpResponse, VotePhotoData } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -382,6 +382,21 @@ export const generateUploadUrlMutation = (options?: Partial<Options<GenerateUplo
     return mutationOptions;
 };
 
+export const listVoteTimelineQueryKey = (options?: Options<ListVoteTimelineData>) => createQueryKey('listVoteTimeline', options);
+
+export const listVoteTimelineOptions = (options?: Options<ListVoteTimelineData>) => queryOptions<ListVoteTimelineResponse, DefaultError, ListVoteTimelineResponse, ReturnType<typeof listVoteTimelineQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await listVoteTimeline({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: listVoteTimelineQueryKey(options)
+});
+
 export const deletePhotoMutation = (options?: Partial<Options<DeletePhotoData>>): UseMutationOptions<DeletePhotoResponse, DefaultError, Options<DeletePhotoData>> => {
     const mutationOptions: UseMutationOptions<DeletePhotoResponse, DefaultError, Options<DeletePhotoData>> = {
         mutationFn: async (fnOptions) => {
@@ -626,6 +641,21 @@ export const listByTeamOptions = (options: Options<ListByTeamData>) => queryOpti
         return data;
     },
     queryKey: listByTeamQueryKey(options)
+});
+
+export const listScoreTimelineQueryKey = (options?: Options<ListScoreTimelineData>) => createQueryKey('listScoreTimeline', options);
+
+export const listScoreTimelineOptions = (options?: Options<ListScoreTimelineData>) => queryOptions<ListScoreTimelineResponse, DefaultError, ListScoreTimelineResponse, ReturnType<typeof listScoreTimelineQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await listScoreTimeline({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: listScoreTimelineQueryKey(options)
 });
 
 export const updateScoreMutation = (options?: Partial<Options<UpdateScoreData>>): UseMutationOptions<UpdateScoreResponse, DefaultError, Options<UpdateScoreData>> => {

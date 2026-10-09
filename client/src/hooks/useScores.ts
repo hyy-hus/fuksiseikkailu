@@ -5,15 +5,22 @@ import {
     getLeaderboardOptions,
     listByCheckpointOptions,
     listByTeamOptions,
+    listScoreTimelineOptions,
     submitScoreMutation,
     updateScoreMutation,
 } from '@/api/generated/@tanstack/react-query.gen'
+
+export const SCORE_TIMELINE_QUERY_KEY = ['scores', 'timeline']
 
 export function useLeaderboard() {
     return useQuery({
         ...getLeaderboardOptions(),
         refetchInterval: 15000,
     })
+}
+
+export function useScoreTimeline() {
+    return useQuery(listScoreTimelineOptions())
 }
 
 export function useTeamScores(teamId?: string) {
@@ -42,6 +49,7 @@ export function useSubmitScore(checkpointId: string, onSuccess?: () => void) {
             const options = listByCheckpointOptions({ path: { checkpoint_id: checkpointId } })
             queryClient.invalidateQueries({ queryKey: options.queryKey })
             queryClient.invalidateQueries(getLeaderboardOptions())
+            queryClient.invalidateQueries({ queryKey: SCORE_TIMELINE_QUERY_KEY })
             onSuccess?.()
         },
     })
@@ -62,6 +70,7 @@ export function useUpdateScore(checkpointId: string, onSuccess?: () => void) {
             const options = listByCheckpointOptions({ path: { checkpoint_id: checkpointId } })
             queryClient.invalidateQueries({ queryKey: options.queryKey })
             queryClient.invalidateQueries(getLeaderboardOptions())
+            queryClient.invalidateQueries({ queryKey: SCORE_TIMELINE_QUERY_KEY })
             onSuccess?.()
         },
     })

@@ -13,6 +13,7 @@ pub fn router(state: AuthState) -> Router {
     Router::new()
         .route("/", post(routes::submit_score))
         .route("/leaderboard", get(routes::get_leaderboard))
+        .route("/timeline", get(routes::list_score_timeline)) // Relative to /scores
         .route(
             "/checkpoint/{checkpoint_id}",
             get(routes::list_by_checkpoint),

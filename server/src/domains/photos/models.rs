@@ -67,3 +67,9 @@ pub struct PresignedUrlResponse {
     pub upload_url: String,
     pub s3_key: String,
 }
+
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct VoteTimestamp {
+    pub photo_id: Uuid,
+    pub created_at: DateTime<Utc>,
+}

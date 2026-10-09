@@ -13,6 +13,7 @@ pub fn router(state: AuthState) -> Router {
     Router::new()
         .route("/", get(routes::list_photos).post(routes::create_photo))
         .route("/presigned-url", post(routes::generate_upload_url))
+        .route("/votes/timeline", get(routes::list_vote_timeline)) // Relative to /photos
         .route(
             "/{id}",
             axum::routing::patch(routes::update_photo).delete(routes::delete_photo),
