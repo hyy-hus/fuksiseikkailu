@@ -1,0 +1,11 @@
+pub mod areas;
+pub mod auth;
+pub mod checkpoints;
+pub mod news;
+pub mod photos;
+pub mod ratings;
+pub mod reports;
+pub mod scores;
+pub mod settings;
+pub mod teams;
+pub mod users;

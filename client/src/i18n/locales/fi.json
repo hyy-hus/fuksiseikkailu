@@ -1,0 +1,197 @@
+{
+    "translation": {
+        "401UnauthorizedYouMustBeLoggedInAsAnAdminToCreateOrEditCheckpoints": "401 Luvaton: Sinun on oltava kirjautuneena ylläpitäjänä luodaksesi tai muokataksesi rasteja.",
+        "403ForbiddenYouDoNotHavePermissionToPerformThisAction": "403 Kielletty: Sinulla ei ole oikeutta suorittaa tätä toimintoa.",
+        "aDescriptionForCheckpointA": "Rastin A kuvaus",
+        "aDescriptionForCheckpointB": "Rastin B kuvaus",
+        "allowextra": "salliYlimääräiset",
+        "anUnexpectedServerErrorOccurredCheckInputsOrNetworkLogs": "Tapahtui odottamaton palvelinvirhe. Tarkista syötteet tai verkkolokit.",
+        "arraybuffer": "taulukkoPuskuri",
+        "basicVal": "Perus {{val}}",
+        "batchImport": {
+            "dropzoneLabel": "Pudota CSV- / TSV-tiedosto tähän tai klikkaa selataksesi",
+            "fields": {
+                "category": "Kategoria",
+                "contactEmail": "Yhteyshenkilön sähköposti",
+                "contactPerson": "Yhteyshenkilö",
+                "contactPhone": "Yhteyshenkilön puhelinnumero",
+                "description": "Kuvaus",
+                "lanes": "Kaistat / Jonot",
+                "latitude": "Leveysaste (Latitude)",
+                "locationName": "Sijainnin nimi",
+                "longitude": "Pituusaste (Longitude)",
+                "name": "Rastin nimi",
+                "number": "Numero (#)"
+            },
+            "ignoreField": "-- Ohita / Jätä kenttä väliin --",
+            "meta": {
+                "loading": "Tuodaan rasteja eränä...",
+                "success_one": "Tuotiin onnistuneesti {{count}} rasti!",
+                "success_other": "Tuotiin onnistuneesti {{count}} rastia!"
+            },
+            "orSeparator": "TAI LIITÄ RAAKA TAULUKKODATA",
+            "parseButton": "Jäsennä ja kohdista sarakkeet",
+            "submitButton_one": "Tuo {{count}} rasti",
+            "submitButton_other": "Tuo {{count}} rastia",
+            "subtitleStep1": "Lataa CSV/TSV-tiedosto tai liitä taulukkovalintasi",
+            "subtitleStep2_one": "Vaihe 2: Kohdista sarakkeet (tunnistettu {{count}} rivi)",
+            "subtitleStep2_other": "Vaihe 2: Kohdista sarakkeet (tunnistettu {{count}} riviä)",
+            "textareaPlaceholder": "Nimi\tNumero\tKategoria\tSijainti\nRasti A\t1\tsubject\tSisäpiha A\nRasti B\t2\tnation\tSali B",
+            "title": "Tuo rasteja eränä"
+        },
+        "bearerToken": "Bearer {{token}}",
+        "categories": {
+            "hobby": "Kerho",
+            "hyy": "HYY",
+            "nation": "Osakunta",
+            "other": "Muu",
+            "subject": "Ainejärjestö",
+            "yliopisto": "Yliopisto"
+        },
+        "checkpoint1Kaisaniemi": "Rasti 1: Kaisaniemi",
+        "checkpointA": "Rasti A",
+        "checkpointAdminTool": "Rastien hallintatyökalu",
+        "checkpointB": "Rasti B",
+        "checkpointForm": {
+            "categories": {
+                "hobby": "Hobby / Kerho",
+                "hyy": "HYY",
+                "nation": "Nation / Osakunta",
+                "other": "Other / Muu",
+                "subject": "Subject / Ainejärjestö",
+                "yliopisto": "Yliopisto"
+            },
+            "createCheckpoint": "Luo rasti",
+            "labels": {
+                "accessible": "Esteetön",
+                "cancelled": "Merkitse peruutetuksi",
+                "category": "Kategoria",
+                "contactEmail": "Yhteyshenkilön sähköposti",
+                "contactPerson": "Yhteyshenkilö",
+                "contactPhone": "Yhteyshenkilön puhelinnumero",
+                "description": "Kuvaus ja ohjeet",
+                "lanes": "Kaistat / Jonot",
+                "latitude": "Leveysaste (Latitude)",
+                "locationName": "Sijainnin nimi",
+                "longitude": "Pituusaste (Longitude)",
+                "name": "Rastin nimi *",
+                "number": "Numero (#)"
+            },
+            "placeholders": {
+                "contactEmail": "jarjestaja@helsinki.fi",
+                "contactPerson": "Matti Meikäläinen",
+                "contactPhone": "+358 40 1234567",
+                "description": "Lyhyet ohjeet, vaatimukset tai rastin säännöt...",
+                "latitude": "60.1708",
+                "locationName": "esim. Topelian sisäpiha",
+                "longitude": "24.9502",
+                "name": "esim. OIH Räp-Räp",
+                "number": "esim. 12"
+            },
+            "saveChanges": "Tallenna muutokset",
+            "submissionFailed": "Lähetys epäonnistui",
+            "subtitleCreate": "Lisää uusi rasti tapahtumatietokantaan.",
+            "subtitleEdit": "Päivitä toiminnallisia tietoja, yhteystietoja tai koordinaatteja.",
+            "titleCreate": "Luo uusi rasti",
+            "titleEdit": "Muokkaa rastia: {{name}}",
+            "validation": {
+                "nameRequired": "Nimi on pakollinen"
+            }
+        },
+        "checkpointMap": {
+            "searchPlaceholder": "Etsi rasteja..."
+        },
+        "checkpoints": {
+            "accessibleBadge": "Esteetön",
+            "adjustFiltersHint": "Kokeile muuttaa hakusanaa tai kategoriesuodatinta.",
+            "batchImport": "Erätuonti",
+            "cancelledBadge": "Peruttu",
+            "clickMapInstruction": "Klikkaa mitä tahansa kohtaa kartalla sijoittaaksesi rastin \"{{name}}\"",
+            "clickMapToPlace": "Klikkaa karttaa sijoittaaksesi...",
+            "editButton": "Muokkaa rastia",
+            "lanesCount": "Kaistoja: {{lanes}}",
+            "listSubtitle": "Selaa tapahtumarasteja, karttakoordinaatteja ja sijoittelutietoja.",
+            "listTitle_one": "Rastit ({{count}})",
+            "listTitle_other": "Rastit ({{count}})",
+            "loadErrorMessage": "Pyydettyä rastia ei löytynyt tai sitä ei saatu haettua.",
+            "loadErrorTitle": "Rastien lataaminen epäonnistui",
+            "loading": "Ladataan rasteja...",
+            "locationsSubtitle": "Valitse rasti nähdäksesi lisätiedot, tai klikkaa karttaa asettaaksesi/siirtääksesi sen sijaintia.",
+            "locationsTitle": "Rastien sijainnit",
+            "managementSubtitle": "Luo, muokkaa tai tuo tapahtumarasteja.",
+            "managementTitle": "Rastien hallinta",
+            "newCheckpoint": "Uusi rasti",
+            "noCheckpointsFound": "Rasteja ei löytynyt",
+            "noDescription": "Kuvausta ei ole annettu.",
+            "reposition": "Sijoita uudelleen",
+            "returnToList": "Palaa rastilistaukseen",
+            "setPosition": "Aseta sijainti"
+        },
+        "common": {
+            "allCategories": "Kaikki kategoriat",
+            "back": "Takaisin",
+            "backToCheckpoints": "Takaisin rasteille",
+            "cancel": "Peruuta",
+            "placed": "Sijoitettu",
+            "refresh": "Päivitä",
+            "searchPlaceholder": "Etsi nimellä tai sijainnilla...",
+            "unexpectedError": "Tapahtui odottamaton palvelinvirhe.",
+            "unset": "Asettamatta"
+        },
+        "deeplynestedArraysobjectsArentSupportedProvideYourOwnQueryserializerToHandleThese": "Syvälle sisäkkäisiä taulukkoja/olioita ei tueta. Tarjoa oma `querySerializer()` näiden käsittelemiseksi.",
+        "doorsOpenAt2100": "Ovet avautuvat klo 21:00.",
+        "dragMarkersOnTheMapOrClickSetPositionToLocateUnsetCheckpoints": "Vedä merkkejä kartalla tai klikkaa \"Aseta sijainti\" paikantaaksesi asettamattomia rasteja.",
+        "fresherAdventure": "Fuksiseikkailu",
+        "fuksiseikkailu": "Fuksiseikkailu",
+        "fuksiseikkailuDashboard": "Fuksiseikkailun hallintapaneeli",
+        "gulisventyret": "Gulisäventyret",
+        "joinedvalues": ".{{joinedValues}}",
+        "kumpulaCampus": "Kumpulan kampus",
+        "lat": "Lat:",
+        "lng": "Lng:",
+        "logActiveState": "Kirjaa aktiivinen tila logiin",
+        "login": {
+            "authenticatedSubtitle": "Istuntotunnisteesi on tallennettu paikalliseen muistiin (localStorage).",
+            "authenticatedTitle": "Tunnistautunut",
+            "buttons": {
+                "sendCode": "Lähetä kirjautumiskoodi",
+                "verify": "Vahvista ja kirjaudu sisään"
+            },
+            "error": {
+                "noToken": "Tunnistautuminen onnistui, mutta palvelin ei palauttanut pääsytunnistetta (access token)."
+            },
+            "headerRequestSubtitle": "Syötä järjestäjän sähköpostiosoitteesi saadaksesi kirjautumiskoodin.",
+            "headerRequestTitle": "Tapahtumaan kirjautuminen",
+            "headerVerifySubtitle": "Koodi lähetetty osoitteeseen {{email}}",
+            "headerVerifyTitle": "Syötä vahvistuskoodi",
+            "labels": {
+                "code": "6-numeroinen vahvistuskoodi",
+                "email": "Sähköpostiosoite"
+            },
+            "logoutButton": "Kirjaudu ulos / Tyhjennä tunniste",
+            "meta": {
+                "requestLoading": "Lähetetään kirjautumiskoodia...",
+                "requestSuccess": "Koodi lähetetty sähköpostiisi!",
+                "verifyLoading": "Vahvistetaan koodia...",
+                "verifySuccess": "Tunnistautuminen onnistui!"
+            },
+            "placeholders": {
+                "code": "123456",
+                "email": "jarjestaja@helsinki.fi"
+            },
+            "validation": {
+                "invalidEmail": "Syötä voimassa oleva sähköpostiosoite"
+            }
+        },
+        "namejoinedvalues": ";{{name}}={{joinedValues}}",
+        "officialAfterpartyTavastia": "Viralliset jatkot (Tavastia)",
+        "operationCompletedSuccessfully": "Toiminto suoritettiin onnistuneesti!",
+        "prakennusMainBuilding": "Päärakennus",
+        "processingRequest": "Käsitellään pyyntöä...",
+        "registrationKickoffBriefingAt1600": "Ilmoittautuminen ja aloitusbriefing klo 16:00.",
+        "scienceStudentChallenges": "Luma-opiskelijoiden haasteet.",
+        "startingAreaSenaatintori": "Lähtöalue (Senaatintori)",
+        "triviaStation": "Tietovisarasti.",
+        "welcomeOrientationAndCheckinStation": "Tervetulo-orientaatio ja ilmoittautumisrasti."
+    }
+}

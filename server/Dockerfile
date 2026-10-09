@@ -1,17 +1,34 @@
-FROM python:3.13-slim-bullseye
-
-# Set working directory
+# server/Dockerfile
+FROM rust:1-slim AS builder
 WORKDIR /app
 
-# Install dependencies
-COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+# Install native dependencies & curl
+RUN apt-get update && apt-get install -y pkg-config libssl-dev curl && rm -rf /var/lib/apt/lists/*
 
-# Copy the application code
-COPY . .
+# Copy manifest files
+COPY Cargo.toml Cargo.lock ./
 
-# Expose ports
-EXPOSE 8000
+# Copy source code, migrations, AND the sqlx query cache
+COPY src ./src
+COPY migrations ./migrations
+COPY .sqlx ./.sqlx
 
-# Run program
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Force SQLx to use offline metadata mode
+ENV SQLX_OFFLINE=true
+
+# Build release binary
+RUN cargo build --release
+
+# Runtime stage (use debian:sid-slim to match the builder's glibc version)
+FROM debian:sid-slim
+WORKDIR /app
+RUN apt-get update && apt-get install -y ca-certificates libssl-dev && rm -rf /var/lib/apt/lists/*
+
+# Copy binary & migrations
+COPY --from=builder /app/target/release/server /app/server
+COPY --from=builder /app/migrations /app/migrations
+
+ENV PORT=8080
+EXPOSE 8080
+
+CMD ["/app/server"]

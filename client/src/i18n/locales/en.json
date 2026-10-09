@@ -1,0 +1,197 @@
+{
+    "translation": {
+        "401UnauthorizedYouMustBeLoggedInAsAnAdminToCreateOrEditCheckpoints": "401 Unauthorized: You must be logged in as an Admin to create or edit checkpoints.",
+        "403ForbiddenYouDoNotHavePermissionToPerformThisAction": "403 Forbidden: You do not have permission to perform this action.",
+        "aDescriptionForCheckpointA": "A description for checkpoint A",
+        "aDescriptionForCheckpointB": "A description for checkpoint B",
+        "allowextra": "allowExtra",
+        "anUnexpectedServerErrorOccurredCheckInputsOrNetworkLogs": "An unexpected server error occurred. Check inputs or network logs.",
+        "arraybuffer": "arrayBuffer",
+        "basicVal": "Basic {{val}}",
+        "batchImport": {
+            "dropzoneLabel": "Drop your CSV / TSV file here or click to browse",
+            "fields": {
+                "category": "Category",
+                "contactEmail": "Contact Email",
+                "contactPerson": "Contact Person",
+                "contactPhone": "Contact Phone",
+                "description": "Description",
+                "lanes": "Lanes",
+                "latitude": "Latitude",
+                "locationName": "Location Name",
+                "longitude": "Longitude",
+                "name": "Checkpoint Name",
+                "number": "Number (#)"
+            },
+            "ignoreField": "-- Ignore / Skip Field --",
+            "meta": {
+                "loading": "Importing checkpoints batch...",
+                "success_one": "Successfully imported {{count}} checkpoints!",
+                "success_other": "Successfully imported {{count}} checkpoints!"
+            },
+            "orSeparator": "OR PASTE RAW TABULAR DATA",
+            "parseButton": "Parse & Map Columns",
+            "submitButton_one": "Import {{count}} Checkpoints",
+            "submitButton_other": "Import {{count}} Checkpoints",
+            "subtitleStep1": "Upload CSV/TSV or paste table data",
+            "subtitleStep2_one": "Step 2: Map Columns ({{count}} rows detected)",
+            "subtitleStep2_other": "Step 2: Map Columns ({{count}} rows detected)",
+            "textareaPlaceholder": "Name\tNumber\tCategory\tLocation\nCheckpoint A\t1\tsubject\tCourtyard A\nCheckpoint B\t2\tnation\tHall B",
+            "title": "Batch Import Checkpoints"
+        },
+        "bearerToken": "Bearer {{token}}",
+        "categories": {
+            "hobby": "Hobby",
+            "hyy": "HYY",
+            "nation": "Nation",
+            "other": "Other",
+            "subject": "Subject",
+            "yliopisto": "Yliopisto"
+        },
+        "checkpoint1Kaisaniemi": "Checkpoint 1: Kaisaniemi",
+        "checkpointA": "Checkpoint A",
+        "checkpointAdminTool": "Checkpoint Admin Tool",
+        "checkpointB": "Checkpoint B",
+        "checkpointForm": {
+            "categories": {
+                "hobby": "Hobby / Kerho",
+                "hyy": "HYY",
+                "nation": "Nation / Osakunta",
+                "other": "Other / Muu",
+                "subject": "Subject / Ainejärjestö",
+                "yliopisto": "Yliopisto"
+            },
+            "createCheckpoint": "Create Checkpoint",
+            "labels": {
+                "accessible": "Wheelchair Accessible",
+                "cancelled": "Mark as Cancelled",
+                "category": "Category",
+                "contactEmail": "Contact Email",
+                "contactPerson": "Contact Person",
+                "contactPhone": "Contact Phone",
+                "description": "Description & Instructions",
+                "lanes": "Lanes",
+                "latitude": "Latitude",
+                "locationName": "Location Name",
+                "longitude": "Longitude",
+                "name": "Checkpoint Name *",
+                "number": "Number (#)"
+            },
+            "placeholders": {
+                "contactEmail": "organizer@helsinki.fi",
+                "contactPerson": "Matti Meikäläinen",
+                "contactPhone": "+358 40 1234567",
+                "description": "Brief guidelines, requirements, or checkpoint rules...",
+                "latitude": "60.1708",
+                "locationName": "e.g. Topelia Courtyard",
+                "longitude": "24.9502",
+                "name": "e.g. OIH Räp-Räp",
+                "number": "e.g. 12"
+            },
+            "saveChanges": "Save Changes",
+            "submissionFailed": "Submission Failed",
+            "subtitleCreate": "Add a new checkpoint to the event database.",
+            "subtitleEdit": "Update operational info, contact details, or location coordinates.",
+            "titleCreate": "Create New Checkpoint",
+            "titleEdit": "Edit Checkpoint: {{name}}",
+            "validation": {
+                "nameRequired": "Name is required"
+            }
+        },
+        "checkpointMap": {
+            "searchPlaceholder": "Search checkpoints..."
+        },
+        "checkpoints": {
+            "accessibleBadge": "Accessible",
+            "adjustFiltersHint": "Try adjusting your search query or category filter.",
+            "batchImport": "Batch Import",
+            "cancelledBadge": "Cancelled",
+            "clickMapInstruction": "Click anywhere on the map to place \"{{name}}\"",
+            "clickMapToPlace": "Click Map to Place...",
+            "editButton": "Edit Checkpoint",
+            "lanesCount": "Lanes: {{lanes}}",
+            "listSubtitle": "Browse event checkpoints, map coordinates, and placement details.",
+            "listTitle_one": "Checkpoints ({{count}})",
+            "listTitle_other": "Checkpoints ({{count}})",
+            "loadErrorMessage": "The requested checkpoint could not be found or fetched.",
+            "loadErrorTitle": "Failed to load checkpoints",
+            "loading": "Loading Checkpoints...",
+            "locationsSubtitle": "Select a checkpoint to expand details, or click the map to set/move its position.",
+            "locationsTitle": "Checkpoint Locations",
+            "managementSubtitle": "Create, edit, or import event checkpoints.",
+            "managementTitle": "Checkpoints Management",
+            "newCheckpoint": "New Checkpoint",
+            "noCheckpointsFound": "No checkpoints found",
+            "noDescription": "No description provided.",
+            "reposition": "Reposition",
+            "returnToList": "Return to Checkpoints List",
+            "setPosition": "Set Position"
+        },
+        "common": {
+            "allCategories": "All Categories",
+            "back": "Back",
+            "backToCheckpoints": "Back to Checkpoints",
+            "cancel": "Cancel",
+            "placed": "Placed",
+            "refresh": "Refresh",
+            "searchPlaceholder": "Search by name or location...",
+            "unexpectedError": "An unexpected server error occurred.",
+            "unset": "Unset"
+        },
+        "deeplynestedArraysobjectsArentSupportedProvideYourOwnQueryserializerToHandleThese": "Deeply-nested arrays/objects aren’t supported. Provide your own `querySerializer()` to handle these.",
+        "doorsOpenAt2100": "Doors open at 21:00.",
+        "dragMarkersOnTheMapOrClickSetPositionToLocateUnsetCheckpoints": "Drag markers on the map or click \"Set Position\" to locate unset checkpoints.",
+        "fresherAdventure": "Fresher Adventure",
+        "fuksiseikkailu": "Fuksiseikkailu",
+        "fuksiseikkailuDashboard": "Fuksiseikkailu Dashboard",
+        "gulisventyret": "Gulisäventyret",
+        "joinedvalues": ".{{joinedValues}}",
+        "kumpulaCampus": "Kumpula Campus",
+        "lat": "Lat:",
+        "lng": "Lng:",
+        "logActiveState": "Log Active State",
+        "login": {
+            "authenticatedSubtitle": "Your session token is saved in local storage.",
+            "authenticatedTitle": "Authenticated",
+            "buttons": {
+                "sendCode": "Send Login Code",
+                "verify": "Verify & Log In"
+            },
+            "error": {
+                "noToken": "Authentication succeeded but no access token was returned by the server."
+            },
+            "headerRequestSubtitle": "Enter your organizer email to receive a login code.",
+            "headerRequestTitle": "Event Login",
+            "headerVerifySubtitle": "Code sent to {{email}}",
+            "headerVerifyTitle": "Enter Verification Code",
+            "labels": {
+                "code": "6-Digit Verification Code",
+                "email": "Email Address"
+            },
+            "logoutButton": "Log Out / Clear Token",
+            "meta": {
+                "requestLoading": "Sending magic code...",
+                "requestSuccess": "OTP code sent to your email!",
+                "verifyLoading": "Verifying code...",
+                "verifySuccess": "Authenticated successfully!"
+            },
+            "placeholders": {
+                "code": "123456",
+                "email": "organizer@helsinki.fi"
+            },
+            "validation": {
+                "invalidEmail": "Enter a valid email"
+            }
+        },
+        "namejoinedvalues": ";{{name}}={{joinedValues}}",
+        "officialAfterpartyTavastia": "Official Afterparty (Tavastia)",
+        "operationCompletedSuccessfully": "Operation completed successfully!",
+        "prakennusMainBuilding": "Päärakennus (Main Building)",
+        "processingRequest": "Processing request...",
+        "registrationKickoffBriefingAt1600": "Registration & Kickoff briefing at 16:00.",
+        "scienceStudentChallenges": "Science student challenges.",
+        "startingAreaSenaatintori": "Starting Area (Senaatintori)",
+        "triviaStation": "Trivia station.",
+        "welcomeOrientationAndCheckinStation": "Welcome orientation and check-in station."
+    }
+}

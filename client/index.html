@@ -1,21 +1,45 @@
 <!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fuksiseikkailu</title>
-</head>
+    <script>
+      // Only execute the cleanup ONCE to prevent killing active MapLibre Workers
+      if (!localStorage.getItem('pwa_cache_cleared_v1')) {
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for (let registration of registrations) {
+              registration.unregister().then(function(boolean) {
+                console.log('Legacy Service Worker unregistered:', boolean);
+              });
+            }
+          });
+        }
 
-<body>
+        if ('caches' in window) {
+          caches.keys().then(function(names) {
+            for (let name of names) {
+              caches.delete(name);
+            }
+          });
+        }
+
+        localStorage.setItem('pwa_cache_cleared_v1', 'true');
+      }
+    </script>
+    
+    <!-- Fallback ICO for older browsers -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <!-- Modern PNG Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+    
+    <!-- iOS Home Screen Icon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fuksiseikkailu 2026</title>
+  </head>
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-</body>
-
+  </body>
 </html>

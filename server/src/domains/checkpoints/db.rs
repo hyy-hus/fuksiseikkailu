@@ -1,0 +1,417 @@
+use sqlx::PgPool;
+use uuid::Uuid;
+
+use super::models::{
+    Checkpoint, CheckpointCategory, CreateCheckpoint, PublicCheckpoint, UpdateCheckpoint,
+};
+use crate::errors::AppError;
+
+pub async fn get_public_checkpoint(pool: &PgPool, id: Uuid) -> Result<PublicCheckpoint, AppError> {
+    let checkpoint = sqlx::query_as!(
+        PublicCheckpoint,
+        r#"
+        SELECT 
+            id, area_id, number, name, category AS "category: CheckpointCategory", 
+            location_name, latitude, longitude, accessible, lanes, 
+            checkpoint_description, org_description, url, cancelled, created_at, updated_at
+        FROM checkpoints
+        WHERE id = $1 AND deleted_at IS NULL
+        "#,
+        id
+    )
+    .fetch_optional(pool)
+    .await?
+    .ok_or(AppError::NotFound)?;
+
+    Ok(checkpoint)
+}
+
+pub async fn list_public_checkpoints(pool: &PgPool) -> Result<Vec<PublicCheckpoint>, AppError> {
+    let checkpoints = sqlx::query_as!(
+        PublicCheckpoint,
+        r#"
+        SELECT 
+            id, area_id, number, name, category AS "category: CheckpointCategory", 
+            location_name, latitude, longitude, accessible, lanes, 
+            checkpoint_description, org_description, url, cancelled, created_at, updated_at
+        FROM checkpoints
+        WHERE deleted_at IS NULL
+        ORDER BY number ASC NULLS LAST, name ASC
+        "#
+    )
+    .fetch_all(pool)
+    .await?;
+
+    Ok(checkpoints)
+}
+
+pub async fn list_all_checkpoints(pool: &PgPool) -> Result<Vec<Checkpoint>, AppError> {
+    let checkpoints = sqlx::query_as!(
+        Checkpoint,
+        r#"
+        SELECT 
+            id, area_id, number, name, category AS "category: CheckpointCategory", 
+            location_name, latitude, longitude, accessible, lanes, 
+            checkpoint_description, org_description, requirements, execution, 
+            url, contact_person, contact_email, contact_phone, cancelled, 
+            created_at, updated_at
+        FROM checkpoints
+        WHERE deleted_at IS NULL
+        ORDER BY number ASC NULLS LAST, name ASC
+        "#
+    )
+    .fetch_all(pool)
+    .await?;
+
+    Ok(checkpoints)
+}
+
+pub async fn get_checkpoint(pool: &PgPool, id: Uuid) -> Result<Checkpoint, AppError> {
+    let checkpoint = sqlx::query_as!(
+        Checkpoint,
+        r#"
+        SELECT 
+            id, area_id, number, name, category AS "category: CheckpointCategory", 
+            location_name, latitude, longitude, accessible, lanes, 
+            checkpoint_description, org_description, requirements, execution, 
+            url, contact_person, contact_email, contact_phone, cancelled, 
+            created_at, updated_at
+        FROM checkpoints
+        WHERE id = $1 AND deleted_at IS NULL
+        "#,
+        id
+    )
+    .fetch_optional(pool)
+    .await?
+    .ok_or(AppError::NotFound)?;
+
+    Ok(checkpoint)
+}
+
+pub async fn create_checkpoint(
+    pool: &PgPool,
+    payload: &CreateCheckpoint,
+) -> Result<Checkpoint, AppError> {
+    let category = payload.category.unwrap_or(CheckpointCategory::Other);
+    let latitude = payload.latitude.unwrap_or(0.0);
+    let longitude = payload.longitude.unwrap_or(0.0);
+    let accessible = payload.accessible.unwrap_or(true);
+    let lanes = payload.lanes.unwrap_or(1);
+
+    let checkpoint = sqlx::query_as!(
+        Checkpoint,
+        r#"
+        INSERT INTO checkpoints (
+            area_id, number, name, category, location_name, latitude, longitude, 
+            accessible, lanes, checkpoint_description, org_description, 
+            requirements, execution, url, contact_person, contact_email, contact_phone
+        )
+        VALUES ($1, $2, $3, $4::checkpoint_category, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+        RETURNING 
+            id, area_id, number, name, category AS "category: CheckpointCategory", 
+            location_name, latitude, longitude, accessible, lanes, 
+            checkpoint_description, org_description, requirements, execution, 
+            url, contact_person, contact_email, contact_phone, cancelled, 
+            created_at, updated_at
+        "#,
+        payload.area_id,
+        payload.number,
+        payload.name,
+        category as CheckpointCategory,
+        payload.location_name,
+        latitude,
+        longitude,
+        accessible,
+        lanes,
+        payload.checkpoint_description,
+        payload.org_description,
+        payload.requirements,
+        payload.execution,
+        payload.url,
+        payload.contact_person,
+        payload.contact_email,
+        payload.contact_phone
+    )
+    .fetch_one(pool)
+    .await?;
+
+    Ok(checkpoint)
+}
+
+pub async fn update_checkpoint(
+    pool: &PgPool,
+    id: Uuid,
+    payload: &UpdateCheckpoint,
+) -> Result<Checkpoint, AppError> {
+    let checkpoint = sqlx::query_as!(
+        Checkpoint,
+        r#"
+        UPDATE checkpoints
+        SET 
+            area_id = COALESCE($1, area_id),
+            number = COALESCE($2, number),
+            name = COALESCE($3, name),
+            category = COALESCE($4::checkpoint_category, category),
+            location_name = COALESCE($5, location_name),
+            latitude = COALESCE($6, latitude),
+            longitude = COALESCE($7, longitude),
+            accessible = COALESCE($8, accessible),
+            lanes = COALESCE($9, lanes),
+            checkpoint_description = COALESCE($10, checkpoint_description),
+            org_description = COALESCE($11, org_description),
+            requirements = COALESCE($12, requirements),
+            execution = COALESCE($13, execution),
+            url = COALESCE($14, url),
+            contact_person = COALESCE($15, contact_person),
+            contact_email = COALESCE($16, contact_email),
+            contact_phone = COALESCE($17, contact_phone),
+            cancelled = COALESCE($18, cancelled),
+            updated_at = NOW()
+        WHERE id = $19 AND deleted_at IS NULL
+        RETURNING 
+            id, area_id, number, name, category AS "category: CheckpointCategory", 
+            location_name, latitude, longitude, accessible, lanes, 
+            checkpoint_description, org_description, requirements, execution, 
+            url, contact_person, contact_email, contact_phone, cancelled, 
+            created_at, updated_at
+        "#,
+        payload.area_id,
+        payload.number,
+        payload.name,
+        payload.category as Option<CheckpointCategory>,
+        payload.location_name,
+        payload.latitude,
+        payload.longitude,
+        payload.accessible,
+        payload.lanes,
+        payload.checkpoint_description,
+        payload.org_description,
+        payload.requirements,
+        payload.execution,
+        payload.url,
+        payload.contact_person,
+        payload.contact_email,
+        payload.contact_phone,
+        payload.cancelled,
+        id
+    )
+    .fetch_optional(pool)
+    .await?
+    .ok_or(AppError::NotFound)?;
+
+    Ok(checkpoint)
+}
+
+pub async fn delete_checkpoint(pool: &PgPool, id: Uuid) -> Result<(), AppError> {
+    let result = sqlx::query!(
+        r#"
+        UPDATE checkpoints
+        SET deleted_at = NOW()
+        WHERE id = $1 AND deleted_at IS NULL
+        "#,
+        id
+    )
+    .execute(pool)
+    .await?;
+
+    if result.rows_affected() == 0 {
+        return Err(AppError::NotFound);
+    }
+
+    Ok(())
+}
+
+pub async fn batch_import_checkpoints(
+    pool: &PgPool,
+    items: &[CreateCheckpoint],
+) -> Result<Vec<Checkpoint>, AppError> {
+    let mut tx = pool.begin().await?;
+
+    // 1. Fetch all active areas to map area names to their UUIDs
+    let area_rows = sqlx::query!(
+        r#"
+        SELECT id, name
+        FROM areas
+        WHERE deleted_at IS NULL
+        "#
+    )
+    .fetch_all(&mut *tx)
+    .await?;
+
+    let area_map: std::collections::HashMap<String, Uuid> = area_rows
+        .into_iter()
+        .map(|r| (r.name.trim().to_lowercase(), r.id))
+        .collect();
+
+    let mut imported = Vec::with_capacity(items.len());
+
+    for payload in items {
+        let category = payload.category.unwrap_or(CheckpointCategory::Other);
+        let latitude = payload.latitude.unwrap_or(0.0);
+        let longitude = payload.longitude.unwrap_or(0.0);
+        let accessible = payload.accessible.unwrap_or(true);
+        let lanes = payload.lanes.unwrap_or(1);
+
+        // 2. Resolve area_id: Use provided payload.area_id, or match by area name if provided
+        let resolved_area_id = payload.area_id.or_else(|| {
+            payload
+                .location_name
+                .as_ref()
+                .map(|name| name.trim().to_lowercase())
+                .and_then(|name| area_map.get(&name).copied())
+        });
+
+        let checkpoint = sqlx::query_as!(
+            Checkpoint,
+            r#"
+            INSERT INTO checkpoints (
+                area_id, number, name, category, location_name, latitude, longitude, 
+                accessible, lanes, checkpoint_description, org_description, 
+                requirements, execution, url, contact_person, contact_email, contact_phone
+            )
+            VALUES ($1, $2, $3, $4::checkpoint_category, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+            ON CONFLICT (name) WHERE deleted_at IS NULL
+            DO UPDATE SET
+                area_id = COALESCE(EXCLUDED.area_id, checkpoints.area_id),
+                number = COALESCE(EXCLUDED.number, checkpoints.number),
+                category = COALESCE(EXCLUDED.category, checkpoints.category),
+                location_name = COALESCE(EXCLUDED.location_name, checkpoints.location_name),
+                latitude = CASE WHEN EXCLUDED.latitude != 0.0 THEN EXCLUDED.latitude ELSE checkpoints.latitude END,
+                longitude = CASE WHEN EXCLUDED.longitude != 0.0 THEN EXCLUDED.longitude ELSE checkpoints.longitude END,
+                accessible = COALESCE(EXCLUDED.accessible, checkpoints.accessible),
+                lanes = COALESCE(EXCLUDED.lanes, checkpoints.lanes),
+                checkpoint_description = COALESCE(EXCLUDED.checkpoint_description, checkpoints.checkpoint_description),
+                org_description = COALESCE(EXCLUDED.org_description, checkpoints.org_description),
+                requirements = COALESCE(EXCLUDED.requirements, checkpoints.requirements),
+                execution = COALESCE(EXCLUDED.execution, checkpoints.execution),
+                url = COALESCE(EXCLUDED.url, checkpoints.url),
+                contact_person = COALESCE(EXCLUDED.contact_person, checkpoints.contact_person),
+                contact_email = COALESCE(EXCLUDED.contact_email, checkpoints.contact_email),
+                contact_phone = COALESCE(EXCLUDED.contact_phone, checkpoints.contact_phone),
+                updated_at = NOW()
+            RETURNING 
+                id, area_id, number, name, category AS "category: CheckpointCategory", 
+                location_name, latitude, longitude, accessible, lanes, 
+                checkpoint_description, org_description, requirements, execution, 
+                url, contact_person, contact_email, contact_phone, cancelled, 
+                created_at, updated_at
+            "#,
+            resolved_area_id,
+            payload.number,
+            payload.name,
+            category as CheckpointCategory,
+            payload.location_name,
+            latitude,
+            longitude,
+            accessible,
+            lanes,
+            payload.checkpoint_description,
+            payload.org_description,
+            payload.requirements,
+            payload.execution,
+            payload.url,
+            payload.contact_person,
+            payload.contact_email,
+            payload.contact_phone
+        )
+        .fetch_one(&mut *tx)
+        .await?;
+
+        imported.push(checkpoint);
+    }
+
+    tx.commit().await?;
+    Ok(imported)
+}
+
+pub async fn renumber_checkpoints_nearest_neighbor(
+    pool: &PgPool,
+    start_id: Option<Uuid>,
+) -> Result<Vec<Checkpoint>, AppError> {
+    let mut tx = pool.begin().await?;
+
+    // 1. Fetch all non-deleted checkpoints with valid coordinates
+    let mut unvisited = sqlx::query_as!(
+        Checkpoint,
+        r#"
+        SELECT 
+            id, area_id, number, name, category AS "category: CheckpointCategory", 
+            location_name, latitude, longitude, accessible, lanes, 
+            checkpoint_description, org_description, requirements, execution, 
+            url, contact_person, contact_email, contact_phone, cancelled, 
+            created_at, updated_at
+        FROM checkpoints
+        WHERE deleted_at IS NULL AND latitude != 0 AND longitude != 0
+        "#
+    )
+    .fetch_all(&mut *tx)
+    .await?;
+
+    if unvisited.is_empty() {
+        return Ok(Vec::new());
+    }
+
+    // Helper: squared Euclidean distance for local graph traversal
+    let distance_sq = |a: &Checkpoint, b: &Checkpoint| -> f64 {
+        let d_lat = a.latitude - b.latitude;
+        let d_lng = a.longitude - b.longitude;
+        d_lat * d_lat + d_lng * d_lng
+    };
+
+    // 2. Determine starting checkpoint
+    let mut current_idx = if let Some(id) = start_id {
+        unvisited.iter().position(|cp| cp.id == id).unwrap_or(0)
+    } else {
+        0
+    };
+
+    let mut current_number = 1;
+    let mut updated_checkpoints = Vec::with_capacity(unvisited.len());
+
+    // 3. Traversal loop
+    while !unvisited.is_empty() {
+        let mut current = unvisited.remove(current_idx);
+        current.number = Some(current_number);
+
+        // Update database record
+        sqlx::query!(
+            r#"
+            UPDATE checkpoints
+            SET number = $1, updated_at = NOW()
+            WHERE id = $2
+            "#,
+            current_number,
+            current.id
+        )
+        .execute(&mut *tx)
+        .await?;
+
+        updated_checkpoints.push(current.clone());
+        current_number += 1;
+
+        if unvisited.is_empty() {
+            break;
+        }
+
+        // 4. Find nearest unvisited neighbor
+        let mut nearest_idx = 0;
+        let mut min_dist = f64::MAX;
+
+        for (i, candidate) in unvisited.iter().enumerate() {
+            let dist = distance_sq(&current, candidate);
+            if dist < min_dist {
+                min_dist = dist;
+                nearest_idx = i;
+            }
+        }
+
+        current_idx = nearest_idx;
+    }
+
+    tx.commit().await?;
+
+    // Sort final result by assigned number
+    updated_checkpoints.sort_by_key(|cp| cp.number);
+
+    Ok(updated_checkpoints)
+}

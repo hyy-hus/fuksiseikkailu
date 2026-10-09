@@ -1,65 +1,68 @@
-:root {
-    --color-1: #e0e1dd;
-    --color-2: #778da9;
-    --color-3: #415a77;
-    --color-4: #1b263b;
-    --color-5: #0d1b2a;
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-    --color-bg: var(--color-1);
-    --color-fg: var(--color-5);
+@theme {
+  --color-blush-pop-50: oklch(94.64% 0.032 348.09);
+  --color-blush-pop-100: oklch(89.58% 0.064 350.73);
+  --color-blush-pop-200: oklch(80.05% 0.132 353.12);
+  --color-blush-pop-300: oklch(72.08% 0.196 356.34);
+  --color-blush-pop-400: oklch(66.58% 0.242 1.05);
+  --color-blush-pop-500: oklch(64.06% 0.257 8.07);
+  --color-blush-pop-600: oklch(54.18% 0.217 7.49);
+  --color-blush-pop-700: oklch(43.83% 0.176 6.56);
+  --color-blush-pop-800: oklch(32.82% 0.132 4.81);
+  --color-blush-pop-900: oklch(20.79% 0.084 0.28);
+  --color-blush-pop-950: oklch(16.91% 0.069 358.10);
 
-    --color-card: light-dark(var(--color-2), var(--color-4));
-    ;
+  --color-blaze-orange-50: oklch(96.21% 0.022 54.34);
+  --color-blaze-orange-100: oklch(92.52% 0.044 52.64);
+  --color-blaze-orange-200: oklch(85.23% 0.090 50.78);
+  --color-blaze-orange-300: oklch(78.73% 0.136 49.80);
+  --color-blaze-orange-400: oklch(73.09% 0.178 47);
+  --color-blaze-orange-500: oklch(68.60% 0.210 41.14);
+  --color-blaze-orange-600: oklch(58.17% 0.177 41.65);
+  --color-blaze-orange-700: oklch(47.24% 0.141 42.51);
+  --color-blaze-orange-800: oklch(35.65% 0.103 44.21);
+  --color-blaze-orange-900: oklch(23.24% 0.061 50.78);
+  --color-blaze-orange-950: oklch(19.18% 0.048 54.39);
 
-    --gap: 1rem;
-    --gap-s: 0.5rem;
-    --gap-xs: 0.25rem;
-    --gap-l: 1.5rem;
-    --gap-xl: 2rem;
+  /* Semantic Token Namespaces */
+  --color-surface-base: var(--color-blaze-orange-500);
+  --color-surface-elevated: var(--color-white);
+  
+  --color-text-main: var(--color-black);
+  --color-text-muted: var(--color-blaze-orange-900);
 
-    --border: 2px solid var(--color-3);
-    --radius: 4px;
+  --color-accent: var(--color-blush-pop-300);
+
+  --font-sans: "neue-haas-grotesk-display", "Inter", sans-serif;
 }
 
-:root {
-    line-height: 1.5;
-    font-weight: 400;
-
-    color-scheme: light dark;
-    color: light-dark(var(--color-fg), var(--color-bg));
-    background-color: light-dark(var(--color-bg), var(--color-fg));
-
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-
-    font-family: "Roboto", serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-}
-
-h1,
-h2,
-h3,
-h4 {
-    font-family: "EB Garamond", serif;
-    font-optical-sizing: auto;
-    font-weight: 600;
-    font-style: normal;
-}
-
-h1 {
-    font-size: 300%;
-    text-align: center;
-    margin-bottom: var(--gap-xl);
-}
-
-body {
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    /* Radial gradient: vibrant lighter orange around edges fading to deeper orange core */
+    background: radial-gradient(
+      circle at center,
+      var(--color-blaze-orange-500) 0%,
+      var(--color-blaze-orange-400) 100%
+    );
+    color: var(--color-text-main);
+    display: flex;
+    height: 100vh;
     width: 100vw;
-    height: 100vw;
+    overflow: hidden;
+    flex-direction: column;
+  }
+
+  #root {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex: 1 1 0%;
+    flex-direction: column;
+    overflow: hidden;
+  }
 }

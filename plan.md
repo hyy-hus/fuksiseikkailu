@@ -1,0 +1,11 @@
+- useAuth + useUsers hookit, useMe + tsekki onko admin -> kicki pois,
+  piilotetaan admin-toiminnot jos ei.
+- julkaisu: app.fuksiseikkailu.fi käyntiin
+- sähköpostikirjautuminen + parempi refresh
+- pisteenlaskukone
+- uutiset
+- valokuvakilpailu
+- leaderboard
+- raportoinnit
+- PWA + notifikaatiot
+- tilastot

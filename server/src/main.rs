@@ -1,0 +1,57 @@
+use anyhow::Context;
+use clap::Parser;
+use dotenvy::dotenv;
+use resend_rs::Resend;
+use sqlx::postgres::PgPoolOptions;
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+
+use server::{app, config::Config, seed};
+
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    dotenv().ok();
+
+    let config = Config::parse();
+
+    tracing_subscriber::registry()
+        .with(tracing_subscriber::fmt::layer())
+        .init();
+
+    tracing::info!("Connecting to the database...");
+
+    let db_pool = PgPoolOptions::new()
+        .max_connections(config.max_db_connections)
+        .connect(&config.database_url)
+        .await
+        .context("Failed to connect to database")?;
+
+    tracing::info!("Database connection established successfully.");
+
+    tracing::info!("Running database migrations...");
+    sqlx::migrate!("./migrations")
+        .run(&db_pool)
+        .await
+        .context("Failed to run database migrations")?;
+
+    seed::seed_admin_user(&db_pool, &config).await?;
+
+    // Initialize Resend client using the API key from config
+    let resend = Resend::new(&config.resend_api_key);
+
+    let app = app(db_pool, config.clone(), resend);
+
+    tracing::info!("Server running on http://{}", config.bind_addr);
+
+    let listener = tokio::net::TcpListener::bind(config.bind_addr)
+        .await
+        .context("Failed to bind to local socket address")?;
+
+    axum::serve(
+        listener,
+        app.into_make_service_with_connect_info::<std::net::SocketAddr>(),
+    )
+    .await
+    .context("An unrecoverable error occurred while running the Axum web server")?;
+
+    Ok(())
+}
