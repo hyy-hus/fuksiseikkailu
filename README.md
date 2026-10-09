@@ -1,23 +1,75 @@
 # Fuksiseikkailu
 
-Fuksiseikkailu on Suomen suuri uusien opiskelijoiden tapahtuma (?) joka
-järjestetään Helsingin yliopiston uusille opiskelijoille joka syksy.
-Tapahtumassa opiskelijat seikkailevat Helsingin keskustassa
-opiskelijajärjestöjen rasteilla, saaden pisteitä suorituksistaan.
-Illan kruunaa fuksiseikkailun jatkot, joilla palkitaan parhaiten pukeutunut
-joukkue ja eniten pisteitä ansainnut joukkue.
+Fuksiseikkailu on [Helsingin yliopiston ylioppilaskunnan (HYY)](https://www.hyy.fi/)
+järjestämä tapahtuma Helsingin yliopiston uusille opiskelijoille. Fuksit
+kiertävät joukkueina Helsingin keskustassa opiskelijajärjestöjen rasteilla ja
+keräävät pisteitä suorituksistaan. Illan kruunaavat jatkot, joilla palkitaan
+parhaiten pukeutunut ja eniten pisteitä ansainnut joukkue.
 
-Fuksiseikkailun osallistujille on kehitetty fuksiseikkailu-sovellus, jonka
-avulla osallistujat voivat navigoida seuraavalle rastilleen, tutustua rasteihin
-etukäteen, arvioida pukukilpailun osallistujia ja tarkkailla omaa sijoitustaan
-suhteessa muihin.
+Tämä repositorio sisältää tapahtuman web-sovelluksen (PWA).
 
-Sovellus on jaettu taustajärjestelmään, joka löytyy `server/`-hakemistosta,
-sekä `client`-hakemistosta löytyvään varsinaiseen sovellukseen.
+## Mitä sovellus tekee
 
-Fuksiseikkailu on [Helsingin yliopiston ylioppilaskunnnan (HYY)](https://www.hyy.fi/)
-tapahtuma.
+- **Kartta ja rastit**: rastit kartalla ja listana (suomi, ruotsi, englanti),
+  mukaan lukien esteettömyys- ja rastikategoriatiedot.
+- **Pisteytys**: rastien vastuuhenkilöt kirjaavat joukkueiden pisteet.
+  Ylläpito voi sulkea pisteytyksen ja tulostaulun tapahtuman ajaksi.
+- **Tulostaulu** ja **tilastot** (alueet, kategoriat, pisteiden kehitys).
+- **Valokuvat ja pukukilpailu**: kuvien lataus suoraan S3:een, äänestys ja
+  joukkueiden ehdottaminen kuviin.
+- **Uutiset**: monikieliset, ajastettavat uutiset rikastekstieditorilla.
+- **Arvioinnit ja raportit**: rastien ja joukkueiden arviointi sekä raportointi.
+- **Ylläpito**: rastien ja joukkueiden hallinta, CSV-tuonti, rastien
+  automaattinen numerointi.
+- **Kirjautuminen** sähköpostiin lähetettävällä kertakäyttökoodilla.
+  Käyttäjärooleja ovat `admin`, `checkpoint` (rasti) ja `team` (joukkue).
 
-Päätason asiakirjat on kirjoitettu suomeksi, mutta tarkemmat tekniset kuvaukset
-ja commit-viestit on kirjoitettu englanniksi, kuten myös koodin muuttujien ja
-funktioiden nimet, sekä kommentit.
+## Rakenne
+
+| Hakemisto | Sisältö |
+| --- | --- |
+| [`server/`](server/README.md) | Rust-taustajärjestelmä (Axum, PostgreSQL, SQLx) |
+| [`client/`](client/README.md) | React/TypeScript-käyttöliittymä (Vite) |
+| `compose.yml` | Paikallinen PostgreSQL-kehityskanta |
+| `.env.hosted` | Mallipohja tuotantoympäristön ympäristömuuttujille (ei salaisuuksia) |
+| `plan.md` | Keskeneräiset tehtävät ja ideat |
+
+Tarkempi kuvaus: [arkkitehtuuri.md](arkkitehtuuri.md).
+
+## Kehitysympäristön käynnistys
+
+Tarvitset [Rustin](https://rustup.rs/), [Node.js](https://nodejs.org/):n ja
+Dockerin.
+
+```sh
+# 1. Tietokanta (portti 5432). compose.yml lukee DB_USER, DB_PASSWORD ja DB_NAME
+#    ympäristöstä tai .env-tiedostosta.
+docker compose up -d
+
+# 2. Taustajärjestelmä (portti 3000), ks. server/README.md ympäristömuuttujista
+cd server
+# luo server/.env (DATABASE_URL, JWT_SECRET, RESEND_API_KEY ...)
+cargo run
+
+# 3. Käyttöliittymä (portti 5173)
+cd client
+npm install
+npm run dev
+```
+
+Ensimmäisellä käynnistyksellä palvelin ajaa migraatiot ja luo ylläpitäjän
+osoitteella `SEED_ADMIN_EMAIL`. Kirjaudu sillä sähköpostikoodilla.
+
+API-dokumentaatio (Swagger UI): <http://127.0.0.1:3000/swagger-ui>.
+
+## Julkaisut
+
+Vuoden 2025 versio on tagissa
+[`2025-release`](../../tree/2025-release) (Python/FastAPI-taustajärjestelmä).
+`main` sisältää vuoden 2026 uudelleenkirjoituksen.
+
+## Kielet ja lisenssi
+
+Päätason asiakirjat on kirjoitettu suomeksi, tekniset README-tiedostot, commit-
+viestit, koodi ja kommentit englanniksi. Koodi on julkaistu
+[MIT-lisenssillä](LICENSE).

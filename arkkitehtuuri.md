@@ -1,42 +1,69 @@
-# Arkittehtuuri
+# Arkkitehtuuri
 
-Tässä dokumentissa eritellään, millainen rakenne projektilla on tarkoitus olla.
-Tarkempi tekninen toteutus on kuvattu erikseen `server`- ja `client`-
-hakemistoissa.
+Sovellus koostuu kolmesta osasta: selaimessa toimivasta PWA-käyttöliittymästä,
+REST-rajapinnan tarjoavasta Rust-palvelimesta ja PostgreSQL-tietokannasta.
+Valokuvat tallennetaan S3-yhteensopivaan objektivarastoon ja karttapalat
+PMTiles-tiedostona objektivarastoon.
 
-## Yleistä
+```
+ Selain (React PWA) ──HTTP/JSON──▶ Axum-palvelin ──SQLx──▶ PostgreSQL
+        │                               │
+        │                               ├─▶ Resend (kirjautumiskoodit)
+        └──presigned PUT──▶ S3 ◀────────┘ (allekirjoitetut URL:t)
+        └──PMTiles (range requests)──▶ S3 (karttapalat)
+```
 
-Projekti toteutetaan hyödyntäen Docker-kontteja. Näin mahdollistetaan
-kohtuullisen kevyt mutta ylläpidettävä ja siirrettävä julkaisuympäristö,
-jossa on mahdollista eriyttää paikallinen kehitysversio, testausversio ja
-julkaistu varsinainen versio toisistaan.
+## Server (`server/`)
 
-Kaikki fuksiseikkailu-sovelluksen koodi on julkaistu Github-repositoriossa,
-ja se julkaistaan avoimen lähdekoodin MIT-lisenssillä.
+- **Axum 0.8** + **Tokio**, **SQLx** (käännösaikaiset kyselyt, välimuisti
+  `server/.sqlx/`), PostgreSQL.
+- Koodi on jaettu *domaineihin* (`src/domains/<nimi>/`), joissa kussakin on
+  `routes.rs` (HTTP), `db.rs` (kyselyt), `models.rs` ja `mod.rs` (reititin).
+  Domainit: `areas`, `auth`, `checkpoints`, `news`, `photos`, `ratings`,
+  `reports`, `scores`, `settings`, `teams`, `users`.
+- **Autentikointi**: sähköpostiin lähetetty kertakäyttökoodi (OTP, voimassa 10
+  min) vaihdetaan JWT-tokeniksi (oletus 15 min), joka uusitaan
+  `/auth/refresh`-reitillä. Roolit: `admin`, `checkpoint`, `team`.
+- **OpenAPI**: utoipa generoi spesifikaation (`/api-docs/openapi.json`) ja
+  Swagger UI:n (`/swagger-ui`). Se on rajapinnan ja clientin välinen sopimus.
+- **Migraatiot** (`server/migrations/`) ajetaan automaattisesti palvelimen
+  käynnistyessä. Ensimmäinen admin luodaan `SEED_ADMIN_EMAIL`-osoitteella.
+- **Tapahtuma-asetukset** (`event_settings`): ylläpito voi sulkea pisteytyksen ja
+  tulostaulun sekä nollata pisteet.
 
-Sovellus on tarkoitus voida julkaista missä tahansa ympäristössä, joka tukee
-docker-kontteja. Julkaisualusta on siis osa yksittäisen instanssin teknistä
-toteutusta. Todennäköisesti lähempänä julkaisua tullaan kuitenkin kirjoittamaan
-ohje sovelluksen käyttöönotolle Heroku-ympäristössä.
+## Client (`client/`)
 
-Lähtökohtaisesti sovellus on pyritty toteuttamaan aikaa kestävillä ja vakailla
-kirjastoilla ja tekniikoilla. Näin sen ylläpitämisen ei pitäisi vaatia spesifiä
-teknistä osaamista, ja haltuunotto on yksinkertaista.
+- **React 19**, **TypeScript**, **Vite**, **Tailwind CSS 4**.
+- **TanStack Router** (tiedostopohjainen reititys `src/routes/`),
+  **TanStack Query** (datan haku) ja **TanStack Form**.
+- **API-client generoidaan** palvelimen OpenAPI-spesifikaatiosta
+  (`@hey-api/openapi-ts` → `src/api/generated/`). Generoituja tiedostoja ei
+  muokata käsin. Datahaut on kääritty hookeiksi (`src/hooks/`).
+- **Kartta**: MapLibre GL, PMTiles (`pmtiles://`-protokolla) ja supercluster
+  rastien ryhmittelyyn. Teema luodaan `@protomaps/basemaps`-kirjastolla.
+- **i18n**: i18next, kielet `fi`, `sv`, `en` (`src/i18n/locales/`). Rastien ja
+  uutisten sisältö on tallennettu kielikohtaisina JSON-objekteina.
+- **Rikasteksti**: Tiptap (uutiset, rastikuvaukset).
+- **PWA**: `public/sw.js` on tällä hetkellä minimaalinen service worker, joka
+  tyhjentää vanhat välimuistit.
 
-## Client
-Client-puoli on verkkosovellus, joka on kirjoitettu Typescriptillä ja puhtaalla
-CSS:llä, käyttäen Vite-frameworkia. Mahdollisesti jatkossa tullaan ottamaan
-mukaan kirjastoja, joilla kommunikaatio APIn ja tietokantataulujen ja
-typescriptin välillä onnistuu automaattisesti.
+## Valokuvat
 
-Kartta-ominaisuus on tarkoitus toteuttaa Leaflet.js -kirjastolla.
+1. Client pyytää palvelimelta allekirjoitetun URL:n (`POST /photos/presigned-url`).
+2. Client lataa kuvan suoraan S3:een (`client/src/lib/s3Uploader.ts`).
+3. Client rekisteröi kuvan palvelimelle (`POST /photos`).
 
-Tarkoituksena on olla käyttämättä liian montaa valmista kirjastoa, jotta
-varmistetaan sovelluksen pitkä-ikäisyys.
+## Julkaisu
 
-## Server
-Server-puoli on Pythonilla kirjoitettu FastAPI-sovellus, joka tarjoaa
-REST-rajapinnan PostgreSQL-tietokantaan, pääsääntöisesti JSON-muotoisena.
+Palvelimelle on Dockerfile (`server/Dockerfile`, monivaiheinen build,
+`SQLX_OFFLINE=true`). Client rakennetaan staattisiksi tiedostoiksi
+(`npm run build` → `client/dist/`). Automaattista julkaisuputkea ei ole
+repositoriossa. Tuotannon ympäristömuuttujat ovat mallina tiedostossa
+`.env.hosted`.
 
-Tietokanta tukee migraatioita, jotta eri kehitysvaiheissa on mahdollista muokata
-tietokannan tauluja melko vapaasti.
+## Periaatteet
+
+- OpenAPI-spesifikaatio on totuus: muuta rajapintaa palvelimella ja generoi
+  client uudelleen.
+- Pidä kyselyt SQLx-makroilla ja päivitä `.sqlx`-välimuisti
+  (`cargo sqlx prepare`) kyselyjä muuttaessasi.
