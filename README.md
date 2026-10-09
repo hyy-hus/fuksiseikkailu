@@ -32,7 +32,6 @@ Tämä repositorio sisältää tapahtuman web-sovelluksen (PWA).
 | [`client/`](client/README.md) | React/TypeScript-käyttöliittymä (Vite) |
 | `compose.yml` | Paikallinen PostgreSQL-kehityskanta |
 | `.env.hosted` | Mallipohja tuotantoympäristön ympäristömuuttujille (ei salaisuuksia) |
-| `plan.md` | Keskeneräiset tehtävät ja ideat |
 
 Tarkempi kuvaus: [arkkitehtuuri.md](arkkitehtuuri.md).
 
