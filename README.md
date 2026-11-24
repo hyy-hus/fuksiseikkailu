@@ -31,7 +31,6 @@ Tämä repositorio sisältää tapahtuman web-sovelluksen (PWA).
 | [`server/`](server/README.md) | Rust-taustajärjestelmä (Axum, PostgreSQL, SQLx) |
 | [`client/`](client/README.md) | React/TypeScript-käyttöliittymä (Vite) |
 | `compose.yml` | Paikallinen PostgreSQL-kehityskanta |
-| `.env.hosted` | Mallipohja tuotantoympäristön ympäristömuuttujille (ei salaisuuksia) |
 
 Tarkempi kuvaus: [arkkitehtuuri.md](arkkitehtuuri.md).
 
