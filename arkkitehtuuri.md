@@ -58,8 +58,8 @@ PMTiles-tiedostona objektivarastoon.
 Palvelimelle on Dockerfile (`server/Dockerfile`, monivaiheinen build,
 `SQLX_OFFLINE=true`). Client rakennetaan staattisiksi tiedostoiksi
 (`npm run build` → `client/dist/`). Automaattista julkaisuputkea ei ole
-repositoriossa. Tuotannon ympäristömuuttujat ovat mallina tiedostossa
-`.env.hosted`.
+repositoriossa. Palvelimen ympäristömuuttujat on kuvattu tiedostossa
+[`server/README.md`](server/README.md).
 
 ## Periaatteet
 
